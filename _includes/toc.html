@@ -1,0 +1,30 @@
+{% assign toc_type = page.toc_type | default: "sticky" %}
+{% if toc_type == "sticky" %}
+  <p class="right">
+    <button id="toggle-toc" class="dont-shrink small" onclick="toggleToc();">
+      <span id="toc-hidden">
+        {%- include svg.html icon="checkbox-outline" -%} Show
+      </span>
+      <span id="toc-shown" class="hidden">
+        {%- include svg.html icon="checkbox-checked" -%} Hide
+      </span> Table of Contents
+    </button>
+  </p>
+{% endif %}
+
+{% if toc_type == "sticky" %}
+  <nav id="toc-sticky" class="toc-sidebar hidden">
+    <details open>
+{% elsif toc_type == "fixed" %}
+  <nav id="toc-fixed" class="toc-sidebar">
+    <details open>
+{% endif %}
+      {% comment %} <summary>On this page</summary> {% endcomment %}
+      <summary class="link-color all-small-caps">Table of Contents</summary>
+      <div id="toc-menu">
+        {% assign header_min = page.toc_header_min | default: 1 %}
+        {% assign header_max = page.toc_header_max | default: 3 %}
+        {% include toc.liquid sanitize=true html=content h_min=header_min h_max=header_max skip_no_ids=true anchor_class='muted' %}
+      </div>
+    </details>
+  </nav>

@@ -1,0 +1,51 @@
+---
+layout: default
+---
+
+<header class="bottom-spacer">
+  <div class="flex space-between">
+    <h1>{{ site.title | escape }}</h1>
+
+    <div class="dont-shrink">
+      <a href="/feed.xml">{%- include svg.html icon="rss" class="spot-icon" params="aria-label='Atom/RSS Feed'" -%}</a>
+    </div>
+  </div>
+
+  {% if site.description %}
+  <p class="muted">{{ site.description }}</p>
+  {% endif %}
+</header>
+
+<main>
+  {{ content }}
+
+  <h2 class="top-x-spacer">Posts</h2>
+
+  <ul class="no-padding none-list">
+    {% for p in site.posts %}
+      {% if forloop.first == true %}
+        {% assign print_date = "9999-99" %}
+      {% endif %}
+      {% assign post_date = p.date | date: "%Y-%m" %}
+      <li class="flex align-items-baseline wider-gap">
+        {% if print_date > post_date %}
+          <span class="muted small dont-shrink">
+        {% else %}
+          <span class="muted small dont-shrink no-visibility">
+        {% endif %}
+          {{ post_date }}
+          {% assign print_date = post_date %}
+        </span>
+        <a href="{{ p.url | relative_url }}">
+          {{ p.title | escape }}
+        </a>
+    </li>
+    {% endfor %}
+  </ul>
+
+</main>
+
+<footer>
+  {% include divider.html %}
+  {%- include footer.html -%}
+</footer>
