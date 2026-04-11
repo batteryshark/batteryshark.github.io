@@ -1,0 +1,25 @@
+---
+---
+<!DOCTYPE html>
+<html lang=”{{ page.lang | default: site.lang | default: ‘en’ }}” prefix=”og: https://ogp.me/ns#”>
+
+  <head>
+  {%- include head.html -%}
+  </head>
+
+  <body>
+    <div class="frame">
+      {{ content }}
+    </div>
+
+    <script>
+      {%- include copyright-year.min.js -%}
+      {% if page.enhanced_details %}
+        {%- include enhanced-details.min.js -%}
+      {% endif %}
+    </script>
+
+    {% include analytics.html %}
+  </body>
+
+</html>

@@ -3,20 +3,20 @@ description: "Reverse engineering, game hacking, AI security, and low-level syst
 url: "https://batteryshark.github.io"
 baseurl: ""
 
-remote_theme: lucasrla/papicu
-
 permalink: /:year/:month/:day/:title.html
 
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
   - jekyll-sitemap
-  - jekyll-remote-theme
 
 markdown: kramdown
 kramdown:
   input: GFM
   syntax_highlighter: rouge
+
+sass:
+  style: compressed
 
 defaults:
   - scope:
@@ -24,8 +24,11 @@ defaults:
       type: posts
     values:
       layout: post
+      code_blocks: true
 
 exclude:
   - Gemfile
   - Gemfile.lock
   - README.md
+  - node_modules
+  - vendor

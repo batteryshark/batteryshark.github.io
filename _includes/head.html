@@ -1,0 +1,18 @@
+<meta content="text/html; charset=UTF-8" name="Content-Type" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width" />
+
+{% seo %}
+
+<meta name="twitter:dnt" content="on">
+
+{% if page.layout == 'post' or page.layout == 'page' %}
+  <meta property="article:modified_time" content="{{ page.date | date: '%Y-%m-%dT00:00:00+00:00' }}" />
+{% endif %}
+
+<link rel="stylesheet" href="{{ '/assets/css/papicu.min.css' | relative_url }}">
+
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafa">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#222222">
+
+<link rel="alternate" type="application/rss+xml" title="{{ site.title }} RSS feed" href="{{ site.url }}/feed.xml" />

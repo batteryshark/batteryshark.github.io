@@ -1,12 +1,7 @@
 source "https://rubygems.org"
 
 gem "jekyll", "~> 4.3"
-gem "jekyll-remote-theme"
 gem "jekyll-feed"
 gem "jekyll-seo-tag"
 gem "jekyll-sitemap"
-gem "jekyll-optional-front-matter"
-gem "jekyll-redirect-from"
-gem "jekyll-archives"
-gem "jekyll-last-modified-at"
-gem "jekyll-postfiles"
+gem "kramdown-parser-gfm"
