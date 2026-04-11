@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Masterpiece - Creating an App Controller (Part Five)"
-date: 2021-10-25
+date: 2021-10-25 05:00:00 +0000
 description: "Ok, we have an app format and some supporting code, but that doesn't do us much good if we can't get it into the process and give some additional control, we need:"
 ---
 
