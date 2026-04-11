@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Masterpiece - Consolizing PC Gaming (Part One)"
-date: 2021-10-25
+date: 2021-10-25 01:00:00 +0000
 description: "A homebrew experiment to bring the console experience to PC gaming - one hack at a time."
 ---
 

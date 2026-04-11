@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Masterpiece - Putting together an App Format (Part Four)"
-date: 2021-10-25
+date: 2021-10-25 04:00:00 +0000
 description: "Now that we have a composite filesystem library and shims that allow us to establish our own operating context, we need something to tie everything into an easily deployable package. This concept has..."
 ---
 

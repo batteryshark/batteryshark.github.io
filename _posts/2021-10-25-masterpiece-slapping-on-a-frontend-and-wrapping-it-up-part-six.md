@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Masterpiece - Slapping on a Frontend and Wrapping it Up (Part Six)"
-date: 2021-10-25
+date: 2021-10-25 06:00:00 +0000
 description: "At this point, we can work on bringing the console feel to everything, but honestly, making a frontend requires a lot of overhead."
 ---
 

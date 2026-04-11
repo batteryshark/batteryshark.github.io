@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Masterpiece - Making a Custom Operating Environment for our Processes (Part Three)"
-date: 2021-10-25
+date: 2021-10-25 03:00:00 +0000
 description: "Now that we have a (somewhat) reasonable way to create a set of files, we have several other considerations before a process can use it effectively:"
 ---
 

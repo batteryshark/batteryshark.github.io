@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Masterpiece - Implementing a Layered Filesystem (Part Two)"
-date: 2021-10-25
+date: 2021-10-25 02:00:00 +0000
 description: "Software management generally includes some method of managing files and their respective paths. Several approaches to this exist, and solutions greatly depend upon if software is expected to be..."
 ---
 
