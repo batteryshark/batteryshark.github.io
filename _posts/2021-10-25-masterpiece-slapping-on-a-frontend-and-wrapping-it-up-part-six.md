@@ -2,7 +2,7 @@
 layout: post
 title: "Masterpiece - Slapping on a Frontend and Wrapping it Up (Part Six)"
 date: 2021-10-25
-description: "At this point, we can work on bringing the "console feel" to everything, but honestly, making a frontend requires a lot of overhead, you need:"
+description: "At this point, we can work on bringing the console feel to everything, but honestly, making a frontend requires a lot of overhead."
 ---
 
 ![vxlogo](/assets/images/20211025/vxicon.png)
