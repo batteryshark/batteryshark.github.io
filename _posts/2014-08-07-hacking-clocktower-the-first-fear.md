@@ -2,12 +2,14 @@
 layout: post
 title: "Hacking Clocktower - The First Fear"
 date: 2014-08-07
-description: "Original Post: 2014-08-07"
+description: "Reverse engineering Clocktower internals, scripting, and tooling around an old console horror title."
+tags: [game-hacking, reverse-engineering, emulation, tooling]
+toc: true
+hero_image: /assets/images/20140807/images/01.png
+archival_note: "Originally published in 2014; emulator behavior, tool availability, and links may have changed."
 ---
 
 ##### *Script Interpreter Analysis for the 21st century*
-Original Post: 2014-08-07
-
 <img src="/assets/images/20140807/images/01.png" height="300">
 
 ```

@@ -2,12 +2,14 @@
 layout: post
 title: "Culdcept Series"
 date: 2013-11-12
-description: "Original Post: 2013-11-12"
+description: "A tour through Culdcept save data, compression, and brute-force tooling from a game-hacking angle."
+tags: [reverse-engineering, game-hacking, tooling]
+toc: true
+hero_image: /assets/images/20131112/images/01.png
+archival_note: "Originally published in 2013; external tooling links and platform details may have changed, but the reverse-engineering workflow is preserved."
 ---
 
 #### *Reverse Engineering Console Game Assets*
-Original Post: 2013-11-12
-
 ![alt text](/assets/images/20131112/images/01.png "Culdcept II")
 
 ### Background
@@ -16,13 +18,13 @@ This game series is like MTG meets monopoly. I discovered it back in the Dreamca
 
 #### Breaking a custom Huffman Stream Format
 
-Apart from the standard ADX archives, the textures and models seem to be in a different format and are jammed into a 100-ish MB file. 
+Apart from the standard ADX archives, the textures and models seem to be in a different format and are jammed into a 100-ish MB file.
 
 The first interesting bit is at the top:
 
 ![alt text](/assets/images/20131112/images/02.png "VFS Header")
 
-Right off, this looks like some kind of archive or virtualized filesystem. A bit of sanity checking on values such as 0x128 and 0x2A1E4B4 could be an offset and size which add up to the third value: 0x2A1E5DC. 
+Right off, this looks like some kind of archive or virtualized filesystem. A bit of sanity checking on values such as 0x128 and 0x2A1E4B4 could be an offset and size which add up to the third value: 0x2A1E5DC.
 
 Writing a quick iterative script might be something like this:
 ```python
@@ -52,7 +54,7 @@ Now, we could simply remake a header and try to slap it onto our data, but we al
 
 In this case, it might be worth making a brute force unpacker.
 
-Thankfully, there is a C-extension python module called lhafile that we can hack up and turn into a brute forcer [http://trac.neotitans.net/wiki/lhafile] which consists of a wrapper that figures out the compression type and details, then passes that data to a c library that does the actual heavy lifting.
+Thankfully, there was an old C-extension Python module called `lhafile` that could be hacked into a brute forcer. The original project link is now historical, but the useful bit was the wrapper: it identified the compression type and details, then handed that work to a C library for the heavy lifting.
 
 Modifying the _RealGetcontent function, we'll populate the structure of what our header SHOULD populate (if it had one).
 
@@ -77,20 +79,20 @@ def _RealGetContent(self):
 
 Other smaller changes include wiping out the CRC16 not matching 0 and the uncompressed size considering we won't know what it should be uncompressed.
 
-Now comes the tricky part, we can decompress the chunk, but we have no idea what byte it starts on, therefore, we need to actually do the decompression multiple times while checking to ensure it didn't break. 
+Now comes the tricky part, we can decompress the chunk, but we have no idea what byte it starts on, therefore, we need to actually do the decompression multiple times while checking to ensure it didn't break.
 
 Thankfully, LHA has the ability to fault out if the bit pattern isn't right (which basically means we started on the wrong byte and it can't figure out how to decode the next byte in the sequence). We'll alter the original logic from raising an exception at this point to simply continuing to the next start byte in the sequence.
 
-Basically, our workflow is like this: 
+Basically, our workflow is like this:
 
-1. Read compressed data starting at n. 
+1. Read compressed data starting at n.
 2. Try to decompress.
 3. If success, write out to file and go again from n+1 / if not, go to the next iteration anyway.
 
-The last step also involves us resetting the file pointer for the data stream back to the beginning byte, but those are just details. 
+The last step also involves us resetting the file pointer for the data stream back to the beginning byte, but those are just details.
 
 In the end, we want:
-- To specify the number of successful decompressions we want. 
+- To specify the number of successful decompressions we want.
 - To specify how many times we're going to retry the file from the next offset.
 
 Adding some arguments to the runtime and calling with sys.argv[i] will work nicely with that.
@@ -142,7 +144,7 @@ In the end, one of the smaller files I was working on contained this:
 
 ![alt text](/assets/images/20131112/images/05.png "Spider Dump")
 
-We have Text!!! The format surrounding it is odd, however. Maybe it didn't unpack properly? Maybe it's compressed further? 
+We have Text!!! The format surrounding it is odd, however. Maybe it didn't unpack properly? Maybe it's compressed further?
 
 #### The Legend Continues
 
@@ -150,7 +152,7 @@ Ok, so we have some uncompresessed chunks, what now? Comparing the DS version (w
 
 ![alt text](/assets/images/20131112/images/06.png "Mem Dump")
 
-A better way to view the memory, however, is with savestates. 
+A better way to view the memory, however, is with savestates.
 
 Another interesting bit appears to be a model format! It uses a header of "MODL" for both DS and DC versions - more than likely some custom format.
 
@@ -295,7 +297,7 @@ fdata = f.read()
 file_offsets = []
 for i in range(0,(w_blocks+1)*h_blocks):
 	file_offsets.append(struct.unpack("<I",fdata[(i*4):(i*4)+4])[0])
-	
+
 #The end doesn't have an offset - sooo...
 file_offsets.append(len(fdata))
 
@@ -316,7 +318,7 @@ for i in range(0,len(file_offsets)-1):
 	otmp = open("out.tmp","rb")
 	img16_data = otmp.read()
 	otmp.close()
-	
+
 	#Now we convert the ARGB1555 pixels to ARGB8888
 	img32_data = ""
 	for i in range(0,len(img16_data),2):
@@ -326,10 +328,10 @@ for i in range(0,len(file_offsets)-1):
 	if(cur_col > w_blocks):
 		cur_row+=1
 		cur_col = 0
-	#Paste the current chunk in the appropriate spot.	
+	#Paste the current chunk in the appropriate spot.
 	outmap.paste(im32,(cur_col*BLOCK_SZ,cur_row*BLOCK_SZ))
 	cur_col+=1
-	
+
 #Write our image out to disk.
 outmap.save('%s.png' % os.path.splitext(sys.argv[1])[0])
 ```
@@ -353,7 +355,7 @@ The card format encompasses a number of different items with varying compression
 
 ![alt text](/assets/images/20131112/images/28.png "Card Block Header")
 
-After the 0x08 header follows a 20bit size in little endian. As a result, the third byte is >> 0x0F to get the least significant 4bits: 
+After the 0x08 header follows a 20bit size in little endian. As a result, the third byte is >> 0x0F to get the least significant 4bits:
 
 ```
 e.g. \x88\x68\x05 would equate to 0x26888
@@ -378,7 +380,7 @@ The first bytes we see are:
 We know the values follow the same format, and based on the stats we have should be:
 4C 00 28 00 28 00 28 00 64 00
 
-Referring back to the 'corrupted' data, lets say that our ST value (40/0x0028) is accurate and correlates to where the value 0xFFDC is. 
+Referring back to the 'corrupted' data, lets say that our ST value (40/0x0028) is accurate and correlates to where the value 0xFFDC is.
 
 0x28-FFDC = 0x4C
 
@@ -412,7 +414,7 @@ As a breakdown, the structure of the cards are as follows:
 This area has a number of card-related metadata such as:
 - Size of the pre-text header in bytes.
 - ST (the card's attack rating)
-- HP 
+- HP
 - MHP (Max HP)
 - G (Cost to use card)
 - Type (Neutral, Earth, Air, Fire, Water, Spell, Weapon, Armor, etc.)
@@ -525,13 +527,13 @@ class Card(object):
 	item_limit_table = {0x00:"None",0x01:"Weapons",0x2:"Armor",0x3:"Weapons, Armor",0x8:"Scrolls",0x9:"Weapons, Scrolls",0xA:"Armor, Scrolls",0xB:"Weapons, Armor,Scrolls",0x0E:"Armor, Tools, Scrolls",0x0F:"Weapons, Armor, Tools, Scrolls"}
 	land_limit_table = {0x00:"None",0x2:"Fire",0x4:"Water",0x06:"Fire, Water",0x8:"Earth",0x0A:"Fire, Earth",0x10:"Air",0x12:"Fire, Air",0x13:"Fire, Air",0x14:"Water, Air",0x1B:"Neutral, Fire, Earth, Air"}
 	artist_table = {0x00:"Yuri Hanayama",0x02:"Naoyuki Katoh",0x03:"Ayano Koshiro",0x04:"Yuji Kaida",0x06:"Satoshi Nakai",0x07:"Ayano Koshiro"}
-	
+
 	def msg_log(self,msg):
 		manifile = open(".\\card.txt","a+")
 		manifile.write(msg+"\n")
 		manifile.close()
-	
-	
+
+
 	def dump_cardinfo(self,str_data):
 		str_data = str_data.replace("\n","").strip()
 		str_data = str_data.replace('"',"`")
@@ -540,10 +542,10 @@ class Card(object):
 		strings = str_data.split(b'\x00')
 		card_metadata = {"name":strings[0]}
 		ref_strings = []
-			
+
 		for i in range(0,len(strings)):
 			strings[i] = strings[i].replace(strings[0],"")
-			#Fix because they cant spell 
+			#Fix because they cant spell
 			strings[i] = strings[i].replace("Judgement","")
 			#strings[i] = filter(lambda x: x in string.printable, strings[i])
 			strings[i] = strings[i].replace(b'\x87\x41'," (Fire) ")
@@ -554,13 +556,13 @@ class Card(object):
 			if(card_metadata['name'] != strings[i] and strings[i] != "" and strings[i] != b'\x00' and strings[i] != "\n"):
 				ref_strings.append(strings[i])
 		strings = ref_strings
-		
+
 		card_metadata["page_1"] = strings[len(strings) - 3]
 		card_metadata["page_2"] = strings[len(strings) - 2]
 		card_metadata["page_3"] = strings[len(strings) - 1]
-		'''	
+		'''
 		for i in range(1,len(strings)):
-			
+
 			strings[i] = strings[i].replace(b"\x01\x1E\x01\x64","")
 			strings[i] = strings[i].replace(b'\x87\x41'," (Fire) ")
 			strings[i] = strings[i].replace(b'\x87\x42'," (Water) ")
@@ -573,7 +575,7 @@ class Card(object):
 			strings[i] = strings[i].replace(b'\x01','')
 			#Just in case something snuck by...
 			strings[i] = filter(lambda x: x in string.printable, strings[i])
-			
+
 			if(strings[0] == strings[i] and page_ctr == 1):
 				page_ctr +=1
 				continue
@@ -587,7 +589,7 @@ class Card(object):
 		if(compdata[0] != b'\x08'):
 			print("ERROR - Not an LH5 Compressed File!")
 			exit(1)
-		
+
 		tfp = open("in.tmp","wb")
 		tfp.write(compdata)
 		tfp.close()
@@ -601,7 +603,7 @@ class Card(object):
 		outdata = tfp.read()
 		tfp.close()
 		os.remove("out.tmp")
-		
+
 		return outdata
 
 	def ARGB1555toARGB8888(self,in_pixel):
@@ -610,8 +612,8 @@ class Card(object):
 		g = (in_pixel & 0x03E0) & 0xFFFF
 		b = (in_pixel & 0x1F) & 0xFFFF
 		rgb = ((r << 9) | (g << 6) | (b << 3)) & 0xFFFFFFFF
-		return ((a*0x1FE00) | rgb | ((rgb >> 5) & 0x070707)) & 0xFFFFFFFF	
-	
+		return ((a*0x1FE00) | rgb | ((rgb >> 5) & 0x070707)) & 0xFFFFFFFF
+
 	def pvr2png(self,curpath,indata,width,height,pvr_type,outname):
 
 		if(pvr_type is "ARGB1555"):
@@ -632,8 +634,8 @@ class Card(object):
 			b = (in_pixel & 0x1F) & 0xFFFF
 			rgb = ((r << 9) | (g << 6) | (b << 3)) & 0xFFFFFFFF
 			return ((a*0x1FE00) | rgb | ((rgb >> 5) & 0x070707)) & 0xFFFFFFFF
-			
-		
+
+
 		outdata = bytearray()
 
 		for i in range(0,len(indata),2):
@@ -642,10 +644,10 @@ class Card(object):
 		#Padding for larger resolutions because PIL is a fuckhead.
 		outdata += bytearray(200048)
 		#Because ARGB -> ABGR
-		
+
 		#STUPID FUCKING DREAMCAST FORMAT BEING ABGR!!!!
 		#outdata = channelSwap(outdata,32)
-			
+
 		im = Image.frombuffer(colortype,(width,height),outdata,'raw',colortype,0,1)
 		im.save("tmp.png","PNG")
 		f = open("tmp.png","rb")
@@ -657,13 +659,13 @@ class Card(object):
 	def dump_cardgfx(self,card_data):
 		outpng = self.pvr2png(".\\",card_data,256,320,"ARGB1555","card.png")
 		return outpng
-	
+
 	def dump_sprite(self):
 		pal16 = self.sprite[0:32]
-	
+
 		while (len(pal16) < 512):
 			pal16 += pal16
-	
+
 		#Convert Palette from 16bit to 32 bit
 		pal32 = []
 		for i in range(0,len(pal16),2):
@@ -673,7 +675,7 @@ class Card(object):
 		outpixels = ""
 		for pixel in self.sprite:
 			outpixels += struct.pack("<I",pal32[struct.unpack("B",pixel)[0]])
-	
+
 
 		#Make new image
 		im = Image.frombuffer("RGBA",(int(64),int(128)),outpixels,'raw',"RGBA",0,1)
@@ -689,15 +691,15 @@ class Card(object):
 		f = open(infile,"rb")
 		dec_byte = f.read(1)
 		f.close()
-		
+
 		os.system("unlha d %s %s 1>nul" % (infile,infile))
-		
+
 		if(dec_byte == b'\x09'):
 			os.system("c:\\python27\\python.exe card_dcrypt.py %s" % infile)
 		f = open(infile,"rb")
 		data = f.read()
 		f.close()
-		
+
 		self.hdr_sz = struct.unpack("B",data[0x00])[0]
 		self.st = struct.unpack(">H",data[1:3])[0]
 		self.hp = struct.unpack(">H",data[3:5])[0]
@@ -750,9 +752,9 @@ class Card(object):
 			self.unknown_file = data[self.unkfile_offset:self.card_offset]
 			self.sprite = self.dump_sprite()
 		self.card_gfx = data[self.card_offset:]
-	
+
 	def gen_json(self):
-	
+
 		json_data = '[{"card_id":%d,"data":{' % self.id+\
 			'"id":%d,' % self.id + \
 			'"st":%d,' % self.st + \
@@ -784,15 +786,15 @@ class Card(object):
 			'"unk_0x2E":%d,' % self.unk_0x2E + \
 			'"unk_0x30":%d,' % self.unk_0x30 + \
 			'"unk_0x32":%d}}]' % self.unk_0x32
-		
+
 
 		return json_data
-	
+
 	def dump_card(self):
 		#Dump Metadata to JSON
 		out = open("%d.json" % self.id,"wb")
 		out.write(self.gen_json())
-		out.close()		
+		out.close()
 		if(self.spr_offset != 0):
 			#Dump Sprite (if available)
 			out = open("%d_spr.png" % self.id,"wb")
@@ -806,31 +808,9 @@ class Card(object):
 		out = open("%d_card.png" % self.id,"wb")
 		out.write(self.dump_cardgfx(self.card_gfx))
 		out.close()
-	
+
 if(__name__ == "__main__"):
 	card = Card(sys.argv[1])
 	card.dump_card()
 	#os.remove(sys.argv[1])
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

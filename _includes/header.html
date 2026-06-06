@@ -1,14 +1,11 @@
-<div class="flex space-between">
+<div class="flex space-between site-header">
   <a href="{{ site.baseurl }}/">
     {{ site.title | escape }}
   </a>
 
-  <div class="dont-shrink">
-    {% assign about_page = site.pages | where: "permalink", "/about" %}
-    {% if about_page[0].permalink %}
-    <a href={{ "/about" | relative_url }}>
-      {{ about_page[0].title }}
-    </a>
-    {% endif %}
-  </div>
+  <nav class="site-nav" aria-label="Primary navigation">
+    <a href="{{ "/topics/" | relative_url }}">Topics</a>
+    <a href="{{ "/series/" | relative_url }}">Series</a>
+    <a href="{{ "/about/" | relative_url }}">About</a>
+  </nav>
 </div>

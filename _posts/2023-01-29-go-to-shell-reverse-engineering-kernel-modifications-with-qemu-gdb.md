@@ -2,7 +2,11 @@
 layout: post
 title: "Go To Shell - Reverse Engineering Kernel Modifications with QEMU/gdb"
 date: 2023-01-29
-description: "January 29, 2023"
+description: "Using QEMU and gdb to chase a kernel modification path until the boot flow gives up its shell."
+tags: [reverse-engineering, low-level-systems, tooling]
+toc: true
+hero_image: /assets/images/20230129/00.png
+archival_note: "Originally published in 2023; emulator, debugger, and kernel build details may have changed."
 ---
 
 ![](/assets/images/20230129/00.png "ShellOVision")
@@ -14,7 +18,7 @@ January 29, 2023
 
 This writeup sort of came out of nowhere while working on the outline for another writeup (coming shortly).
 
-I was asked to look at a few dumps from various eras of a company's release portfolio - known to mostly rely heavily on FPGAs and other custom hardware to deter copying and protect runtime assets. 
+I was asked to look at a few dumps from various eras of a company's release portfolio - known to mostly rely heavily on FPGAs and other custom hardware to deter copying and protect runtime assets.
 
 What started as a casual dive into a couple of runtimes quickly evolved into more interesting modifications and required more and more analysis and modification to get anywhere useful.
 
@@ -27,7 +31,7 @@ Are you ready to jump? Let's-a-go!!!
 
 ## A Simple Example
 
-### Testing from an Image 
+### Testing from an Image
 
 The first thing we'll do is look at a general HDD image - use your weapon of choice here (xways forensics/winhex,ftk,whatever).
 
@@ -72,12 +76,12 @@ How do we get to a place where we can be in an environment that understands this
 We can run the hdd image [v .001] with the following command:
 
 ```
-qemu-system-i386 -s -drive format=raw,file=CF_GIG_M001US-WA.img 
+qemu-system-i386 -s -drive format=raw,file=CF_GIG_M001US-WA.img
 ```
 
 ![](/assets/images/20230129/04.png "Bootloader Hang")
 
-Running the image, nothing happens which makes sense - the game itself would start given the right hardware and, maybe there are some hardware checks that make the game hang otherwise. 
+Running the image, nothing happens which makes sense - the game itself would start given the right hardware and, maybe there are some hardware checks that make the game hang otherwise.
 
 At this point, some would give up, but not you and I - no siree! We're going to go deeper and figure out what's up, let's dive in!
 
@@ -89,7 +93,7 @@ Running binwalk on the Fish4P-OS, we can see:
 
 ![](/assets/images/20230129/06.png "binwalk results")
 
-It looks like there is a compressed blob at a specific offset. Different kernels might use xz, lzma, gzip, or some bootloaders might even encrypt or otherwise encode the image themselves, it varies greatly. However, assuming whoever made this used a standard mechanism to pack their bzImage and it's gzip (given the era), we can look for 1f 8b 08 00, or the magic for gzip. 
+It looks like there is a compressed blob at a specific offset. Different kernels might use xz, lzma, gzip, or some bootloaders might even encrypt or otherwise encode the image themselves, it varies greatly. However, assuming whoever made this used a standard mechanism to pack their bzImage and it's gzip (given the era), we can look for 1f 8b 08 00, or the magic for gzip.
 
 ![](/assets/images/20230129/05.png "gzip magic")
 
@@ -99,16 +103,16 @@ However, knowing that this kernel is a 2.6 or newer kernel (based on strings vis
 
 ### vmlinux-to-elf
 
-This [python package](https://github.com/marin-m/vmlinux-to-elf) can extract various compressed file formats of bzimage. It also can read a symbol table from the kernel if it was left compiled into the kernel and that will give us function names - including any customized function names. 
+This [python package](https://github.com/marin-m/vmlinux-to-elf) can extract various compressed file formats of bzimage. It also can read a symbol table from the kernel if it was left compiled into the kernel and that will give us function names - including any customized function names.
 
-In our case, the kernel we have seems to work perfectly! 
+In our case, the kernel we have seems to work perfectly!
 ![](/assets/images/20230129/07.png "vmlinux-to-elf results")
 
 Okay... so we have the kernel extracted... now what?
 
 ### Booting the Kernel
 
-We can boot the compressed kernel (Fish4P) directly via QEMU 
+We can boot the compressed kernel (Fish4P) directly via QEMU
 ```
 qemu-system-i386 -s -drive format=raw,file=CF_GIG_M001US-WA.img -kernel "Fish4P-OS" -append "debug console=/dev/ttyso"
 ```
@@ -128,9 +132,9 @@ When looking at a Linux kernel with the aim of reversing customizations, we have
 
 * See if we can identify what was changed from the vanilla kernel.
 * Bypass any checks or roadblocks that prevent us from fully starting the kernel - as in, being able to run usermode code.
-* Get from `kernel_start` through `init_post`. 
+* Get from `kernel_start` through `init_post`.
 
-Think of `init_post` as your main function - after `kernel_start`, there's some initial setup, then `init_post` does additional mounting, sets up your console, and then kicks off whatever init usermode code needs to happen. 
+Think of `init_post` as your main function - after `kernel_start`, there's some initial setup, then `init_post` does additional mounting, sets up your console, and then kicks off whatever init usermode code needs to happen.
 
 This is our endgame - we need to get here in order to have a working system to progress.
 
@@ -147,7 +151,7 @@ Clearly, there are some checks happening to ensure that this is running on origi
 ![](/assets/images/20230129/09.png "init_post disasm")
 
 
-We can also see the support for our custom 'rofs' filesystem - based on CramFS 
+We can also see the support for our custom 'rofs' filesystem - based on CramFS
 
 
 ![](/assets/images/20230129/10.png "rofs decomp")
@@ -337,7 +341,7 @@ We'll know we're in the right spot when functions start properly referencing, an
 
 ![](/assets/images/20230129/35.png "lb6")
 
-### Analysis Setup 
+### Analysis Setup
 
 At this point, we'll start looking for that init string to lead us to `init_post`:
 
@@ -368,7 +372,7 @@ Writing out Modified bzImage
 And test it:
 
 ```
-qemu-system-i386 -m 512 -S -s -kernel "sub-OS-e64_debug" -append "debug console=/dev/ttyS0" -drive format=raw,file=sub.img,index=2 
+qemu-system-i386 -m 512 -S -s -kernel "sub-OS-e64_debug" -append "debug console=/dev/ttyS0" -drive format=raw,file=sub.img,index=2
 ```
 
 Aaaaand we get a kernel panic:
@@ -462,29 +466,29 @@ If this function fails, however, the startup jumps to the start of the kernel an
 
 * A check against an arbitrary int value that appears to be a broken hash check (flag 0x08).
 
-![](/assets/images/20230129/52.png "lb20") 
-![](/assets/images/20230129/53.png "lb20") 
+![](/assets/images/20230129/52.png "lb20")
+![](/assets/images/20230129/53.png "lb20")
 
 * Running a process called /mnt/GECA - a userspace application [from the kernel](https://developer.ibm.com/articles/l-user-space-apps/) (flag 0x10):
 
-![](/assets/images/20230129/54.png "lb20") 
+![](/assets/images/20230129/54.png "lb20")
 
 
 * A check in `mount_root` - this one checks against a BIOS string `i852-W83627HF` and reset-panics the kernel as well if our BIOS does not contain this serial (flag 0x02).
-![](/assets/images/20230129/57.png "lb20") 
-![](/assets/images/20230129/58.png "lb20") 
-![](/assets/images/20230129/59.png "lb20") 
+![](/assets/images/20230129/57.png "lb20")
+![](/assets/images/20230129/58.png "lb20")
+![](/assets/images/20230129/59.png "lb20")
 
 
 At the end of all this, right before /dev/console is connected, the kernel checks our flag to ensure every bit has been flipped and enters an infinite loop if not:
 
-![](/assets/images/20230129/55.png "lb20") 
+![](/assets/images/20230129/55.png "lb20")
 
 ### The Last Mile
- 
+
  So at this point, we can pretty much patch all of our checks out by skipping them or otherwise. However, it seems to hang on running bash / connecting to our console, or hitting a panic - wtf?
 
-![](/assets/images/20230129/60.png "lb20") 
+![](/assets/images/20230129/60.png "lb20")
 
 At this point, we can suspect that the developers did something funny with their rootfs. That's why it's useful to make your own!
 
@@ -492,7 +496,7 @@ At this point, we can suspect that the developers did something funny with their
 
 We're going to take a few files from a rootfs around the same time to ensure libc compatibility, but bash, tar, and gzip are useful if we're going to dump a copy of the files for ourselves. You may also want mount and some other goodies such as busybox if you're really paranoid about their environment.
 
-![](/assets/images/20230129/61.png "lb20") 
+![](/assets/images/20230129/61.png "lb20")
 
 It is also useful to pack an 'init' or at least a shell script with the init minimal implementation we had above to mount devfs,procfs, etc.
 
@@ -582,21 +586,21 @@ We'll now start it up like so:
 
 ```qemu-system-i386 -m 512 -s -kernel "sub-OS-e64_patched" -append "debug ro root=/dev/hdc2 console=ttyS0 init=/Sub/game_data/bin/bash" -drive format=raw,file=sub.img,index=2 -drive file=facade.qcow2,index=3```
 
-![](/assets/images/20230129/62.png "lb20") 
+![](/assets/images/20230129/62.png "lb20")
 
 Now that we have shell access, we can see that their /dev/console was a symlink to /dev/ttyS2 which didn't exist and was causing the panic. However, they included a `console.bak` which was a normal device file.
 
-![](/assets/images/20230129/63.png "lb20") 
+![](/assets/images/20230129/63.png "lb20")
 
-![](/assets/images/20230129/64.png "lb20") 
+![](/assets/images/20230129/64.png "lb20")
 
-At this point, we're basically free to mount whatever we want. 
+At this point, we're basically free to mount whatever we want.
 
 If we want to make a live copy of the rootfs for further startup analysis, we can use our tar+gzip `tar --exclude='mnt/Target' --exclude='dev' --exclude='sys' --exclude='proc' -czvf /mnt/Target/rootfs.tar /`
 
 We can also use this as an opportunity to dump the custom partition data included as well.
 
-It's worth noting that this is where we'll need to analyze startup scripts and any custom binaries to figure out what's next for our target. 
+It's worth noting that this is where we'll need to analyze startup scripts and any custom binaries to figure out what's next for our target.
 
 Welcome to userland!
 

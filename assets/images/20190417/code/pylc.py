@@ -1,6 +1,5 @@
-# Limited Ctypes Module for the Senselock LC (CLAVE2) API
 import os
-from ctypes import *
+from ctypes import WinDLL, byref, c_char, c_int32, c_ubyte, c_uint32, c_voidp, sizeof, POINTER
 import binascii
 
 DEFAULT_LC_PASSWORD = "12345678".encode('ascii')
@@ -33,19 +32,20 @@ def lcc_init(dev_id=DEFAULT_DEV_ID, password=DEFAULT_LC_PASSWORD):
 
 
 def lc_encrypt(dev_id, dongle_passwd, in_data):
-    if detect_arch == 64:
+    if detect_arch() == 64:
         print("Native Bindings for 64 bit are not currently supported")
-        while ndec is b"":
-            t_ndec = input("Enter the ascii hex of the output bytes: ")
+        decrypted_data = b""
+        while decrypted_data == b"":
+            hex_data = input("Enter the ascii hex of the output bytes: ")
             try:
-                ndec = binascii.unhexlify(t_ndec)
-            except:
+                decrypted_data = binascii.unhexlify(hex_data)
+            except binascii.Error:
                 print("Error - Not a Hex String")
                 continue
-        return True, ndec
+        return True, decrypted_data
 
     status, handle = lcc_init(dev_id, dongle_passwd)
-    if (status is False):
+    if status is False:
         return False, b""
     outdata = (c_ubyte * len(in_data))()
     res = lc_dll.LC_encrypt(handle, in_data, outdata)
@@ -56,19 +56,20 @@ def lc_encrypt(dev_id, dongle_passwd, in_data):
 
 
 def lc_decrypt(dev_id, dongle_passwd, in_data):
-    if (detect_arch == 64):
+    if detect_arch() == 64:
         print("Native Bindings for 64 bit are not currently supported")
-        while ndec is b"":
-            t_ndec = input("Enter the ascii hex of the output bytes: ")
+        decrypted_data = b""
+        while decrypted_data == b"":
+            hex_data = input("Enter the ascii hex of the output bytes: ")
             try:
-                ndec = binascii.unhexlify(t_ndec)
-            except:
+                decrypted_data = binascii.unhexlify(hex_data)
+            except binascii.Error:
                 print("Error - Not a Hex String")
                 continue
-        return True, ndec
+        return True, decrypted_data
 
     status, handle = lcc_init(dev_id, dongle_passwd)
-    if (status is False):
+    if status is False:
         return False, b""
     outdata = (c_ubyte * len(in_data))()
     res = lc_dll.LC_decrypt(handle, in_data, outdata)

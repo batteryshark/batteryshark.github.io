@@ -2,12 +2,14 @@
 layout: post
 title: "Adding Keyboard Support to a Crazy Taxi Clone"
 date: 2015-11-28
-description: "Original Post: 2015-11-28"
+description: "Input patching and control adaptation work on a game that was never especially interested in keyboard players."
+tags: [game-hacking, reverse-engineering, low-level-systems]
+toc: true
+hero_image: /assets/images/20151128/images/01.jpg
+archival_note: "Originally published in 2015; controller APIs, wrappers, and emulator options may have changed."
 ---
 
-Original Post: 2015-11-28
-
-### Foreward
+### Foreword
 I have wanted to do a blog post about adding keyboard support to an arcade game for a while now. Historically my work has been focused more on Linux arcade games, but I'm getting more and more into Windows territory nowadays.
 
 Adding emulated IO support for this game in particular was pretty straightforward which is why I opted to do it now - the game itself isn't stripped, original IO support is modular, and it runs on a modern OS. As a result, we can focus more on strategy and implementation design rather than having to do a bunch of compatibility patching beforehand.

@@ -1,0 +1,17 @@
+{% assign p = include.post %}
+<li class="archive-row">
+  <div class="archive-row-date muted small">{{ p.date | date: "%Y-%m-%d" }}</div>
+  <div class="archive-row-body">
+    <a href="{{ p.url | relative_url }}">{{ p.title | escape }}</a>
+    {% if p.description %}
+      <p class="muted small no-margin">{{ p.description | smartify }}</p>
+    {% endif %}
+    {% if p.tags %}
+      <div class="tag-list small">
+        {% for tag in p.tags %}
+          <a href="{{ "/topics/" | relative_url }}#{{ tag | slugify }}">{{ tag }}</a>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</li>

@@ -1,8 +1,14 @@
 ---
 layout: post
 title: "Masterpiece - Creating an App Controller (Part Five)"
-date: 2021-10-25 05:00:00 +0000
-description: "Ok, we have an app format and some supporting code, but that doesn't do us much good if we can't get it into the process and give some additional control, we need:"
+date: 2021-10-25
+description: "The controller layer that ties app packages, process control, and runtime behavior into one launch path."
+tags: [masterpiece, compatibility, game-hacking, low-level-systems]
+toc: true
+hero_image: /assets/images/20211025/v4p4.png
+archival_note: "Originally published in 2021 as part of the Masterpiece series; runtime assumptions are preserved as historical project context."
+series: "Masterpiece"
+series_part: 5
 ---
 
 ![vxlogo](/assets/images/20211025/vxicon.png)
@@ -41,7 +47,7 @@ __declspec(noinline) static void __stdcall load_library_worker(load_library_t *s
 }
 ```
 
-We then allocate some pages to store unicode library paths, and use a resolved LdrLoadDll address within our process to load our libraries. 
+We then allocate some pages to store unicode library paths, and use a resolved LdrLoadDll address within our process to load our libraries.
 
 Why not LoadLibraryA? We create the process in a suspended state, at this point, nothing is loaded other than ntdll and perhaps the wow64 stuff for 32bit apps. Instead of force loading kernel32, we use the ntdll library's equivalent to map a library into memory to assure that we can map our changes early in the process for the best compatibility with potential changes. This will also allow us to inject libraries that do not include references to stdlib if necessary.
 
@@ -54,6 +60,3 @@ In addition, I have put everything together and ported it to .NET 5.0 as VXTools
 ## Next Steps
 
 Now we have a launcher, supporting code, an app format, and a way to control apps, but running them from a command line or context menu is kind of crappy, let's see what else we can leverage to make this a bit more friendly next time!
-
- 
-

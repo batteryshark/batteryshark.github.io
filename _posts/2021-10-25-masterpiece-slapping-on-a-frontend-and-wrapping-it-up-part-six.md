@@ -1,8 +1,14 @@
 ---
 layout: post
 title: "Masterpiece - Slapping on a Frontend and Wrapping it Up (Part Six)"
-date: 2021-10-25 06:00:00 +0000
-description: "At this point, we can work on bringing the console feel to everything, but honestly, making a frontend requires a lot of overhead."
+date: 2021-10-25
+description: "The frontend wrap-up for the Masterpiece experiment: enough UI to make the system feel like a coherent console shell."
+tags: [masterpiece, compatibility, game-hacking, low-level-systems]
+toc: true
+hero_image: /assets/images/20211025/vxicon.png
+archival_note: "Originally published in 2021 as part of the Masterpiece series; frontend and framework details may have changed."
+series: "Masterpiece"
+series_part: 6
 ---
 
 ![vxlogo](/assets/images/20211025/vxicon.png)
@@ -66,7 +72,7 @@ That's all well-and-good, but what about cloud saves? What about remote apps?
 
 Although we could implement something to handle all of this for us, something simple like Google Drive File Stream will work well for this.
 
-For those not familiar, Google Drive has a driver that can mount your GDrive and Shared Drives as native filesystem paths and operate read/writes as normal. In this case, we simply put our vxapp folders onto GDrive and we have an online repository that we can stream the app files from as we need them. 
+For those not familiar, Google Drive has a driver that can mount your GDrive and Shared Drives as native filesystem paths and operate read/writes as normal. In this case, we simply put our vxapp folders onto GDrive and we have an online repository that we can stream the app files from as we need them.
 
 This allows us to read from the various images as needed without having to download the entire app. In this case, the "Install" option to copy the app locally is useful for offline play.
 
@@ -75,7 +81,7 @@ Also, because smoothie uses a read/write persistence layer, we can point our per
 ## Looking Forward
 
 At this point, remaining work is mostly:
-- Improving paradox to support network emulation 
+- Improving paradox to support network emulation
 - Additional format support for smoothie (maybe xvc, squashfs)
 - Better Linux Support
 - Mac Support
@@ -84,9 +90,3 @@ At this point, remaining work is mostly:
 But that's for another day,
 
 Cheers!
-
-
-
-
-
-

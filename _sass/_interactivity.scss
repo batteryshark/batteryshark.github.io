@@ -202,5 +202,5 @@ button svg,
   background: none;
 }
 
-// TODO: investigate why previous/next buttons are not showing up
-//       on iOS (Safari, Firefox), background:none isn't the culprit
+// iOS browsers have historically been inconsistent with these controls;
+// background:none is not the culprit.

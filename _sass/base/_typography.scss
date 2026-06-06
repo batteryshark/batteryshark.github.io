@@ -116,7 +116,6 @@ code:not(div.highlight code):not(figure.highlight code) {
 // trying to avoid emoji fonts
 // - https://github.com/jimniels/blog/blob/142d509f98e1d83343bd47b2f5d7c7ecc4795c86/src/client/assets/css/base.css#147
 a.reversefootnote{
-  // TODO: find an elegant way to make Safari iOS honor this (CSS-only)
-  // appending &#xFE0E; is not really an option because the symbol is being inserted by kramdown and I don't have much control over it
+  // Safari iOS may ignore the font choice for kramdown's generated symbol.
   font-family: sans-serif;
 }

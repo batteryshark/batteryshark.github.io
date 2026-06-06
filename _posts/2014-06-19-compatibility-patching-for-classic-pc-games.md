@@ -2,16 +2,18 @@
 layout: post
 title: "Compatibility Patching for Classic PC Games"
 date: 2014-06-19
-description: "Original Post: 2014-06-19"
+description: "Small compatibility patches and debugging notes for getting older PC games across newer Windows behavior."
+tags: [compatibility, game-hacking, reverse-engineering]
+toc: true
+hero_image: /assets/images/20140619/images/01.png
+archival_note: "Originally published in 2014; Windows compatibility behavior and third-party links may have changed."
 ---
 
 #### *A Cross-Platform Approach*
-Original Post: 2014-06-19
-
 ![alt text](/assets/images/20140619/images/01.png "Croc2 Logo")
 
 ### Intro
-Quite a bit of work these days goes into compatibility patching for legacy applications. In the area of reverse-engineering games, few things are more fun than being able to hack up a game that previously didn't work right and make it do just that. 
+Quite a bit of work these days goes into compatibility patching for legacy applications. In the area of reverse-engineering games, few things are more fun than being able to hack up a game that previously didn't work right and make it do just that.
 
 Many games in the past were built with designs and dependencies that either no longer apply or exist on a modern PC (e.g. optical media, region-specific character encoding, etc.). Today, we're going to dive into hacking up an old game to make it run on a modern machine, complete with working CD Audio (CDDA) without mounting bin/cues or any of that extra installed software nonsense - let's modernize the shit out of this game :)
 
@@ -68,7 +70,7 @@ Here we go, this one should be fun!
 It has CDDA, was a nightmare to even get working when it was released, and many people have had problems since. A lot of people have played the N64 version of this game, but what's interesting is that the N64 version is actually a butchered port of the PC version which contained real cutscenes, voice acted audio sequences for ingame text, and a vastly improved musical score. Also, the resolution could be adjusted so it even LOOKS better.
 
 
-The disc contents looks like this: 
+The disc contents looks like this:
 
 ![alt text](/assets/images/20140619/images/11.png "SOTE Image")
 
@@ -101,23 +103,23 @@ Ok, so this one checks for the CDROM drive (type removable) as before, and then 
 After running again, we are then greeted with the config window, but pressing play crashes... oh, the registry!
 
 ```
- [HKEY_LOCAL_MACHINE\SOFTWARE\LucasArts Entertainment Company\Shadows of the Empire] 
- "Install Path"=".\\" 
- "SData Path"=".\\" 
- "Video Path"=".\\" 
- "Source Dir"=".\\" 
- "Fog"="TRUE" 
- "Force Alpha"="FALSE" 
- "Display Device"="Primary Display Driver" 
- "3D Device"="Microsoft Direct3D Hardware acceleration through Direct3D HAL" 
- "Width"="1024" 
- "Height"="768" 
- "Game Pad"="FALSE" 
- "Direct Movie"="TRUE" 
- "CD Audio"="TRUE" 
- "Cutscene Text"="FALSE" 
- "Executable"=".\\Shadows.exe" 
- "Numb Hand"="FALSE" 
+ [HKEY_LOCAL_MACHINE\SOFTWARE\LucasArts Entertainment Company\Shadows of the Empire]
+ "Install Path"=".\\"
+ "SData Path"=".\\"
+ "Video Path"=".\\"
+ "Source Dir"=".\\"
+ "Fog"="TRUE"
+ "Force Alpha"="FALSE"
+ "Display Device"="Primary Display Driver"
+ "3D Device"="Microsoft Direct3D Hardware acceleration through Direct3D HAL"
+ "Width"="1024"
+ "Height"="768"
+ "Game Pad"="FALSE"
+ "Direct Movie"="TRUE"
+ "CD Audio"="TRUE"
+ "Cutscene Text"="FALSE"
+ "Executable"=".\\Shadows.exe"
+ "Numb Hand"="FALSE"
 ```
 
 We need to set the paths properly. This can either be achieved by importing this key into the registry or using other patching/registry emulation methods to give the game the proper paths.
@@ -141,8 +143,3 @@ After recompilation, we will name this library winm0.dll as to not interfere wit
 OGG File CDDA Works now (even in WINE!)
 
 Until next time :)
-
-
-
-
-

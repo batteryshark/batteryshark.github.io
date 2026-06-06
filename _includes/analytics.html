@@ -1,4 +1,5 @@
-{% if jekyll.environment != "local" and site.analytics.shynet.url.size > 0 %}
+{% assign shynet_url = site.analytics.shynet.url | default: "" %}
+{% if jekyll.environment != "local" and shynet_url.size > 0 %}
 
   {% comment %} This is to prevent double slashes "//" {% endcomment %}
 
@@ -13,7 +14,7 @@
   {% endif %}
   {% endcomment %}
 
-  <noscript><img src="{{ site.analytics.shynet.url }}/pixel.gif"></noscript>
-  <script defer src="{{ site.analytics.shynet.url }}/script.js"></script>
+  <noscript><img src="{{ shynet_url }}/pixel.gif" alt=""></noscript>
+  <script defer src="{{ shynet_url }}/script.js"></script>
 
 {% endif %}

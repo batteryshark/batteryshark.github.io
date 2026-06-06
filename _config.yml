@@ -2,6 +2,8 @@ title: BatteryShark
 description: "Reverse engineering, game hacking, AI security, and low-level systems"
 url: "https://batteryshark.github.io"
 baseurl: ""
+lang: en
+timezone: America/New_York
 
 permalink: /:year/:month/:day/:title.html
 
@@ -26,9 +28,15 @@ defaults:
       layout: post
       code_blocks: true
 
+analytics:
+  shynet:
+    url: ""
+
 exclude:
   - Gemfile
   - Gemfile.lock
+  - MAINTAINING.md
+  - ARCHIVE_AUDIT.md
   - README.md
   - node_modules
   - vendor

@@ -1,41 +1,52 @@
-import os,sys,struct
+import sys
 
-BOSHY_KEY = "BLOB"
-key = BOSHY_KEY
 
-f = open(sys.argv[1],"rb")
-data = ""
-data = f.read()
-f.close()
+BOSHY_KEY = b"BLOB"
+STATE_SIZE = 256
+
+
+def build_key_schedule(key):
+    state = list(range(STATE_SIZE))
+    key_stream = [0] * STATE_SIZE
+    key_index = 0
+
+    if key:
+        for index in range(STATE_SIZE):
+            if key_index == len(key):
+                key_index = 0
+            key_stream[index] = key[key_index]
+            key_index += 1
+
+    swap_index = 0
+    for index in range(STATE_SIZE):
+        swap_index = (key_stream[index] + state[index] + swap_index) % STATE_SIZE
+        state[index], state[swap_index] = state[swap_index], state[index]
+
+    return state
+
 
 def convert(data, key):
-    v11 = range(256)
-    v6 = [0] * 256
-    v7 = 0
-    if key:
-        for i in xrange(256):
-            if v7 == len(key):
-                v7 = 0
-            v6[i] = ord(key[v7])
-            v7 += 1
-    v7 = 0
-    for i in xrange(256):
-        v7 = (v6[i] + v11[i] + v7) % 256
-        v10 = v11[i]
-        v11[i] = v11[v7]
-        v11[v7] = v10
-    v7 = 0
-    out = ''
-    i = 0
-    for j in xrange(len(data)):
-        i = (i + 1) % 256
-        v7 = (v7 + v11[i]) % 256
-        v10 = v11[i]
-        v11[i] = v11[v7]
-        v11[v7] = v10
-        v12 = (v11[v7] + v11[i]) % 256
-        v5 = v11[v12]
-        out += chr(ord(data[j]) ^ v5)
-    return out
-out = convert(data,key)
-print(out)
+    state = build_key_schedule(key)
+    swap_index = 0
+    state_index = 0
+    output = bytearray()
+
+    for value in data:
+        state_index = (state_index + 1) % STATE_SIZE
+        swap_index = (swap_index + state[state_index]) % STATE_SIZE
+        state[state_index], state[swap_index] = state[swap_index], state[state_index]
+        stream_index = (state[swap_index] + state[state_index]) % STATE_SIZE
+        output.append(value ^ state[stream_index])
+
+    return bytes(output)
+
+
+def main():
+    with open(sys.argv[1], "rb") as save_file:
+        data = save_file.read()
+
+    sys.stdout.buffer.write(convert(data, BOSHY_KEY))
+
+
+if __name__ == "__main__":
+    main()

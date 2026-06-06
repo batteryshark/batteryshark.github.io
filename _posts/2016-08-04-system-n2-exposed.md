@@ -2,15 +2,17 @@
 layout: post
 title: "System N2 Exposed"
 date: 2016-08-04
-description: "Original Post: 2016-08-04"
+description: "A look inside Namco System N2-era arcade hardware and software from the perspective of a reverser trying to make it behave."
+tags: [arcade, reverse-engineering, game-hacking, emulation, low-level-systems]
+toc: true
+hero_image: /assets/images/20160804/images/00.png
+archival_note: "Originally published in 2016; hardware sourcing, emulator status, and project links may have changed."
 ---
 
 ##### *A Tale of Reversing an NVIDIA/Namco Arcade Platform*
-Original Post: 2016-08-04
-
 <img src="/assets/images/20160804/images/00.png" height="300">
 
-### Foreward
+### Foreword
 This writeup serves as a collection of observations during a recent reverse-engineering effort of the arcade platform known as System N2.
 
 Certain items have been redacted from this document in an effort to maintain privacy and mostly-comply with intellectual property restrictions. However, due to the system’s age and lack of proper fault tolerance, this guide may be used to better understand the N2 system as a whole and serve as a basis to maintain compatibility with replaceable components or leveraged for purposes of emulation and legacy compatibility initiatives (e.g. MAME).
