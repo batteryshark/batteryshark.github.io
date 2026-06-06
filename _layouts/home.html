@@ -7,7 +7,7 @@ layout: default
     <h1>{{ site.title | escape }}</h1>
 
     <div class="dont-shrink">
-      <a href="/feed.xml">{%- include svg.html icon="rss" class="spot-icon" params="aria-label='Atom/RSS Feed'" -%}</a>
+      <a href="{{ "/feed.xml" | relative_url }}">{%- include svg.html icon="rss" class="spot-icon" params="aria-label='Atom/RSS Feed'" -%}</a>
     </div>
   </div>
 
@@ -19,29 +19,74 @@ layout: default
 <main>
   {{ content }}
 
-  <h2 class="top-x-spacer">Posts</h2>
+  <section class="archive-section">
+    <h2>Start Here</h2>
+    <p class="muted">A few good entry points into the archive, depending on what kind of rabbit hole you want today.</p>
 
-  <ul class="no-padding none-list">
+    <ul class="no-padding none-list archive-list">
+      {% for p in site.posts %}
+        {% if p.title == "Reversing an ASIC-Assisted Arcade Game" or p.title == "Go To Shell - Reverse Engineering Kernel Modifications with QEMU/gdb" or p.title == "Pwning a SafeNET Microdog" or p.title == "WOW64 Rant" %}
+          {% include post-list-row.html post=p %}
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </section>
+
+  <section class="archive-section">
+    <h2>Topics</h2>
+    <div class="topic-cloud">
+      <a href="{{ "/topics/#reverse-engineering" | relative_url }}">reverse-engineering</a>
+      <a href="{{ "/topics/#game-hacking" | relative_url }}">game-hacking</a>
+      <a href="{{ "/topics/#windows-internals" | relative_url }}">windows-internals</a>
+      <a href="{{ "/topics/#compatibility" | relative_url }}">compatibility</a>
+      <a href="{{ "/topics/#hardware-security" | relative_url }}">hardware-security</a>
+      <a href="{{ "/topics/#arcade" | relative_url }}">arcade</a>
+      <a href="{{ "/topics/#emulation" | relative_url }}">emulation</a>
+      <a href="{{ "/topics/#tooling" | relative_url }}">tooling</a>
+      <a href="{{ "/topics/#low-level-systems" | relative_url }}">low-level-systems</a>
+      <a href="{{ "/topics/#masterpiece" | relative_url }}">masterpiece</a>
+    </div>
+  </section>
+
+  <section class="archive-section">
+    <h2>Masterpiece Series</h2>
+    <p class="muted">A six-part homebrew experiment around making PC games feel more console-like, from filesystem layering to the frontend.</p>
+
+    <ol class="archive-list">
+      {% assign masterpiece_posts = site.posts | where: "series", "Masterpiece" | sort: "series_part" %}
+      {% for p in masterpiece_posts %}
+        {% include post-list-row.html post=p %}
+      {% endfor %}
+    </ol>
+  </section>
+
+  <section class="archive-section">
+    <h2>Full Archive</h2>
+    <ul class="no-padding none-list archive-list">
     {% for p in site.posts %}
       {% if forloop.first == true %}
         {% assign print_date = "9999-99" %}
       {% endif %}
-      {% assign post_date = p.date | date: "%Y-%m" %}
-      <li class="flex align-items-baseline wider-gap">
+      {% assign post_date = p.date | date: "%Y" %}
+      <li class="archive-row">
         {% if print_date > post_date %}
-          <span class="muted small dont-shrink">
+          <span class="archive-row-date muted small">
         {% else %}
-          <span class="muted small dont-shrink no-visibility">
+          <span class="archive-row-date muted small no-visibility">
         {% endif %}
           {{ post_date }}
           {% assign print_date = post_date %}
         </span>
-        <a href="{{ p.url | relative_url }}">
-          {{ p.title | escape }}
-        </a>
+        <div class="archive-row-body">
+          <a href="{{ p.url | relative_url }}">{{ p.title | escape }}</a>
+          {% if p.description %}
+            <p class="muted small no-margin">{{ p.description | smartify }}</p>
+          {% endif %}
+        </div>
     </li>
     {% endfor %}
-  </ul>
+    </ul>
+  </section>
 
 </main>
 

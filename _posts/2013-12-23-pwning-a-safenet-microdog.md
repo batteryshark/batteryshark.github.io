@@ -2,11 +2,12 @@
 layout: post
 title: "Pwning a SafeNET Microdog"
 date: 2013-12-23
-description: "An exercise in hardware security module analysis"
+description: "A practical teardown of a low-cost hardware security module, its client libraries, and the assumptions around dongle-backed licensing."
+tags: [hardware-security, reverse-engineering, low-level-systems]
+toc: true
+hero_image: /assets/images/20131223/images/00.jpg
+archival_note: "Originally published in 2013; hardware availability, vendor ownership, and linked code may have moved since then."
 ---
-
-##### *An exercise in hardware security module analysis*
-Original Post: 2013-12-23
 
 <img src="/assets/images/20131223/images/00.jpg" height="300">
 
@@ -202,51 +203,51 @@ To save the trouble, this is what we're looking for (super paraphrased):
   - A buffer that can be used to convert data or read/write data to/from the flash memory.
 
 #### [Exported Functions]
-1.DogCheck()  
-Reads: DogCascade   
-Writes: None  
-Returns: 0 on success - errcode otherwise.  
-Desc: In short, this asks the driver if it can talk to the dongle. Useful for a simple isDonglePresent() check, although not very secure.   
+1.DogCheck()
+Reads: DogCascade
+Writes: None
+Returns: 0 on success - errcode otherwise.
+Desc: In short, this asks the driver if it can talk to the dongle. Useful for a simple isDonglePresent() check, although not very secure.
 
-2.ReadDog()   
-Reads: DogCascade,DogAddr, DogBytes, DogData,DogPassword Writes: DogData   
-Returns: 0 on success - errcode otherwise.  
+2.ReadDog()
+Reads: DogCascade,DogAddr, DogBytes, DogData,DogPassword Writes: DogData
+Returns: 0 on success - errcode otherwise.
 Desc: Reads n bytes from the 200 byte flash memory area starting at y where n is DogBytes and y is DogAddr. Dongle password is required for it to work properly.
 
 3.WriteDog()
-Reads: DogCascade,DogAddr, DogBytes, DogData,DogPassword   Writes: None   
-Returns: 0 on success - errcode otherwise.   
-Desc: Writes n bytes to the 200 byte flash memory area starting at y where n is DogBytes and y is DogAddr. Dongle password is required for it to work properly.   
+Reads: DogCascade,DogAddr, DogBytes, DogData,DogPassword   Writes: None
+Returns: 0 on success - errcode otherwise.
+Desc: Writes n bytes to the 200 byte flash memory area starting at y where n is DogBytes and y is DogAddr. Dongle password is required for it to work properly.
 
-4.DogConvert()   
-Reads:   DogCascade,DogBytes,DogData   
-Writes:  DogResult   
-Returns: 0 on success - errcode otherwise.   
-Desc: Take the buffer of 1-63 bytes in DogData and send it to the dongle where it returns a 4 byte hash of the data based upon the current algorithm selected. The last 4 bytes of the 200 byte internal flash memory determines the algorithm; byte 196 decides the algorithm and bytes 197,198, and 199 decide the algorithm descriptor. As a result, 16,777,216 possible algorithms exist.   
+4.DogConvert()
+Reads:   DogCascade,DogBytes,DogData
+Writes:  DogResult
+Returns: 0 on success - errcode otherwise.
+Desc: Take the buffer of 1-63 bytes in DogData and send it to the dongle where it returns a 4 byte hash of the data based upon the current algorithm selected. The last 4 bytes of the 200 byte internal flash memory determines the algorithm; byte 196 decides the algorithm and bytes 197,198, and 199 decide the algorithm descriptor. As a result, 16,777,216 possible algorithms exist.
 
-5.DisableShare()  
-Reads: DogCascade  
-Writes: None   
-Returns: 0 on success - errcode otherwise.   
-Desc: Disables the ability for a dongle to be shared across parallel port sharing solutions... only used for parallel port dongles.  
+5.DisableShare()
+Reads: DogCascade
+Writes: None
+Returns: 0 on success - errcode otherwise.
+Desc: Disables the ability for a dongle to be shared across parallel port sharing solutions... only used for parallel port dongles.
 
-6.GetCurrentNo()  
-Reads: DogCascade, DogData  
-Writes: DogData  
-Returns: 0 on success - errcode otherwise.  
-Desc: Read a unique manufacturer serial number from the dongle. Unlike the vendor ID, this one is always unique to ONE specific dongle. Useful to identify customers, etc. and normally 4 bytes.  
+6.GetCurrentNo()
+Reads: DogCascade, DogData
+Writes: DogData
+Returns: 0 on success - errcode otherwise.
+Desc: Read a unique manufacturer serial number from the dongle. Unlike the vendor ID, this one is always unique to ONE specific dongle. Useful to identify customers, etc. and normally 4 bytes.
 
-7.SetPassword()  
-Reads: DogCascade,DogPassword,NewPassword  
-Writes: None  
-Returns: 0 on success - errcode otherwise.  
-Desc: Sets a new dongle password.  
+7.SetPassword()
+Reads: DogCascade,DogPassword,NewPassword
+Writes: None
+Returns: 0 on success - errcode otherwise.
+Desc: Sets a new dongle password.
 
-8.SetDogCascade()  
-Reads: DogCascade, DogPassword, DogData  
-Writes: None  
-Returns: 0 on success - errcode otherwise.  
-Desc: Sets the dongle cascade to 0-15, determined by the byte in DogData.  
+8.SetDogCascade()
+Reads: DogCascade, DogPassword, DogData
+Writes: None
+Returns: 0 on success - errcode otherwise.
+Desc: Sets the dongle cascade to 0-15, determined by the byte in DogData.
 
 #### [Internal Functions for Client Library]
 The following functions are present in the library, but are only used internally.
@@ -391,28 +392,28 @@ We'll make a simple hook of ioctl in linux to dump packets and inspect them - pr
 static void *io;
 static void (*realIOCTL)(int fd, int request, unsigned long data);
 
-typedef struct request_packet{  
-  unsigned short magic;  
-  unsigned short opcode;  
+typedef struct request_packet{
+  unsigned short magic;
+  unsigned short opcode;
   unsigned int dog_serial;
-  unsigned int mask_key;  
-  unsigned short dog_addr;  
-  unsigned short dog_bytes;  
-  unsigned char payload[256];  
-  unsigned int dog_password;  
+  unsigned int mask_key;
+  unsigned short dog_addr;
+  unsigned short dog_bytes;
+  unsigned char payload[256];
+  unsigned int dog_password;
   unsigned char dog_cascade;
 };
 
 //Setting our real ioctl function.
-void __attribute__((constructor)) initialize(void) {      
-   io = dlopen("libc.so.6", RTLD_NOW);    
-   realIOCTL = dlsym(io, "ioctl");  
+void __attribute__((constructor)) initialize(void) {
+   io = dlopen("libc.so.6", RTLD_NOW);
+   realIOCTL = dlsym(io, "ioctl");
  }
 
 int ioctl(int fd, int request, unsigned long* data){
-  if(request == MICRODOG_XACT){ /* DO SOMETHING ALREADY */ return 0;   
+  if(request == MICRODOG_XACT){ /* DO SOMETHING ALREADY */ return 0;
  }
-  //Any other ioctl we don't care about.  realIOCTL(fd,request,data);  
+  //Any other ioctl we don't care about.  realIOCTL(fd,request,data);
 }
 ```
 
@@ -485,9 +486,9 @@ This means we need an additional handler for opcode 0x14 in our emulator to send
 Ok, so now we have to figure out the response packet... The response packet is initialized like this:
 
 ```
-typedef struct response_packet{  
-  unsigned int dog_serial;  
-  unsigned int return_code;  
+typedef struct response_packet{
+  unsigned int dog_serial;
+  unsigned int return_code;
   unsigned char payload[256];
 };
 ```
@@ -618,8 +619,8 @@ The implementation here is pretty simple:
 ![](/assets/images/20131223/images/28.png)
 
 ### Writing the Emulator
-![](/assets/images/20131223/images/30.jpg)  
-** MUCH SECURITY - VERY MICRODOG - SUCH HACK WOW **  
+![](/assets/images/20131223/images/30.jpg)
+** MUCH SECURITY - VERY MICRODOG - SUCH HACK WOW **
 
 Before communicating with a real dongle, it's probably best to first construct a responder in order to better test the packets.
 

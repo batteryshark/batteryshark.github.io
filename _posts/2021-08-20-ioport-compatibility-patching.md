@@ -2,7 +2,11 @@
 layout: post
 title: "IOPort Compatibility Patching"
 date: 2021-08-20
-description: "Working with old software presents interesting challenges from time to time -"
+description: "A practical compatibility patching note on old software that expects direct I/O port access."
+tags: [compatibility, low-level-systems, reverse-engineering]
+toc: true
+hero_image: /assets/images/20210820/images/iop0.png
+archival_note: "Originally published in 2021; driver policy, kernel behavior, and compatibility tooling may have changed."
 ---
 
 Working with old software presents interesting challenges from time to time -
@@ -112,9 +116,9 @@ our instruction to let the CPU know that we want it to handle this as if it were
 a 16Bit CPU.
 
 That's how x86 can get away with having instruction 0xEF mean both 32bit and 16bit
-operations.   
+operations.
 
-# How IOPort Worked Before
+## How IOPort Worked Before
 
 Taking a look at our example in a disassembler shows that
 we're calling an "IN" instruction - namely in AL,DX which would be 0xEC.
@@ -124,7 +128,7 @@ we're calling an "IN" instruction - namely in AL,DX which would be 0xEC.
 Traditionally, this would simply IN/OUT to memory where the hardware would read/write
 wherever it was mapped at that would be it - simple!
 
-# How IOPort Works Now
+## How IOPort Works Now
 
 To do this nowadays, it's a bit more difficult. Modern Operating Systems have
 abstracted a lot of this and require quite a few hoops to make this work
@@ -144,7 +148,7 @@ known as giveio.sys. Essentially, this acts as a layer that restores the intende
 functionality for select ports. It's something that must be installed and activated
 prior to the process execution, however.
 
-# Alternatives?
+## Alternatives?
 So, what if you want to run an application without giveio or ioperm? Further,
 what if you want to run the application, and your system doesn't have the required
 hardware? With only so many bytes per instruction, our options are limited right?
@@ -213,9 +217,9 @@ in the order that they are set:
 #include <signal.h>
 #include <ucontext.h>
 #include <sys/io.h>
-void ioport_handler(int mysignal, siginfo_t *si, void* arg){    
-  ucontext_t *context = (ucontext_t *)arg;    
-  unsigned int eip_val = context->uc_mcontext.gregs[REG_EIP];  
+void ioport_handler(int mysignal, siginfo_t *si, void* arg){
+  ucontext_t *context = (ucontext_t *)arg;
+  unsigned int eip_val = context->uc_mcontext.gregs[REG_EIP];
   // ** Do Stuff **
   if((eip_val & 0xFFFF) == 0xED66){
     switch(context->uc_mcontext.gregs[REG_EDX] & 0xFFFF){
@@ -226,7 +230,7 @@ void ioport_handler(int mysignal, siginfo_t *si, void* arg){
     // Skip over the instruction that caused the exception:
     context->uc_mcontext.gregs[REG_EIP]+=2;
   }
-  
+
 }
 
 void set_handler(){
@@ -291,7 +295,7 @@ LONG WINAPI ioport_handler(PEXCEPTION_POINTERS pExceptionInfo) {
 
 
 void IOPort_Init(){
-    SetUnhandledExceptionFilter(ioport_handler);    
+    SetUnhandledExceptionFilter(ioport_handler);
 }
 void IOPort_Init_Alternate(){
     AddVectoredExceptionHandler(1,ioport_handler);
@@ -307,7 +311,7 @@ another time as those rely upon addressing and their own registers to track.
 For a more practical example, refer to the compatibility layer that was written
 for the Andamiro MK5 computer: [Here](https://github.com/pumpitupdev/andamiro_mk5)
 
-# Wrapping Up
+## Wrapping Up
 
 There is quite a bit that can be done with leveraging exception handlers... from
 nanomites engines to custom debug logic... even user-space hardware emulation.

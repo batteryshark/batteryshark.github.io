@@ -2,7 +2,11 @@
 layout: post
 title: "Time Travel - Win9x Heaps for the 2020s"
 date: 2021-08-19
-description: "Compatibility patching, much like OS development, comes with balancing methods"
+description: "Compatibility patching notes around old heap behavior, modern Windows, and the weird glue needed between them."
+tags: [compatibility, windows-internals, reverse-engineering]
+toc: true
+hero_image: /assets/images/20210819/images/yse_crash.png
+archival_note: "Originally published in 2021; Windows compatibility layers and project links may have changed."
 ---
 
 Compatibility patching, much like OS development, comes with balancing methods
@@ -34,7 +38,7 @@ to ensure it works properly on Linux/Wine.
 To do that, we have to understand the AppCompat engine, how it works,
 how to find the fixes we need, and port them to something a bit more flexible.
 
-# Digging In
+## Digging In
 
 ![yse_crash](/assets/images/20210819/images/yse_crash.png)
 
@@ -63,7 +67,7 @@ Now - generally, the compatibility tab doesn't say a whole lot about what fixes
 are being leveraged - and that's what the application compatibility toolkit
 is for.
 
-# Compatibility Administrator
+## Compatibility Administrator
 
 https://docs.microsoft.com/en-us/archive/blogs/yongrhee/download-windows-10-assessment-and-deployment-kit-adk
 
@@ -103,7 +107,7 @@ we are left with this:
 
 ![ca_03](/assets/images/20210819/images/ca_03.png)
 
-# EmulateHeap?
+## EmulateHeap?
 
 So wtf is EmulateHeap doing? To figure that out, we have to look into apphelp
 to see that it points to aclayers and then acgenral which we find the EmulateHeap
@@ -176,7 +180,7 @@ Now, this particular fix involves reimplementing the entirety of Win9x's heap
 management - note for note. One option would be to dig into the binary and
 approximate this functionality.
 
-# A Questionable Approach
+## A Questionable Approach
 If you aren't shipping a solution and/or are less... *ethically* inclined,
 it should be noted that the 9x heap management code has been a fix practically
 forever, which means it's in the leaked XP source code that has been floating
@@ -231,7 +235,7 @@ questionable source code.
 
 [9xHeap Public Repo](https://github.com/batteryshark/9xheap_public)
 
-# Closing Thoughts
+## Closing Thoughts
 
 Sort of a long way to get to a point, but I find the whole idea that modern
 Windows has such an extensive collection of shims that are silently loaded as

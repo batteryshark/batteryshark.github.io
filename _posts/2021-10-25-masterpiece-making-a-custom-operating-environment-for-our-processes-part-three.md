@@ -1,8 +1,14 @@
 ---
 layout: post
 title: "Masterpiece - Making a Custom Operating Environment for our Processes (Part Three)"
-date: 2021-10-25 03:00:00 +0000
-description: "Now that we have a (somewhat) reasonable way to create a set of files, we have several other considerations before a process can use it effectively:"
+date: 2021-10-25
+description: "How the project shaped process environment, hooks, and operating context once the filesystem layer existed."
+tags: [masterpiece, compatibility, game-hacking, low-level-systems]
+toc: true
+hero_image: /assets/images/20211025/v4p2.png
+archival_note: "Originally published in 2021 as part of the Masterpiece series; linked component READMEs and APIs may have changed."
+series: "Masterpiece"
+series_part: 3
 ---
 
 ![vxlogo](/assets/images/20211025/vxicon.png)
@@ -14,7 +20,7 @@ Now that we have a (somewhat) reasonable way to create a set of files, we have s
 - We have to monitor and control dependency management and library loading.
 - We have to anonymize or give control of our operating layer to not use the OS specific usernames to ensure that instances store files in a universally compliant manner.
 - We have to have some exceptions for our own benefit, such as bypassing shader caching.
-- We have to include some emulation of calls that control things like drives on the machine, optical disc referencing (for old CD checks), operating system version reporting, etc.. 
+- We have to include some emulation of calls that control things like drives on the machine, optical disc referencing (for old CD checks), operating system version reporting, etc..
 - We have to deal with configuration control such as registry functionality on Windows.
 - We have to deal with legacies, that is, processes that create child processes and ensure that they also understand our operating environment.
 - We have to offer these things in a way that isn't global, can exist in multiple processes at once, and is (somewhat) configurable.
@@ -24,13 +30,13 @@ Paradox, or pdx for short, is a collection of libraries that hook syscalls for v
 
 It starts with a bootstrap layer that establishes what components to load with what options, and then loads libraries that do everything from filesystem redirection, registry emulation, and environment emulation. Network emulation is a planned addition.
 
-The gory details of each plugin require their own section and writeup. As a result, I'd say to read the various readme.md files in each component here if you want more information about a particular feature:
+The gory details of each plugin require their own section and writeup. As a result, I'd say to read the component README files if you want more information about a particular feature:
 
 https://github.com/batteryshark/pdx
 
 Paradox currently supports Windows and Linux with OSX planned. In reality, sandboxing at the process level is a common practice for apps such as web browsers (https://chromium.googlesource.com/chromium/src.git/+/57.0.2987.21/sandbox/win/tools/finder/finder_kernel.cc) and other non-OS software components that require this kind of isolation without a driver.
 
-# Additional Considerations
+## Additional Considerations
 - This approach will not universally work with aggressive DRM that leverages drivers or other rootkit-like operations, but will handle most cases.
 - Careful consideration must always be exercised when crutching on syscalls as they are the first to be hooked by OS components, the first to change, and more difficult to maintain than higher level functions.
 - Given that these plugins are configurable and different applications need different options, we'll need a format to store these configurations along with the necessary application data, up next!

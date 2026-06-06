@@ -2,12 +2,14 @@
 layout: post
 title: "Hacking 'I Wanna be the Boshy' Game Saves"
 date: 2014-10-03
-description: "Original Post: 2014-10-03"
+description: "A compact game-save hacking note that turns a small target into a useful data-format exercise."
+tags: [game-hacking, reverse-engineering, tooling]
+toc: false
+hero_image: /assets/images/20141003/images/01.png
+archival_note: "Originally published in 2014; this is preserved as a small practical game-save hacking note."
 ---
 
 ##### *A cursory glance at reversing Multimedia Fusion framework components*
-Original Post: 2014-10-03
-
 ![alt text](/assets/images/20141003/images/01.png "Boshy Logo")
 
 ### Background

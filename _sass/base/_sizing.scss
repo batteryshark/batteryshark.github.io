@@ -11,12 +11,6 @@ $letter-spacing-sm: 0.01em;
 $line-height: 1.5;
 $paragraph-line-height: 1.66em;
 
-// TODO: experiment with Utopia https://utopia.fyi/
-// 
-// Elegantly scale type and space without breakpoints
-// 
-// Utopia is not a product, a plugin, or a framework. It’s a memorable/pretentious word we use to refer to a way of thinking about fluid responsive design. There’s no program or dependency to install
-
 $coef-laptop: 0.88888; // = 16/18
 
 $coef-wide: 1.11111; // = 20/18
@@ -53,8 +47,6 @@ $border-radius: 6px;
   --sn-pos: calc((1/#{$coef-small}) * (#{$body-width} + var(--body-padding)));
 
 
-  // TODO: track https://stackoverflow.com/a/47212942
-  // CSS var() cannot be used in media queries, solution is env()
   // --breakpoint-mobile: 640px; min-width
   // --breakpoint-comp: 1230px; min-width
   // --breakpoint-wide: 1380px; min-width

@@ -77,3 +77,9 @@
     text-decoration: underline;
   }
 }
+
+@media only screen and (max-width: 640px) {
+  .toc-toggle-control {
+    text-align: left;
+  }
+}

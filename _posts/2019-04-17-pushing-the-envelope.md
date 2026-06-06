@@ -2,7 +2,11 @@
 layout: post
 title: "Pushing the Envelope"
 date: 2019-04-17
-description: "```"
+description: "A deep dive into unpacking and understanding a protected SDK/library stack rather than just patching around it."
+tags: [reverse-engineering, tooling, hardware-security]
+toc: true
+hero_image: /assets/images/20190417/images/001.png
+archival_note: "Originally published in 2019; linked references and unpacking toolchains may have changed."
 ---
 
 ##### *The Faults of Hardware Token use in Commercial Thick Client Software*
@@ -232,11 +236,11 @@ So realistically... what do we have?
   * We have a dll - we even have a 64 bit dll but the API is buggy and the vendor advises using the 32 bit version. As a result, we'll use the 32 bit vendor API dll with Python Ctypes and put legit dongle interaction in our unpacker!
 
   In addition to the hardcoded key and password for the dongle - the general area they reside in has some other interesting values:
-  
+
 ![](/assets/images/20190417/images/011.png)
 
   Opening our original exe in CFFExplorer - some of these values start popping up:
-  
+
 ![](/assets/images/20190417/images/012.png)
 
 From this, we can start to construct what exists in this area, and what values will be important
@@ -252,7 +256,7 @@ to properly unpack the executable - something like:
 
   ___
   ### Writing an Unpacker
-  ___  
+  ___
 **Note:** Code is included - follow along if desired.
 
   To make this whole process a lot easier, we will be using a couple Py3 Modules:
@@ -308,7 +312,7 @@ before the IAT can be reconstructed.
 
 **NOTE:** The difficulty of the following sections will hinge on experience
 with PE internals and imports. For a great reference, I'd advise
-a page like this: http://www.reverse-engineering.info/SystemInformation/iat.html#sec3.2
+a historical reference page covering import table reconstruction and related PE details.
 
 
 #### Step 4 - Parsing the IAT Blob
@@ -457,7 +461,7 @@ the vendor SDK (Clave2 Basic_v2.2.2.2.zip), however.
 
   ___
   ### Final Thoughts
-  ___  
+  ___
 
   Some important takeaways from this:
   * There is a reason why vendors tend to lock client libraries to specific customers.
@@ -473,4 +477,4 @@ the vendor SDK (Clave2 Basic_v2.2.2.2.zip), however.
     * Proper Security Controls
     * Responsible Software Design
 
-See You!    
+See You!

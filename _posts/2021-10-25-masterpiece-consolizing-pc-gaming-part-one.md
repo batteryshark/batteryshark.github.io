@@ -1,8 +1,14 @@
 ---
 layout: post
 title: "Masterpiece - Consolizing PC Gaming (Part One)"
-date: 2021-10-25 01:00:00 +0000
-description: "A homebrew experiment to bring the console experience to PC gaming - one hack at a time."
+date: 2021-10-25
+description: "The opening context for a homebrew attempt to make PC games behave more like a console library."
+tags: [masterpiece, compatibility, game-hacking, low-level-systems]
+toc: true
+hero_image: /assets/images/20211025/xsxdash.jpg
+archival_note: "Originally published in 2021 as part of the Masterpiece series; links to related code and platform assumptions may have changed."
+series: "Masterpiece"
+series_part: 1
 ---
 
 ![vxlogo](/assets/images/20211025/vxicon.png)
@@ -14,7 +20,7 @@ A homebrew experiment to bring the console experience to PC gaming - one hack at
 
 This is something I've been working on since roughly 2014, has gone through many **MANY** iterations, and is finally something worth sharing. It's taken a lot of reverse-engineering, further background in Windows/Linux internals, cross-platform code compliance, and a lot of sacrificed sleep. At this point, this will probably be the most ambitious thing I ever do before I let life cannibalize the rest of my free time, but it was absolutely worth it.
 
-## Background 
+## Background
 For years, I've wanted to bring the convenience of modern console gaming to my PC game collection without many of the compromises that locked-down consoles bring. I would patch games and include dependencies, make them run from discs, or keep pre-installed files with dependencies so I could just play whenever I wanted. As consoles got more advanced, the allure of modern features such as frontends, containerization, and state management were hard to ignore, but incredibly difficult to replicate on Windows.
 
 Instead of ranting for 70ish pages of how everything is put together, I'm going to attempt to break this up into different technologies as, by themselves, the components that make this up may be useful in their own right to someone or some project down the road. First of all, let's establish some context.
@@ -65,7 +71,3 @@ So, what would we need to keep things like user-based modding, but add the conve
 - (Ideally) Some pretty frontend package to make it look not terrible.
 
 So - that's what we're doing, stay tuned for Part 2.
-
-
-
-

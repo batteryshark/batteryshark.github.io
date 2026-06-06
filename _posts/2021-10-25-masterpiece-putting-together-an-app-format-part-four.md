@@ -1,8 +1,14 @@
 ---
 layout: post
 title: "Masterpiece - Putting together an App Format (Part Four)"
-date: 2021-10-25 04:00:00 +0000
-description: "Now that we have a composite filesystem library and shims that allow us to establish our own operating context, we need something to tie everything into an easily deployable package. This concept has..."
+date: 2021-10-25
+description: "Packaging the filesystem and runtime assumptions into an app format that can be moved around sanely."
+tags: [masterpiece, compatibility, game-hacking, low-level-systems]
+toc: true
+hero_image: /assets/images/20211025/v4p3.png
+archival_note: "Originally published in 2021 as part of the Masterpiece series; metadata and package names are preserved from the original design."
+series: "Masterpiece"
+series_part: 4
 ---
 
 ![vxlogo](/assets/images/20211025/vxicon.png)
@@ -23,7 +29,7 @@ Simplicity is key here, and .vxapp takes pages from various app formats includin
 A typical app layout may look like the following:
 ```
 App Name.vxapp /
-    content / 
+    content /
         some_image.vhdx
         smoothie.map
         plugin_options.ini
@@ -63,4 +69,3 @@ One lesson learned over the many iterations is to keep metadata generic, we aren
 
 
 Now that we have a format, we have to build a loader to tie all this together -  more to come!
-

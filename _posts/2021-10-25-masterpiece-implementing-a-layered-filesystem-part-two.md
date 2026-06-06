@@ -1,8 +1,14 @@
 ---
 layout: post
 title: "Masterpiece - Implementing a Layered Filesystem (Part Two)"
-date: 2021-10-25 02:00:00 +0000
-description: "Software management generally includes some method of managing files and their respective paths. Several approaches to this exist, and solutions greatly depend upon if software is expected to be..."
+date: 2021-10-25
+description: "A filesystem-layering approach for packaging and redirecting game files without making every install special."
+tags: [masterpiece, compatibility, game-hacking, low-level-systems]
+toc: true
+hero_image: /assets/images/20211025/v4p1.png
+archival_note: "Originally published in 2021 as part of the Masterpiece series; implementation details reflect that project snapshot."
+series: "Masterpiece"
+series_part: 2
 ---
 
 ![vxlogo](/assets/images/20211025/vxicon.png)
@@ -100,7 +106,5 @@ Finally, the mount directory showing everything that was mounted:
 
 ![sd3](/assets/images/20211025/sd3.png)
 
-# Additional Considerations
+## Additional Considerations
 Now, we can't just tell a process that /path/to/root/thing is /root/thing, right? Further, we can't just expect a process to like the fact that we're mounting packages as read-only and stick to writing within our composite filesystem... we need some kind of redirection to happen from within the process. Let's get to that next!
-
-

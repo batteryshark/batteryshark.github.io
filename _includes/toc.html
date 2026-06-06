@@ -1,6 +1,6 @@
 {% assign toc_type = page.toc_type | default: "sticky" %}
 {% if toc_type == "sticky" %}
-  <p class="right">
+  <p class="right toc-toggle-control">
     <button id="toggle-toc" class="dont-shrink small" onclick="toggleToc();">
       <span id="toc-hidden">
         {%- include svg.html icon="checkbox-outline" -%} Show

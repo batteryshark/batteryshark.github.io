@@ -2,7 +2,11 @@
 layout: post
 title: "Reversing an ASIC-Assisted Arcade Game"
 date: 2023-02-01
-description: "This one has been in the works for over a decade."
+description: "A decade-spanning arcade reverse-engineering story involving Linux, protection hardware, timing, and one very stubborn game."
+tags: [arcade, reverse-engineering, game-hacking, emulation, low-level-systems]
+toc: true
+hero_image: /assets/images/20230201/00.png
+archival_note: "Originally published in 2023; hardware availability, emulation status, and linked resources may have changed."
 ---
 
 <img src="/assets/images/20230201/00.png" title="Title" />
@@ -12,11 +16,11 @@ description: "This one has been in the works for over a decade."
 
 
 
-This one has been in the works for over a decade. 
+This one has been in the works for over a decade.
 
-Had I known the amount of work that this game would require, I'm not sure that I would have ever started working on it. 
+Had I known the amount of work that this game would require, I'm not sure that I would have ever started working on it.
 
-However, the skills both used and learned while putting this together have been one of the most valuable reversing projects I have ever worked on. 
+However, the skills both used and learned while putting this together have been one of the most valuable reversing projects I have ever worked on.
 
 To best illustrate everything that happened, I should probably start from the beginning...
 
@@ -65,9 +69,9 @@ I decided to dig into the game executable to see more.
 
 ***
 
-### The Game 
+### The Game
 
-The game executable was unstripped and based on SDL - a set of libraries that act as a framework to develop games and other 'media-based' content. 
+The game executable was unstripped and based on SDL - a set of libraries that act as a framework to develop games and other 'media-based' content.
 
 Normally, stuff like this doesn't have function names available, so it was even more interesting to me as I could see all of the various functions and sort of piece together what they did:
 
@@ -109,7 +113,7 @@ But I couldn't really make heads or tails of what it was doing other than openin
 
 
 
-Also, this game was silent because it was based on OSS - and the developers statically compiled the SDL Mixer library into the game (gg) - so replacing it was an impossibility at this time. Eventually, I discovered Alsa-OSS and got the default IGS startup sound, but was still stuck at that black screen. 
+Also, this game was silent because it was based on OSS - and the developers statically compiled the SDL Mixer library into the game (gg) - so replacing it was an impossibility at this time. Eventually, I discovered Alsa-OSS and got the default IGS startup sound, but was still stuck at that black screen.
 
 **Note From the Future:** Later on, I would start using libpulsedsp and eventually osspd which is easier to use.
 
@@ -251,7 +255,7 @@ The card itself was built with a Texas Instruments PCI1410 CardBUS controller, s
 
 ***
 ### Putting it on Pause
-Seeing as how it wasn't booting, I then shoved it into my closet with a promise that eventually, I would get around to finally running logging on the hardware, then maybe it would work! 
+Seeing as how it wasn't booting, I then shoved it into my closet with a promise that eventually, I would get around to finally running logging on the hardware, then maybe it would work!
 
 Due to other reversing projects, it would be another two years until I'd end up pulling the machine down and trying to get it going again.
 
@@ -346,7 +350,7 @@ I took a wild guess at the no POST symptom and bought a replacement power supply
 
 
 
-Right away, the PC booted - I was back in business!!! Except the X11 issue remained. I still couldn't boot into the game, anything graphical, nor could I get keyboard working. 
+Right away, the PC booted - I was back in business!!! Except the X11 issue remained. I still couldn't boot into the game, anything graphical, nor could I get keyboard working.
 
 I decided that getting the game working to ensure the A27 still worked correctly was the best initial goal. After all, anything could have happened before the machine got to me as it wasn't a guarantee that this thing even worked beforehand.
 
@@ -362,7 +366,7 @@ At the same time, I also bought a Dell Monitor from eBay to ensure I had somethi
 
 
 
-Aaand the damn thing still didn't boot! 
+Aaand the damn thing still didn't boot!
 
 <img src="/assets/images/20230201/22.png" title="X11 Error" />
 
@@ -384,7 +388,7 @@ which worked!
 
 
 
-I knew that the built-in pccard driver was working! The next step would be getting the real game working... 
+I knew that the built-in pccard driver was working! The next step would be getting the real game working...
 
 
 
@@ -395,7 +399,7 @@ I knew that the built-in pccard driver was working! The next step would be getti
 
 
 
-Looking at the log messages from trying to insmod the NVIDIA kernel module, it appeared that the card was unsupported, but how!? 
+Looking at the log messages from trying to insmod the NVIDIA kernel module, it appeared that the card was unsupported, but how!?
 
 It turns out that I had recevied a P118 (FX5200), when I had really wanted a P70 (MX400) or P73 (MX440).
 
@@ -415,7 +419,7 @@ As this kernel module wouldn't be able to support this card, and I really didn't
 
 I installed the new card aaaaaaand...
 
-no POST... 
+no POST...
 
 I put the FX5200 back in - no POST
 
@@ -500,7 +504,7 @@ The request packet consists of the following structure:
 #define PCCARD_DATA_BUFFER_SIZE 0x4000
 
 typedef struct _TRACKBALL_DATA{
-	unsigned short player_index; 
+	unsigned short player_index;
     unsigned short align;
 	unsigned short vx;
 	unsigned short vy;
@@ -520,7 +524,7 @@ typedef struct _A27_WRITE_HEADER{
 	unsigned char light_disable;
 	unsigned char key_sensitivity_value;
 	unsigned char light_state[4];
-	unsigned char light_pattern[4];    
+	unsigned char light_pattern[4];
 }A27WriteHeader,*PA27WriteHeader;
 
 typedef struct _A27_WRITE_MESSAGE{
@@ -552,7 +556,7 @@ typedef struct _A27_WRITE_MESSAGE{
 
 - `data_payload`: A buffer of data that can be up to 16KB sent to the ASIC.
 
-  
+
 
 
 ***
@@ -562,31 +566,31 @@ The response packet has a lot more going on - also, reading from the A27 respond
 
 ```c
 typedef struct _A27_READ_HEADER{
-    unsigned int data_size; 
-    unsigned int system_mode;     
-    unsigned char coin_inserted; 
-    unsigned char asic_iserror;  
-    unsigned short asic_errnum;  
+    unsigned int data_size;
+    unsigned int system_mode;
+    unsigned char coin_inserted;
+    unsigned char asic_iserror;
+    unsigned short asic_errnum;
     unsigned int button_io[6];
     unsigned short num_io_channels;
-    unsigned char protection_value;   
-    unsigned char protection_offset;  
-    unsigned short game_region;    
+    unsigned char protection_value;
+    unsigned char protection_offset;
+    unsigned short game_region;
     unsigned short align_1;
-    char in_rom_version_name[8];  
-    char ext_rom_version_name[8]; 
-    unsigned short inet_password_data; 
-    unsigned short a27_has_message;    
-    unsigned char is_light_io_reset;   
-    unsigned char pci_card_version;    
-    unsigned char checksum_1;          
-    unsigned char checksum_2;          
-    unsigned char a27_message[0x40];              
+    char in_rom_version_name[8];
+    char ext_rom_version_name[8];
+    unsigned short inet_password_data;
+    unsigned short a27_has_message;
+    unsigned char is_light_io_reset;
+    unsigned char pci_card_version;
+    unsigned char checksum_1;
+    unsigned char checksum_2;
+    unsigned char a27_message[0x40];
 }A27ReadHeader,*PA27ReadHeader;
 
 typedef struct _A27_READ_MESSAGE{
     A27ReadHeader header;
-    unsigned char data[PCCARD_DATA_BUFFER_SIZE];    
+    unsigned char data[PCCARD_DATA_BUFFER_SIZE];
 }A27ReadMessage,*PA27ReadMessage;
 
 ```
@@ -633,7 +637,7 @@ typedef struct _A27_READ_MESSAGE{
 
 - `data_payload`: Just like the request packet, this is a buffer of data that can be up to 16KB retrieved from the ASIC whose size is defined by `data_size`.
 
-  
+
 
 ***
 
@@ -707,7 +711,7 @@ enum A27_Program{
 
   * This is only ever called once when the `/dev/pccard0` handle is opened and supposedly resets the A27 to an initial state, however, subsequent runs may leave the card in an inconsistent state that requires a system reboot.
 
-    
+
 
 It's believed that the A27 gets its name from 27 programmable subroutines that it has available. It should be noted that other games (e.g. Rock Fever 4, Speed Driver, etc.) likely reorder programs, may not use the same programs, or any combination of the two.
 
@@ -720,7 +724,7 @@ Now that I had a better understanding of what the game wanted at each screen, it
 
 #### The I/O
 
-While the 'button_io' component of the response packet appeared to be read by the game for the menu, I couldn't actually play any of the songs! 
+While the 'button_io' component of the response packet appeared to be read by the game for the menu, I couldn't actually play any of the songs!
 
 
 The reason behind this is that the game evaluates menu controls within the game executable, but the note 'hits' and 'judgement' are all happening on the I/O... from the serial/gameport on the A27 card from the original drums... which I didn't have.
@@ -749,7 +753,7 @@ Digging into the game binary and being able to test on the real thing opened mor
 - A hidden mode unlocked by hitting certain drums at startup that specifies Taiwan as the home country (normally this is replaced with `China`).
   <img src="/assets/images/20230201/45.png" title="Taiwan Region" />
 
-  
+
 
 - A language select menu (unlockable by button combo).
 
@@ -806,7 +810,7 @@ At this point, the intro, how to play, staff screen, demo loops, and the actual 
 
 #### Figuring out the SongState
 
-Starting with the opening as a simple example, I wrote a [script](https://github.com/batteryshark/igstools/blob/main/scripts/print_songevt.py) to parse all of the packet data to understand how this command works, and what is happening for each song. 
+Starting with the opening as a simple example, I wrote a [script](https://github.com/batteryshark/igstools/blob/main/scripts/print_songevt.py) to parse all of the packet data to understand how this command works, and what is happening for each song.
 
 As it turns out, the 'Song' command itself is actually broken down into several subcommands:
 
@@ -871,13 +875,13 @@ enum A27_Song_Subcommand{
       typedef struct _PLAYER_ANIMATION{
           unsigned char track[8];
       }PlayerAnimation,*PPLayerAnimation;
-      
+
       typedef struct _PLAYER_HIT_STATE{
           unsigned char track[8];
       }PlayerHitState,*PPlayerHitState;
-      
+
       #define PLAYER_CURSOR_MAX_ACTIVE 150
-      
+
       typedef struct _CURSOR_STATE{
           unsigned short flags;
           unsigned char exflags;
@@ -885,12 +889,12 @@ enum A27_Song_Subcommand{
           short y_pos;
           short fever_offset;
       }NoteCursor,*PNoteCursor;
-      
+
       typedef struct _PLAYER_CURSOR{
           NoteCursor cursor[PLAYER_CURSOR_MAX_ACTIVE];
       }PlayerCursor,*PPlayerCursor;
-      
-      
+
+
       typedef struct _SONGSTATE{
           unsigned short cmd;
           unsigned short state;
@@ -905,9 +909,9 @@ enum A27_Song_Subcommand{
           PlayerAnimation player_track_hit_animation[2];
           PlayerAnimation player_cursor_hit_animation[2];
           unsigned int player_score[2];
-          unsigned int player_score_copy[2];    
-          unsigned int idk_maybepadding2; 
-          unsigned short player_life[2];    
+          unsigned int player_score_copy[2];
+          unsigned int idk_maybepadding2;
+          unsigned short player_life[2];
           unsigned short lifebar_align[2];
       }SongState,*PSongState;
       ```
@@ -941,7 +945,7 @@ However, there were still several questions:
 
 * How much of the engine would I need to support in code?
 
-  
+
 
 ***
 
@@ -974,7 +978,7 @@ Seeing as I had three sources to reproduce the notes, I had a few options:
 1. Dump the UVEPROM, hope it's not encrypted or something more of a pain, and figure out that format to play the real charts.
 2. Assume the charts in the executable were accurate, and dump them with a script.
 3. Read my packet dumps and approximate when a cursor appeared to reconstruct a chart.
-4. 
+4.
 
 At this point, converting the built in note charts to a format that could be replayed seemed to be the best path forward. As a result, I wrote a [script](https://github.com/batteryshark/igstools/blob/main/songdata_extractor/recxtract.py) to extract the note charts from the game executable, and convert them into the very 'rec' format that the debug code used.
 
@@ -1025,11 +1029,11 @@ To pare down what had to be implemented:
 * All [code](https://github.com/batteryshark/igstools/blob/main/pm_patch/src/a27/song/song_judge.c) to judge notes.
 * All [code](https://github.com/batteryshark/igstools/blob/main/pm_patch/src/a27/song/song_recfile.c) to read our note data into [something our patch](https://github.com/batteryshark/igstools/blob/main/pm_patch/src/a27/song/song_event.c) and the game engine understands.
 * All [code](https://github.com/batteryshark/igstools/blob/main/pm_patch/src/a27/song/song_result.c) to calculate our scoring at the end of a song, determine letter grades, whether we passed or failed, etc..
-* A song [state manager](https://github.com/batteryshark/igstools/blob/main/pm_patch/src/a27/song/song_manager.c) to tie everything together. 
+* A song [state manager](https://github.com/batteryshark/igstools/blob/main/pm_patch/src/a27/song/song_manager.c) to tie everything together.
 
 
 
-All of our gameplay logic at this point relied on the current 32nd note beat - established from elapsed time in ms based on when the song started. 
+All of our gameplay logic at this point relied on the current 32nd note beat - established from elapsed time in ms based on when the song started.
 
 To calculate this, we have a 2 byte value in each note chart that represents the tempo/bpm (e.g. 13900 or 8755). These are binary coded decimal (BCD) and need to be converted to a float first (e.g. 139.00 or 87.55):
 
@@ -1079,11 +1083,11 @@ At this point, everything appears to be working as expected:
 
 ### Wrapping Up
 
-I suppose the lesson here is - short of decapping or cloning the custom logic on the ASIC, handling the functionality essentially involves monitoring the behavior somehow and recreating part of the runtime - sometimes quite a bit of it. 
+I suppose the lesson here is - short of decapping or cloning the custom logic on the ASIC, handling the functionality essentially involves monitoring the behavior somehow and recreating part of the runtime - sometimes quite a bit of it.
 
 It's worth noting that PercussionMaster is similar to the previous game (Rock Fever 4) with the exception that RF4 contains a rearranged set of 'commands', it's missing a few, and contains more 'lanes' than the given 6 per player (up to 36). Realistically, one might be able to somewhat easily convert [pm_patch](https://github.com/batteryshark/igstools/tree/main/pm_patch) to work with that game as well once the notes are dumped from the game executable, and the inconsistencies from the A27 are addressed.
 
-It's also worth noting that the A27 contains two roms - an 'external' program rom and an 'internal' program rom inside of the ASIC package. While it's possible to dump the external program rom, it's likely encrypted with a key from the internal rom or something similar. But a truely accurate emulator will one day need to dump these along with recreating the ARM7 code or lifting it into llvm and then translating or something else. 
+It's also worth noting that the A27 contains two roms - an 'external' program rom and an 'internal' program rom inside of the ASIC package. While it's possible to dump the external program rom, it's likely encrypted with a key from the internal rom or something similar. But a truely accurate emulator will one day need to dump these along with recreating the ARM7 code or lifting it into llvm and then translating or something else.
 
 
 

@@ -2,6 +2,9 @@ _site/
 .sass-cache/
 .jekyll-cache/
 .jekyll-metadata
-Gemfile.lock
 .bundle/
 vendor/
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc

@@ -2,7 +2,11 @@
 layout: post
 title: "Pushing the Envelope - Part Deux"
 date: 2020-05-11
-description: "Jeez - well... didn't think I'd be doing another post on this SDK/Dongle, but here we are. To give some background, I've been trying to clean up a myriad of code projects. The unpacker I wrote last..."
+description: "A follow-up unpacking pass that turns earlier reversing notes into cleaner tooling and better assumptions."
+tags: [reverse-engineering, tooling, hardware-security]
+toc: true
+hero_image: /assets/images/20200511/images/apim_01.png
+archival_note: "Originally published in 2020; linked repositories, SDK behavior, and unpacking assumptions may have changed."
 ---
 
 Jeez - well... didn't think I'd be doing another post on this SDK/Dongle, but here we are. To give some background, I've been trying to clean up a myriad of code projects. The unpacker I wrote last time, if anyone remembers, had some issues running on a 64bit Python instance mostly due to the handles not being written properly from the "open" call and some other quirks.
@@ -11,7 +15,7 @@ After statically compiling a new library, dynamically binding to another library
 
 Seeing as how the Clave2 runs over HID packets, we're going to figure those out and make our own client library from scratch.
 
-# Information Gathering
+## Information Gathering
 Just as before, the client library being unstripped helps us out quite a bit here:
 
 ![ida_01](/assets/images/20200511/images/ida_01.png)
@@ -21,39 +25,39 @@ In addition, running some example C programs in APIMonitor reveals that, predict
 ![apim_01](/assets/images/20200511/images/apim_01.png)
 
 
-# Disabling Packet Obfuscation
+## Disabling Packet Obfuscation
 From IDA, we can see that the library calls rand() and srand() to create its random data for the exchange key generation and padding.
 ![ida_02](/assets/images/20200511/images/ida_02.png)
 
 ![ida_03](/assets/images/20200511/images/ida_03.png)
 
-We can easily patch these calls out via NOP and re-run our example in APIMonitor to make things a bit more clear :)  
+We can easily patch these calls out via NOP and re-run our example in APIMonitor to make things a bit more clear :)
 
 [Set Exchange Key - Unpadded]
 
-![apim_02](/assets/images/20200511/images/apim_02.png)  
+![apim_02](/assets/images/20200511/images/apim_02.png)
 
 [Login Request - Before]
 
-![apim_03](/assets/images/20200511/images/apim_03a.png)  
+![apim_03](/assets/images/20200511/images/apim_03a.png)
 [Login Request - After]
 
 ![apim_04](/assets/images/20200511/images/apim_04.png)
 
 There we go! Now it's time to run all the API calls and try to map out how this protocol works!
 
-# Protocol Breakdown
+## Protocol Breakdown
 The LC Protocol is broken down into various types of operations. In most cases, an operation will have different modes that affect given parameters. For instance, operation 0x09 (HMAC) is comprised of three modes (Init, Update, and Digest) where each have a different set of parameters and return values. In the case where a mode is specified, it takes the place of the first parameter.
 
-As for communication itself, a new session will set an "exchange key" via an non-encrypted packet. 
+As for communication itself, a new session will set an "exchange key" via an non-encrypted packet.
 The "exchange key" is created via the following steps:
 ```
 1. XOR over the entire hardcoded client base key (b"\x70\x25\x4E\x4D\x73\xF5\x89\xFD\xF0\xAC\x4E\xD3\x52\x94\x14\x67") with 0x5B
 2. Create 16 bytes of random data via 4 calls to: rand() * 0.000030517578125 * 255.0
-3. AES-CBC Decrypt the random data with our XOR'ed exchange key with a NULL IV. 
+3. AES-CBC Decrypt the random data with our XOR'ed exchange key with a NULL IV.
 ```
 
-# Packet Encoding 
+## Packet Encoding
 The first 4 bytes of this key are xored over our packet bytes before being sent to hardware.
 When a response is received, the 4 bytes must be xored over the response to decode the packet.
 
@@ -70,7 +74,7 @@ Request packets are comprised of a 4 byte header, followed by any required paylo
 ```
 0x00 Operation
 0x01 Parameter 1 (Typically - Operation Mode)
-0x02 Parameter 2 
+0x02 Parameter 2
 0x03 Parameter 3 (Typically - Data Length)
 0x-- Data
 
@@ -80,7 +84,7 @@ Response packets are also comprised of a 4 byte header. In this case:
 ```
 0x00 Status Code
 0x01 Return Value 1
-0x02 Return Value 2 
+0x02 Return Value 2
 0x03 Return Value 3 (Typically - Data Length)
 0x-- Data
 
@@ -108,7 +112,7 @@ Response status codes have an odd cross-mapping to the client API. That is, they
 
 ## Operations:
 ### [0x00 Authentication]
-This operation deals with setting an authenticated context by logging into the dongle.  
+This operation deals with setting an authenticated context by logging into the dongle.
 In addition, it handles clearing session data upon logout.
 
 #### Request:
@@ -124,15 +128,15 @@ Data: Password (8 bytes)
 ```
 **Note: Log out expects payload to be '00000000'**
 
-Examples: 
+Examples:
 ```
 1:
   00 00 00 08 31 32 33 34 35 36 37 38
-2: 
+2:
   00 01 00 08 31 32 33 34 35 36 37 38
-3: 
+3:
   00 02 00 08 31 32 33 34 35 36 37 38
-4: 
+4:
   00 03 00 08 30 30 30 30 30 30 30 30
 ```
 #### Response:
@@ -145,19 +149,19 @@ Data : None
 ```
 Examples:
 ```
-1: 
-  00 00 00 00 
-2: 
-  00 01 00 00 
-3: 
+1:
+  00 00 00 00
+2:
+  00 01 00 00
+3:
   00 02 00 00
-4: 
+4:
   00 03 00 00
 ```
 
 ### [0x01 Change Password]
-This operation deals with password management (reasonably so).  
-Note: This operation requires you to be logged in as Admin/Developer and only changes  
+This operation deals with password management (reasonably so).
+Note: This operation requires you to be logged in as Admin/Developer and only changes
 the authentication password. All other user types will throw an error.
 
 #### Request:
@@ -167,10 +171,10 @@ Parameter 2: None
 Parameter 3: Data Length
 Data : Old Password New Password (16 Bytes)
 ```
-Examples: 
+Examples:
 ```
-1: 
-  01 02 00 10 31 32 33 34 35 36 37 38 31 31 31 31 
+1:
+  01 02 00 10 31 32 33 34 35 36 37 38 31 31 31 31
   31 31 31 31
 ```
 #### Response:
@@ -181,10 +185,10 @@ Return Value 2: None
 Return Value 3: None
 Data: None
 ```
-Examples: 
+Examples:
 ```
-1: 
-  00 0d 00 00 
+1:
+  00 0d 00 00
 ```
 ### [0x02 Hardware Information]
 Retrieve hardware information about the device.
@@ -197,7 +201,7 @@ Data : None
 ```
 Examples:
 ```
-1: 
+1:
   02 00 00 00
 ```
 #### Response:
@@ -215,8 +219,8 @@ Data : Hardware information (32 bytes)
 Examples:
 ```
 1:
-  00 00 00 20 31 00 36 00 39 00 31 00 30 00 35 00 
-  31 00 36 00 36 00 38 00 37 00 36 00 6b 32 f1 5a 
+  00 00 00 20 31 00 36 00 39 00 31 00 30 00 35 00
+  31 00 36 00 36 00 38 00 37 00 36 00 6b 32 f1 5a
   9b 3f a3 5e
 ```
 ### [0x03 Read]
@@ -246,15 +250,15 @@ Data: Requested Data
 Examples:
 ```
 1:
-  00 1c 00 40 ff ff ff ff ff ff ff ff ff ff ff ff 
-  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 
-  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 
-  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 
+  00 1c 00 40 ff ff ff ff ff ff ff ff ff ff ff ff
+  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
   ff ff ff ff
 ```
 
 ### [0x04 Write]
-Write data to internal blocks of memory. Block 0 can be written by any privileges, whereas 1-3 can only be written by an admin/devleoper. 
+Write data to internal blocks of memory. Block 0 can be written by any privileges, whereas 1-3 can only be written by an admin/devleoper.
 **Note:** Because block 3 is logically located after sensitive blocks, additional steps are required to be able to write to this area.
 
 #### Request:
@@ -268,10 +272,10 @@ Data: Data to Write
 Examples:
 ```
 1:
-  04 00 00 40 ff ff ff ff ff ff ff ff ff ff ff ff 
-  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 
-  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 
-  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 
+  04 00 00 40 ff ff ff ff ff ff ff ff ff ff ff ff
+  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
   ff ff ff ff
 ```
 
@@ -367,7 +371,7 @@ Data: None
 ```
 Examples:
 ```
-1: 
+1:
   07 02 00 00
 ```
 
@@ -399,7 +403,7 @@ Data: Input Data
 ```
 Examples:
 ```
-1: 
+1:
   08 00 00 10 aa bb cc dd ee ff 00 11 22 33 44 55 66 77 88 99
 ```
 
@@ -421,14 +425,14 @@ Examples:
 ```
 
 ### [0x09 Sign]
-Perform Signature Operations.  
+Perform Signature Operations.
 **Note:** Only Authentication User (2) can use this.
 #### Request:
 ```
 Parameter 1: Operation Flag
 	> 0x00: HMAC Init
 	> 0x01: HMAC Update
-	> 0x02: HMAC Finalize	
+	> 0x02: HMAC Finalize
 Parameter 2: None
 Parameter 3: Init (None), Update (Input Data Size), Finalize (None)
 Data: Init (None), Update (Input Data), Finalize (None)
@@ -437,7 +441,7 @@ Examples:
 ```
 1:
   09 00 00 00
-2: 
+2:
   09 01 00 11 54 48 45 5f 52 41 49 4e 5f 49 4e 5f 53 50 41 49 4e
 3:
   09 02 00 00
@@ -475,7 +479,7 @@ Parameter 1: Operation Flag
 	> 0x00: Set Block
 	> 0x01: Write Block
 	> 0x02: Validate Header
-	> 0x03: Validate Signature	
+	> 0x03: Validate Signature
 Parameter 2: Set Block (Block Number), Write Block (Chunk Counter), Validate Header (None), Validate Signature (None)
 Parameter 3: Set Block (None), Write Block (Chunk Size), Validate Header (Header Size), Validate Signature (Signature Size)
 Data: Set Block (None), Write Block (Chunk Data), Validate Header (Header Data), Validate Signature (Signature Data)
@@ -484,11 +488,11 @@ Examples:
 ```
 1:
   0a 00 00 00
-2: 
-  0a 01 00 40 ff ff ff ff ff ff ff ff ff ff ff ff 
-  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 
-  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 
-  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 
+2:
+  0a 01 00 40 ff ff ff ff ff ff ff ff ff ff ff ff
+  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
   ff ff ff ff
 3:
   0a 02 00 11 30 00 35 00 31 00 36 00 36 00 38 00 37 00 36 00 03
@@ -503,7 +507,7 @@ Return Value 1: Operation Flag
 	> 0x00: Set Block
 	> 0x01: Write Block
 	> 0x02: Validate Header
-	> 0x03: Validate Signature	
+	> 0x03: Validate Signature
 Return Value 2: None
 Return Value 3: None
 Data: None
@@ -512,7 +516,7 @@ Examples:
 ```
 1:
   0a 00 00 00
-2: 
+2:
   0a 01 00 00
 3:
   0a 02 00 00
@@ -534,7 +538,7 @@ Data: Input Data
 ```
 Examples:
 ```
-1: 
+1:
   0b cd 00 10 ad b6 37 51 4c ca 39 92 24 2c d8 b7 5d bd 0a d5
 ```
 
@@ -581,7 +585,7 @@ Offset Size  R W Name     Desc
 ```
 
 
-# Interesting Quirks
+## Interesting Quirks
 - Any privilege can read the various keys and passwords with a simple read command... probably not what they were going for.
 
 - The additional 3584 bytes of read/write memory is an interesting find. It seems like they used a larger module than needed.
@@ -590,10 +594,10 @@ Offset Size  R W Name     Desc
 
 - The Auth privilege has a retry limit, but the attempt counter can be reset by overwriting the value.
 
-# Rebuilding the API
+## Rebuilding the API
 This repository details a Python API for the LC hardware alongside several tests: [Link to Repository](https://github.com/batteryshark/io.clave2)
 
-# Additional Thoughts
+## Additional Thoughts
 - It might be worth decapping one of these to check out what's under the hood and where the AES key lives.
 
 - Perhaps I'll make an emulator at some point to simulate the hardware itself.
