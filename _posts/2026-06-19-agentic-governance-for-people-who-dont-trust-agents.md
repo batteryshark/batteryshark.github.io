@@ -83,9 +83,9 @@ tool access quietly becomes dangerous because it puts too much authority in the
 one place least able to own the outcome. A real boundary has to control reach,
 not hoped-for behavior.
 
-A follow-up post will walk through the system I built to make that boundary hold,
-and what it taught me. If you want the punchline up front: trust agents with
-action, not standing access.
+In [the follow-up]({% post_url 2026-06-20-building-the-boundary %}), I walk
+through the system I built to make that boundary hold, and what it taught me. If
+you want the punchline up front: trust agents with action, not standing access.
 
 ## A small version of the same boundary
 
@@ -392,12 +392,12 @@ did not answer my immediate question: what survives contact with the agents and
 tools I actually run? So I built a small version and paid attention to what stuck,
 what got annoying, and what actually changed the boundary.
 
-The follow-up is the build: the broker, the human-in-the-loop approval surface,
-the place for secrets to live with workloads instead of agents, and the audit
-trail for when I get the boundary wrong. It is not a product, and I am not selling
-anything. It is a pattern and a working implementation I put on
-[GitHub](https://github.com/batteryshark/Toolstack) so you can take the useful
-parts and leave the rest.
+[The follow-up is the build]({% post_url 2026-06-20-building-the-boundary %}):
+the broker, the human-in-the-loop approval surface, the place for secrets to live
+with workloads instead of agents, and the audit trail for when I get the boundary
+wrong. It is not a product, and I am not selling anything. It is a pattern and a
+working implementation I put on [GitHub](https://github.com/batteryshark/Toolstack)
+so you can take the useful parts and leave the rest.
 
 This is the part I keep coming back to: even clever wrappers are still a bet that
 the agent will not find a way around the constraint. I want useful agents near

@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 650" role="img" aria-labelledby="title desc">
+  <title id="title">Capability onboarding into named operations</title>
+  <desc id="desc">Custom APIs, MCP servers, REST APIs, and OpenAPI specs feed into Toolstack as named operations. Policy then classifies each operation as allow, review, or deny.</desc>
+  <defs>
+    <style>
+      .bg { fill: #fbfaf6; }
+      .box { fill: #ffffff; stroke: #263238; stroke-width: 2; }
+      .source { fill: #edf0eb; stroke: #738078; stroke-width: 2; }
+      .menu { fill: #15363d; stroke: #0d2429; stroke-width: 3; }
+      .op { fill: #ffffff; stroke: #d9dfda; stroke-width: 2; }
+      .allow { fill: #dcebd5; stroke: #456b3a; }
+      .review { fill: #f3e5bd; stroke: #846221; }
+      .deny { fill: #efd6d2; stroke: #8a3a32; }
+      .label { font: 700 25px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #1d292c; }
+      .small { font: 500 17px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #344145; }
+      .tiny { font: 700 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #344145; }
+      .white { fill: #ffffff; }
+      .arrow { stroke: #263238; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#263238"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1200" height="650"/>
+  <text x="60" y="64" class="label">Capability onboarding without capability soup</text>
+  <text x="60" y="95" class="small">Different protocols enter the same policy surface.</text>
+
+  <rect x="60" y="145" width="210" height="82" rx="12" class="source"/>
+  <text x="92" y="181" class="small">Custom API</text>
+  <text x="92" y="207" class="tiny">purpose-built tool</text>
+
+  <rect x="60" y="252" width="210" height="82" rx="12" class="source"/>
+  <text x="92" y="288" class="small">MCP server</text>
+  <text x="92" y="314" class="tiny">existing capability</text>
+
+  <rect x="60" y="359" width="210" height="82" rx="12" class="source"/>
+  <text x="92" y="395" class="small">REST API</text>
+  <text x="92" y="421" class="tiny">generic proxy</text>
+
+  <rect x="60" y="466" width="210" height="82" rx="12" class="source"/>
+  <text x="92" y="502" class="small">OpenAPI spec</text>
+  <text x="92" y="528" class="tiny">import first cut</text>
+
+  <rect x="392" y="154" width="320" height="386" rx="18" class="menu"/>
+  <text x="430" y="198" class="label white">Named operations</text>
+  <text x="430" y="228" class="small white">finite, discoverable, auditable</text>
+
+  <rect x="430" y="260" width="244" height="54" rx="10" class="op"/>
+  <text x="452" y="294" class="small">mail.list_messages</text>
+  <rect x="430" y="330" width="244" height="54" rx="10" class="op"/>
+  <text x="452" y="364" class="small">mail.create_draft</text>
+  <rect x="430" y="400" width="244" height="54" rx="10" class="op"/>
+  <text x="452" y="434" class="small">repo.open_pr</text>
+  <rect x="430" y="470" width="244" height="54" rx="10" class="op"/>
+  <text x="452" y="504" class="small">infra.rotate_token</text>
+
+  <rect x="845" y="178" width="240" height="340" rx="18" class="box"/>
+  <text x="888" y="222" class="label">Caller policy</text>
+  <text x="888" y="252" class="small">same operation menu,</text>
+  <text x="888" y="278" class="small">different callers</text>
+
+  <rect x="888" y="316" width="150" height="46" rx="23" class="allow"/>
+  <text x="934" y="345" class="tiny">ALLOW</text>
+
+  <rect x="888" y="382" width="150" height="46" rx="23" class="review"/>
+  <text x="930" y="411" class="tiny">REVIEW</text>
+
+  <rect x="888" y="448" width="150" height="46" rx="23" class="deny"/>
+  <text x="940" y="477" class="tiny">DENY</text>
+
+  <path d="M270 186 C320 186 340 260 392 280" class="arrow"/>
+  <path d="M270 293 C320 293 340 330 392 352" class="arrow"/>
+  <path d="M270 400 C320 400 340 410 392 424" class="arrow"/>
+  <path d="M270 507 C320 507 340 486 392 494" class="arrow"/>
+  <path d="M712 350 C770 350 790 350 845 350" class="arrow"/>
+
+  <text x="785" y="333" class="tiny">policy by name</text>
+</svg>

@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">Toolstack boundary system diagram</title>
+  <desc id="desc">An agent can only reach the broker. The broker handles policy, approval, and audit, then forwards approved calls to tool workloads. Toolyard injects secrets into workloads, and the broker is not on the secret path.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f6f7f3; }
+      .panel { fill: #ffffff; stroke: #2f3a3d; stroke-width: 2; }
+      .muted { fill: #eef1ec; stroke: #87928a; stroke-width: 2; }
+      .broker { fill: #16343a; stroke: #0f2328; stroke-width: 3; }
+      .workload { fill: #f3d48b; stroke: #765c20; stroke-width: 2; }
+      .secret { fill: #e9ede8; stroke: #4b695f; stroke-width: 2; }
+      .approval { fill: #dbe8ea; stroke: #315f68; stroke-width: 2; }
+      .audit { fill: #efe7d4; stroke: #6e5a2c; stroke-width: 2; }
+      .deny { fill: #f2d6d2; stroke: #8a3a32; stroke-width: 2; }
+      .label { font: 700 26px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #1f292b; }
+      .small { font: 500 17px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #334044; }
+      .tiny { font: 600 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #485457; }
+      .white { fill: #ffffff; }
+      .arrow { stroke: #233033; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .secretline { stroke: #4b695f; stroke-width: 3; stroke-dasharray: 8 8; fill: none; marker-end: url(#arrow-secret); }
+      .noline { stroke: #8a3a32; stroke-width: 3; stroke-dasharray: 7 8; fill: none; }
+    </style>
+    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#233033"/>
+    </marker>
+    <marker id="arrow-secret" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#4b695f"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1200" height="700"/>
+
+  <text x="60" y="66" class="label">Toolstack boundary</text>
+  <text x="60" y="96" class="small">The agent gets one reachable ingress. Authority stays behind it.</text>
+
+  <rect x="55" y="140" width="230" height="150" rx="14" class="muted"/>
+  <text x="86" y="190" class="label">Agent host</text>
+  <text x="86" y="224" class="small">broker token only</text>
+  <text x="86" y="252" class="small">client / skill / MCP</text>
+
+  <rect x="355" y="124" width="265" height="184" rx="16" class="broker"/>
+  <text x="398" y="180" class="label white">Broker</text>
+  <text x="398" y="214" class="small white">auth + caller policy</text>
+  <text x="398" y="242" class="small white">request lifecycle</text>
+  <text x="398" y="270" class="small white">approval + audit</text>
+
+  <rect x="690" y="90" width="205" height="78" rx="12" class="approval"/>
+  <text x="728" y="122" class="small">nod approval</text>
+  <text x="728" y="148" class="tiny">messenger only</text>
+
+  <rect x="690" y="196" width="205" height="78" rx="12" class="audit"/>
+  <text x="728" y="228" class="small">audit trail</text>
+  <text x="728" y="254" class="tiny">what happened</text>
+
+  <rect x="690" y="330" width="250" height="190" rx="16" class="workload"/>
+  <text x="730" y="380" class="label">Tool workloads</text>
+  <text x="730" y="414" class="small">custom API</text>
+  <text x="730" y="442" class="small">MCP server</text>
+  <text x="730" y="470" class="small">REST proxy</text>
+
+  <rect x="970" y="360" width="165" height="118" rx="14" class="panel"/>
+  <text x="1002" y="405" class="small">Downstream</text>
+  <text x="1002" y="431" class="tiny">SaaS / APIs</text>
+  <text x="1002" y="455" class="tiny">infra / data</text>
+
+  <rect x="355" y="455" width="265" height="120" rx="16" class="secret"/>
+  <text x="398" y="504" class="label">Toolyard</text>
+  <text x="398" y="536" class="small">starts workloads</text>
+  <text x="398" y="562" class="small">injects secrets</text>
+
+  <rect x="55" y="455" width="230" height="120" rx="14" class="secret"/>
+  <text x="92" y="504" class="small">Secret backend</text>
+  <text x="92" y="532" class="tiny">Infisical / SOPS</text>
+  <text x="92" y="556" class="tiny">not reachable by agent</text>
+
+  <path d="M285 215 C318 215 326 215 355 215" class="arrow"/>
+
+  <path d="M620 168 C650 150 660 132 690 128" class="arrow"/>
+  <path d="M690 148 C660 156 650 178 620 200" class="arrow"/>
+  <text x="644" y="104" class="tiny">review if needed</text>
+
+  <path d="M620 238 C650 236 660 236 690 236" class="arrow"/>
+
+  <path d="M620 285 C656 340 662 390 690 420" class="arrow"/>
+  <text x="615" y="346" class="tiny">approved call</text>
+
+  <path d="M940 420 C955 420 955 420 970 420" class="arrow"/>
+
+  <path d="M488 455 C520 410 604 385 690 386" class="secretline"/>
+
+  <path d="M285 515 C315 515 325 515 355 515" class="secretline"/>
+
+  <path d="M265 292 C395 400 560 430 690 432" class="noline"/>
+  <text x="158" y="334" class="tiny" fill="#8a3a32">no direct tool/API route</text>
+
+  <path d="M390 455 C348 390 325 320 355 270" class="noline"/>
+</svg>
