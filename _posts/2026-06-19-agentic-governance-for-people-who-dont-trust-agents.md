@@ -244,12 +244,12 @@ tool gave it somewhere to put what it read.
 
 <figure>
   <img src="https://media.tenor.com/PS6IdRk6jGIAAAAC/charlie-always.gif" alt="Charlie from It's Always Sunny stands in front of a chaotic investigation board.">
-  <figcaption>This is threat modeling, just with more arrows.</figcaption>
+  <figcaption>Same old threat model, more arrows.</figcaption>
 </figure>
 
-Security people already know this muscle. It is threat modeling: look at the
-whole surface, follow the data, follow the authority, and ask what changes when
-two harmless-looking capabilities meet.
+Security people already have this reflex. Threat modeling trains you to look at
+the whole surface, follow the data, follow the authority, and ask what changes
+when two harmless-looking capabilities meet.
 
 ## Credential hygiene helps, but it isn't enough
 
