@@ -27,6 +27,11 @@ kickflip, rotate a credential, delete a file, mix a mai-tai, read private data,
 or change production. It can be wrong, loudly, and that's about the extent of
 the damage.
 
+<figure>
+  <img src="{{ '/assets/writeup/robot-bartender.gif' | relative_url }}" alt="A robot bartender shakes and pours a tropical cocktail.">
+  <figcaption>Without tools, it can only talk about the mai-tai. With tools, it can start making one.</figcaption>
+</figure>
+
 The moment you give it tools, the deal changes.
 
 Now it can help with real work, which is the entire reason we're doing any of
