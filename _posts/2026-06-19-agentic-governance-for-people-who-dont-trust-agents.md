@@ -132,6 +132,8 @@ giving an agent wide combinations of tools, credentials, local context, and
 execution. The practical move is to decide what kind of environment the agent is
 allowed to be clever inside.
 
+### Dangerous capability is part of the job
+
 <figure>
   <img src="https://media.tenor.com/N3N8F0453XsAAAAd/hammer-carrot.gif" alt="A small robot repeatedly hits a carrot with a hammer.">
   <figcaption>Room to work is useful. Sharp things in reach are still sharp.</figcaption>
