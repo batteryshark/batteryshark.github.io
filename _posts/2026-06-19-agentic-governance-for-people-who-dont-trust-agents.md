@@ -29,7 +29,7 @@ the damage.
 
 <figure>
   <img src="{{ '/assets/writeup/robot-bartender.gif' | relative_url }}" alt="A robot bartender shakes and pours a tropical cocktail.">
-  <figcaption>Without tools, it can only talk about the mai-tai. With tools, it can start making one.</figcaption>
+  <figcaption>Cute, until it can open a tab.</figcaption>
 </figure>
 
 The moment you give it tools, the deal changes.
