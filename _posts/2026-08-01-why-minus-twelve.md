@@ -69,7 +69,7 @@ virtual bases, which `std::string` is, they're identical, and the spec says so
 in the next line: *"Some of the symbols for constructor and destructor variants
 are optional."*
 
-I checked a shipping library rather than take that on faith. Debian trixie,
+I checked a shipping library rather than take that on faith (LOL). Debian trixie,
 `libstdc++.so.6.0.33`, GCC 15:
 
 ```
