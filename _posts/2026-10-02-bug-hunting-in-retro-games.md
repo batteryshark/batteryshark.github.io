@@ -15,7 +15,8 @@ image: /assets/images/20261002/banner.jpg
 
 Bugs fascinate me, especially the ones that nobody detected, or that everyone
 took to be intended. Some of them stay in shipped software for years, and
-people learn them as normal behavior.
+people learn them as normal behavior. Finding one of those decades later has
+always been one of my favorite things.
 
 Retro games are a good place to look for these bugs. At that time, it was easy
 to make a bug like this by accident. Most developers wrote in assembly, and they had few of
@@ -47,10 +48,13 @@ already reverse-engineering the game's menus to find it. In Alien Resurrection
 disc without a reset. It was a test, and he did not tell the other developers
 or Sony. He revealed it in 2023, 23 years later.
 
-I expect that many ROMs contain things like this that nobody has found yet,
-along with bugs. The Cutting Room Floor documents a lot of them, but there are
-thousands of games, and many of them have several revisions and regional
-versions.
+This is the part that gets me most excited. Every game that shipped is a
+snapshot of code that somebody wrote under a deadline, and most of that code
+has probably never been read by anyone outside the team that wrote it. Even
+with sites like The Cutting Room Floor documenting so much, there are
+probably debug menus, cheats, unused features and bugs in thousands of games
+that nobody has found yet. Add every revision and every regional release, and
+the pile only gets bigger. We have barely scratched the surface.
 
 Some well-known behaviors started as bugs. In Super Mario Bros., Lakitu was supposed to
 throw Spiny eggs with some physics: the throw depended on Mario's speed and
@@ -393,11 +397,15 @@ started on it.
 
 ## Outside games
 
-My day job is finding issues in software, mostly not in games. I see the same
-kind of bug in large code bases: a value that one part of the code leaves
-behind and another part trusts, in a configuration that nobody tests. Agents
-can take one cause like this and check every place where it occurs, across
-many configurations. I want to use them more for that work.
+My day job is finding issues in software, mostly not in games, and this is
+what excites me about it. I see the same kind of bug in large code bases: a
+value that one part of the code leaves behind and another part trusts, in a
+configuration that nobody tests. Those code bases are big, strange and full of
+odd edge cases, and nobody can keep all of their variations in their head.
+Agents are getting better at taking one systemic cause like this and checking
+every place where it shows up. Each time that gets better, we find more
+unintended behavior that has been sitting there for years, and that is
+exciting.
 
 If you remember this room being very hard on a console with one pad, or if you
 know of other bugs like this, I would like to hear about it.
