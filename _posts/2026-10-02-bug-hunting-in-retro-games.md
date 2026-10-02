@@ -38,11 +38,19 @@ also still contains a character select screen for the earlier Bond actors,
 which you can only reach with a cheat device.
 
 Developers also put in button codes and debug features that they never
-disclosed, or that they forgot about, and many of them are still in the
-shipped code. I expect that many ROMs contain things like this that nobody has
-found yet, along with bugs. The Cutting Room Floor documents a lot of them, but
-there are thousands of games, and many of them have several revisions and
-regional versions.
+disclosed, or that they forgot about. Homefront: The Revolution (2016) contains
+a full port of TimeSplitters 2 that a code unlocks. In 2021, the programmer who
+added it said that the code was lost with his notebook. Four days later, a
+player who had kept the code from an old message posted it, while a modder was
+already reverse-engineering the game's menus to find it. In Alien Resurrection
+(PlayStation, 2000), a programmer added a code that lets you swap in another
+disc without a reset. It was a test, and he did not tell the other developers
+or Sony. He revealed it in 2023, 23 years later.
+
+I expect that many ROMs contain things like this that nobody has found yet,
+along with bugs. The Cutting Room Floor documents a lot of them, but there are
+thousands of games, and many of them have several revisions and regional
+versions.
 
 Some of these bugs are well known. In Super Mario Bros., Lakitu was supposed to
 throw Spiny eggs with some physics: the throw depended on Mario's speed and
@@ -420,6 +428,11 @@ The Street Fighter II cancel story comes from its designers, in
 The GoldenEye details are from
 [Wikipedia](https://en.wikipedia.org/wiki/GoldenEye_007_(1997_video_game)) and
 [Nintendo Life](https://www.nintendolife.com/news/2012/03/wait_theres_a_spectrum_emulator_in_goldeneye).
+The TimeSplitters 2 story is from
+[Kotaku](https://kotaku.com/someone-recovered-the-code-to-unlock-a-full-version-of-1846655103) and
+[Tech Times](https://www.techtimes.com/articles/258927/20210409/timespliiters-2-easter-egg-code-finally-cracked-homefront-revolution.htm),
+and the Alien Resurrection code from
+[Time Extension](https://www.timeextension.com/news/2023/12/23-years-later-ps1-alien-resurrections-naughty-piracy-cheat-code-is-revealed).
 The TurboTap protocol and the multitap expectation are from pce-devel's
 [PCE_Controller_Info](https://github.com/pce-devel/PCE_Controller_Info). The
 emulator's model of the TurboTap is in the input code of
