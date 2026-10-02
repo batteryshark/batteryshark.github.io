@@ -28,8 +28,9 @@ A shipped cartridge did not get online updates, but it was not always the last
 version either. Some games got cartridge revisions that fixed bugs, and
 sometimes a revision broke other things or changed a feature. Releases for
 different regions were often built from different snapshots of the code. I
-think we have only started to understand the differences between all these
-versions.
+think we have only begun to scratch the surface in finding this stuff.
+Speedrunners have done this kind of work for a long time: they look for ways to
+break a game so that they can finish it faster or skip whole sections.
 
 Some of what shipped stayed hidden for a long time. Every cartridge of
 GoldenEye 007 (Nintendo 64, 1997) contains a ZX Spectrum emulator with ten of
@@ -54,7 +55,7 @@ has probably never been read by anyone outside the team that wrote it. Even
 with sites like The Cutting Room Floor documenting so much, there are
 probably debug menus, cheats, unused features and bugs in thousands of games
 that nobody has found yet. Add every revision and every regional release, and
-the pile only gets bigger. We have barely scratched the surface.
+the pile only gets bigger.
 
 Some well-known behaviors started as bugs. In Super Mario Bros., Lakitu was supposed to
 throw Spiny eggs with some physics: the throw depended on Mario's speed and
