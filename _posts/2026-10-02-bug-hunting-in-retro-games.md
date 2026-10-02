@@ -35,11 +35,12 @@ GoldenEye 007 (Nintendo 64, 1997) contains a ZX Spectrum emulator with ten of
 Rare's Spectrum games. Rare made it as an experiment and disabled it, but did
 not remove it, and players found it in 2012, 15 years after release. The game
 also still contains a character select screen for the earlier Bond actors,
-which you can only reach with a cheat device. I expect that many ROMs still
-contain things like this that nobody has found yet: debug menus, cheats, unused
-features and bugs. The Cutting Room Floor documents a lot of them, but there
-are thousands of games, and many of them have several revisions and regional
-versions.
+which you can only reach with a cheat device.
+
+I expect that many ROMs still contain things like this that nobody has found
+yet: debug menus, cheats, unused features and bugs. The Cutting Room Floor
+documents a lot of them, but there are thousands of games, and many of them
+have several revisions and regional versions.
 
 Some of these bugs are well known. In Super Mario Bros., Lakitu was supposed to
 throw Spiny eggs with some physics: the throw depended on Mario's speed and
