@@ -5,8 +5,13 @@ date: 2026-10-02
 description: "The bugs that went undetected, or that everyone accepted as intended, are the interesting ones, and retro games have a lot of them. An emulator with good instrumentation lets an agent test many configurations and compare the results, which makes it practical to search for these bugs. The example: a Parasol Stars bug where the second controller port controls whether enemies can fly through walls."
 tags: [reverse-engineering, game-hacking, emulation, low-level-systems, tooling]
 toc: true
-image: /assets/images/20261002/01-same-inputs.png
+image: /assets/images/20261002/banner.jpg
 ---
+
+<figure>
+  <img src="/assets/images/20261002/banner.jpg" alt="Title art in the style of the Parasol Stars title screen: the words Bug Hunting in rainbow bubble letters, a ribbon that says In Retro Games, the parasol in an oval window over the sea, and a triangle enemy slipping out through the oval's wall.">
+  <figcaption>Title art made from the remake's REMASTER title screen.</figcaption>
+</figure>
 
 Bugs fascinate me, especially the ones that nobody detected, or that everyone
 accepted as intended behavior. Software ships with them, people use it for
