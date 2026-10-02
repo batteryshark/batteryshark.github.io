@@ -373,10 +373,12 @@ different configurations. I have started on it.
 
 ## Summary
 
-The ROM contains two versions of round 1-5. In the version that the developers
-intended, the triangles stay in the maze until you flood them. In the version
-you get with one pad, the triangles go through the walls while you hold a
-direction. The difference is one configuration that nobody tested.
+With one pad, or with a second player who holds a direction, the triangles in
+round 1-5 go through walls that should stop them. The cause is one shared byte
+that the wall test does not clear. Round 1-5 is only where I noticed it. The
+same wall test runs for the flying enemies in other rounds, and the byte next
+to `$26` (`$27`, port 2's new presses) gets the same copy. I am checking where
+else in the game this changes the behavior.
 
 Other old games probably have bugs like this. To find them by hand, you need a
 person who knows the game very well and has a lot of time. With an emulator
