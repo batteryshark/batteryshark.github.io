@@ -14,11 +14,11 @@ image: /assets/images/20261002/banner.jpg
 </figure>
 
 Bugs fascinate me, especially the ones that nobody detected, or that everyone
-accepted as intended behavior. Software ships with them, people use it for
-years, and the bug becomes part of how the software works.
+took to be intended. Some of them stay in shipped software for years, and
+people learn them as normal behavior.
 
-Retro games are a good place to look for these bugs. It was easy to add one by
-accident at that time. Most developers wrote in assembly, and they had few of
+Retro games are a good place to look for these bugs. At that time, it was easy
+to make a bug like this by accident. Most developers wrote in assembly, and they had few of
 the tools that we use now to find bugs, such as static analysis and test
 automation. There are also thousands of these games, and emulators let us run
 and inspect them.
@@ -52,20 +52,20 @@ along with bugs. The Cutting Room Floor documents a lot of them, but there are
 thousands of games, and many of them have several revisions and regional
 versions.
 
-Some of these bugs are well known. In Super Mario Bros., Lakitu was supposed to
+Some well-known behaviors started as bugs. In Super Mario Bros., Lakitu was supposed to
 throw Spiny eggs with some physics: the throw depended on Mario's speed and
 position, and the eggs bounced off walls. A bug makes the eggs drop straight
 down. For decades, players knew that as normal Lakitu behavior. In Street
 Fighter II, you can cancel a normal attack into a special move. This came from
 code that made special-move inputs easier. Capcom saw it during development and
-kept it, and it became a feature of the genre.
+kept it.
 
 <figure>
   <img src="/assets/images/20261002/lakitu-eggs.png" alt="Schematic: on the left, Lakitu's egg follows an arc ahead of Mario and bounces off a block, as the throw code intends. On the right, the egg drops straight down under Lakitu, as in the shipped game.">
   <figcaption>The Lakitu bug, drawn from the description on The Cutting Room Floor.</figcaption>
 </figure>
 
-The undetected bugs are the hardest to find, because no document shows what the
+Bugs that nobody noticed are hard to find, because no document shows what the
 developers intended. The only evidence is in the code, where two parts of the
 code disagree. Often the bug occurs in one configuration only: one controller
 instead of two, a multitap connected or not, a different region, different
@@ -76,9 +76,8 @@ person can do this for one or two theories, but it is slow work.
 An emulator with good instrumentation makes this easier. You can save a state,
 play the same input in different configurations, record the RAM in every frame,
 and compare the runs. An agent can do this for many configurations and many
-save states, and it does not get tired of comparing memory dumps. This makes it
-practical to search for these bugs, instead of only testing a theory that you
-already have.
+save states, and it does not get tired of comparing memory dumps. With an
+agent, you can search for these bugs before you have a theory.
 
 <figure>
   <img src="/assets/images/20261002/ab-runs.png" alt="Diagram: one save state runs twice, once with a TurboTap and once with one pad, with the same input. The triangles' state is the same in frames 30 to 32 and different from frame 33. The trace back finds $26: $00 in run A and $80 in run B.">
@@ -155,8 +154,7 @@ check if a TurboTap is present.
   <figcaption>Holding LEFT sets bit 7, so the byte is $80. Port 2's byte is at $244E.</figcaption>
 </figure>
 
-The game does not copy player 1's input to player 2. It always reads five
-ports. Without a TurboTap, the same pad answers all five reads.
+So with one pad, ports 2 to 5 hold player 1's buttons.
 
 ## How $26 is used
 
@@ -165,7 +163,7 @@ page is at `$2000`, so for a watchpoint the address is `$2026`.)
 
 1. Player 1's routine writes port 1's held buttons to `$26`.
 2. Player 2's routine writes port 2's held buttons to `$26`. This routine runs
-   in every frame, also when there is no player 2, because it checks if a
+   in every frame, even when there is no player 2, because it checks if a
    second player wants to join.
 3. The enemy routines run. The wall tests of the flying enemies (`$6645` for
    movement to the right, `$66BC` for movement to the left) read `$26` as a
@@ -173,12 +171,13 @@ page is at `$2000`, so for a watchpoint the address is `$2026`.)
 
 <figure>
   <img src="/assets/images/20261002/04-one-frame.png" alt="Four steps in one frame: read the pads, player 1's turn writes port 1 into $26, player 2's turn writes port 2 into $26, the enemies move and the flyers' wall test reads $26 as a row counter.">
-  <figcaption>Two routines use $26: the player code for held buttons, and the wall test for a counter.</figcaption>
+  <figcaption>The player code uses $26 for held buttons, and the wall test uses it as a counter.</figcaption>
 </figure>
 
-The value that matters is what port 2 reports. With one pad and no TurboTap,
-port 2 reports your own buttons. In a two-player game, it reports player 2's
-buttons. The walls work correctly only when port 2 reports no buttons.
+When the enemy routines run, `$26` holds port 2's buttons. With one pad and no
+TurboTap, port 2 reports your own buttons. In a two-player game, it reports
+player 2's buttons. The walls work correctly only when port 2 reports no
+buttons (for example, a TurboTap with one player).
 
 <figure>
   <img src="/assets/images/20261002/05-what-is-in-26.png" alt="The byte $26 shown as eight bits in three setups: TurboTap alone gives $00 and the walls hold; one pad with LEFT held gives $80 and triangles slip; TurboTap with player 2 holding RIGHT gives $20 and triangles slip.">
@@ -243,11 +242,12 @@ save state:
 | Player 1 does nothing, pad 2 holds LEFT, 3000 frames | 9 of 10 get out, the same frame for frame as one pad | |
 | Random bot, 96 sessions each | 0 deaths in 480,000 frames | 741 deaths in 459,124 frames |
 
-In the first three rows, player 1 does not move and cannot be hit, so only the
-triangles act. The bot plays with 9 lives, and a session ends at game over.
-This is why the frame totals are different. The 1.8% is the baseline: the maze
-has openings, and the triangles go through them for short times even with no
-input.
+In the first three rows, the harness holds player 1 in one place and makes him
+invulnerable, so only the triangles act. The input still goes to the pad, so
+`$26` still gets it. The bot plays with 9 lives, and a session ends at game
+over. This is why the frame totals are different. The 1.8% is the baseline:
+the maze has openings, and the triangles go through them for short times even
+when `$26` is 0.
 
 I also tested a flood after 20 seconds of walking. In the original with the
 TurboTap, the flood caught all ten triangles. The remake's one-pad model,
@@ -265,13 +265,13 @@ contains pad 2's byte.
   <figcaption>Port 2 decides the result, not player 1.</figcaption>
 </figure>
 
-In this room, the walls work only when port 2 is an empty socket. That means a
-TurboTap with one player.
+The same wall test runs in other rounds. In a first pass over all 80 rounds, it
+read the stale buttons in 36 of them. I do not know yet in how many of those
+rounds a player would see a difference.
 
 ## Why I call it a bug
 
-There is no design document and nobody to ask, so the evidence must come from
-the ROM. Three things show that the developers did not intend this behavior:
+Three things in the ROM show that the developers did not intend this behavior:
 
 - The counter in the wall test has one purpose: rows above the map. All other
   paths through the routine expect it to be 0.
@@ -318,32 +318,31 @@ the original looked correct to me and the remake looked wrong.
 All the tests ran on the original ROM in an emulator, not on a console. These
 are the reasons that I think a console behaves the same way:
 
-- The TurboTap protocol is documented: CLR resets it and SEL steps it. A pad
-  that is connected directly to the console has nothing to step through. I
-  read the emulator's input code, and it does what the documentation says.
+- The TurboTap protocol is documented: CLR resets it and SEL steps it. I read
+  the emulator's input code, and it does what the documentation says.
 - The game's title screen check works only because a single pad answers on all
   ports. If the console did not do this, `$E204` would not see RUN on ports 2
   and 3.
 
 The TurboTap screenshots show GAME OVER / CREDIT 1 for player 2. The save
-state was made when the game's flag said one pad, and the tap was enabled in
-the emulator after the state was loaded. This does not change the result,
-because the copy from port 2 does not check that flag.
+state has the multitap flag `$2458` at 0 (one pad), and the harness enables the
+tap after it loads the state. This does not change the result, because the
+copy from port 2 does not check that flag.
 
 I did not find this bug described anywhere else. I would like someone to test
 it on a console. If you have a PC Engine or TurboGrafx-16, one pad and
 Parasol Stars, go to round 1-5, hold LEFT for 20 seconds, and watch the
-triangles. Short trips through the maze's openings are normal. Triangles inside
-the bricks are the bug.
+triangles. You will see some short trips through the maze's openings even with
+a TurboTap. With the bug, triangles fly into the bricks.
 
 ## The bug class
 
 This bug is an example of a general class. Old consoles keep temporary values
-in a small set of fast, shared bytes (the zero page on the 6502 family). Two
-routines can each be correct and still use the same byte for different things.
-Here, the player code uses `$26` for "buttons held" and the wall test uses it
-for "rows to repeat". The problem occurs only in a configuration that the
-developers did not test much.
+in a small set of fast, shared bytes (the zero page on the 6502 family). One
+routine leaves a value in a shared byte. A later routine reads that byte before
+it writes it. Here, the player code uses `$26` for "buttons held" and the wall
+test uses it for "rows to repeat". The problem shows only in a configuration
+that, I think, the developers rarely tested.
 
 <figure>
   <img src="/assets/images/20261002/10-stale-scratch.png" alt="The stale-scratch pattern in four steps, and four ways to hunt for it: log the first access to each zero-page byte per routine, find the last writer, vary rarely changed conditions, and diff runs frame by frame.">
@@ -372,48 +371,33 @@ It also made mistakes:
 
 - An early summary said that with a TurboTap, none of the ten triangles leave
   the maze. The data shows four triangles that leave for short times, 1.8% of
-  the time. The summary was wrong, and the data was correct.
+  the time.
 - A draft of the infographics said that the button you hold does not matter.
-  It does. Button II alone gives a count of 2, and the wall test of the first
-  flying enemy uses it up. The draft generalized from tests that did not
+  That was wrong: button II alone gives a count of 2, and the wall test of the
+  first flying enemy uses it up. The draft generalized from tests that did not
   include that case.
 - The one-pad behavior in the remake was the agent's decision. It kept the
   behavior of the test harness and did not compare it with my emulator
-  configuration. That made the remake harder than I expected, and it is also
-  why we found the bug.
+  configuration. That made the remake harder than I expected.
 
-We found each mistake by going back to the data. The rule I use now: each claim
-in a caption must have a test run behind it.
+We found each mistake when we checked the claim against the logged data.
 
-When the explanation was correct, the agent made a skill from the explanation
-part. The skill takes a bug that you understand and makes a set of pictures
-from the evidence: real frames from the original, and diagrams where each
-number comes from a measurement. The search part is still a manual method. My
-next step is a tool that an agent can run over a full ROM: trace the
-zero-page reads that come before a write, then test those candidates in
-different configurations. I have started on it.
+After that, I had the agent turn the explanation work into a skill. It takes a
+bug that you understand and makes a set of pictures from the evidence: real
+frames from the original, and diagrams where each number comes from a
+measurement. The skill does not find bugs. A person still chooses what to
+test. The next step is a
+tool that an agent can run over a full ROM: trace the zero-page reads that come
+before a write, then test those candidates in different configurations. I have
+started on it.
 
-## Summary
+## Outside games
 
-With one pad, or with a second player who holds a direction, the triangles in
-round 1-5 go through walls that should stop them. The cause is one shared byte
-that the wall test does not clear. Round 1-5 is only where I noticed it. The
-same wall test runs for the flying enemies in other rounds, and the byte next
-to `$26` (`$27`, port 2's new presses) gets the same copy. I am checking where
-else in the game this changes the behavior.
-
-Other old games probably have bugs like this. To find them by hand, you need a
-person who knows the game very well and has a lot of time. With an emulator
-that you can script and an agent to run the tests, you can search for them
-systematically.
-
-This is also why the work interests me outside of games. My day job is finding
-issues in software. Large code bases have the same problems: odd edge cases,
-many configurations, and behavior that nobody intended. When an agent can take
-one systemic cause, such as a shared value that one part of the code does not
-reset, and check every place where it shows up across all the variations, it
-becomes practical to find unintended behavior at a scale that a person cannot
-cover by hand. That is the part that I am excited about.
+My day job is finding issues in software, mostly not in games. I see the same
+kind of bug in large code bases: a value that one part of the code leaves
+behind and another part trusts, in a configuration that nobody tests. Agents
+can take one cause like this and check every place where it occurs, across
+many configurations. I want to use them more for that work.
 
 If you remember this room being very hard on a console with one pad, or if you
 know of other bugs like this, I would like to hear about it.
