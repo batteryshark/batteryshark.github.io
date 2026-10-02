@@ -460,17 +460,26 @@ It also made mistakes:
 - The one-pad behavior in the remake was the agent's decision. It kept the
   behavior of the test harness and did not compare it with my emulator
   configuration. That made the remake harder than I expected.
+- The first sweep script missed some memory accesses, so one routine looked
+  like it read the stale buttons when it did not. A verifying agent found the
+  problem, and the corrected sweep found the same 36 rounds.
 
 We found each mistake when we checked the claim against the logged data.
 
 After that, I had the agent turn the explanation work into a skill. It takes a
 bug that you understand and makes a set of pictures from the evidence: real
 frames from the original, and diagrams where each number comes from a
-measurement. The skill does not find bugs. A person still chooses what to
-test. The next step is a
-tool that an agent can run over a full ROM: trace the zero-page reads that come
-before a write, then test those candidates in different configurations. I have
-started on it.
+measurement.
+
+Then an agent built the search part as a tool. It traces every memory access
+in the emulator, finds the reads in each routine that come before a write,
+ranks them, and tests the best candidates with A/B runs that change one
+condition. As a test, it had to find the `$26` bug with no hint. It ranked the
+two wall-test reads first and second out of 2,474 candidates, in about 13
+seconds. Run over every round, it also found the leftover count from the
+previous section. It still makes mistakes: in round 1-5 it marked the player's
+state byte as a confirmed problem, but that byte only changed because the
+escaped triangles hit the player. A person still has to read what it finds.
 
 ## Outside games
 
