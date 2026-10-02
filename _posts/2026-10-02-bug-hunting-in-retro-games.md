@@ -366,10 +366,13 @@ The method to find this class of bug:
 
 ## What the agent did, and its mistakes
 
-The agent did the work that I would not do by hand. It measured the speeds to
-remove the first theory. It ran A/B tests with one change at a time. It ran
-192 bot sessions (939,124 frames). It found the first frame where the two runs
-are different, and it traced `$26` back to the routine that wrote it.
+I could have done all of this by hand. It would have been grueling, and it
+would have taken a lot of time that I do not have, even for one game, let alone
+a whole shelf of them. The agent did that work. It measured the speeds to
+remove the first theory. It ran A/B tests with one change at a time. It ran 192
+bot sessions (939,124 frames). It found the first frame where the two runs are
+different, and it traced `$26` back to the routine that wrote it. Being able to
+hand that work off and see what it uncovers is very cool.
 
 It also made mistakes:
 
