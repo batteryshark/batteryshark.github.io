@@ -476,10 +476,12 @@ in the emulator, finds the reads in each routine that come before a write,
 ranks them, and tests the best candidates with A/B runs that change one
 condition. As a test, it had to find the `$26` bug with no hint. It ranked the
 two wall-test reads first and second out of 2,474 candidates, in about 13
-seconds. Run over every round, it also found the leftover count from the
-previous section. It still makes mistakes: in round 1-5 it marked the player's
-state byte as a confirmed problem, but that byte only changed because the
-escaped triangles hit the player. A person still has to read what it finds.
+seconds. Run over every round, it also found the leftover count described
+above.
+
+The tool still makes mistakes. In round 1-5 it marked the player's state byte
+as a confirmed problem, but that byte only changed because the escaped
+triangles hit the player. A person still has to read what it finds.
 
 ## Outside games
 
