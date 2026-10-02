@@ -269,9 +269,8 @@ contains pad 2's byte.
   <figcaption>Port 2 decides the result, not player 1.</figcaption>
 </figure>
 
-The same wall test runs in other rounds. In a first pass over all 80 rounds, it
-read the stale buttons in 36 of them. I do not know yet in how many of those
-rounds a player would see a difference.
+Round 1-5 is not the only round where this happens. The section "The rest of
+the game" below covers the other rounds.
 
 ## Why I call it a bug
 
@@ -338,6 +337,81 @@ it on a console. If you have a PC Engine or TurboGrafx-16, one pad and
 Parasol Stars, go to round 1-5, hold LEFT for 20 seconds, and watch the
 triangles. You will see some short trips through the maze's openings even with
 a TurboTap. With the bug, triangles fly into the bricks.
+
+## The rest of the game
+
+Round 1-5 is only where I noticed the bug. The same wall test runs for flying
+enemies in many rounds, so the next question was where else it changes the
+game.
+
+The project has a save state for each round of the original, 78 in all. An
+agent ran each one twice with the same input, once with a TurboTap and once
+with one pad, and logged every read of `$26` and `$27`. With the TurboTap, every
+read of the value that player 2's copy left there was 0. With one pad, the wall
+test read the held buttons in 36 of the 78 rounds.
+
+A stale read does not always change what you see. So one group of agents
+measured each of the 36 rounds: the same save state and input with a TurboTap
+and with one pad, for 3,000 to 9,000 frames, with A/B screenshots and a count of
+the frames where a flyer's hitbox centre is inside a wall. A second group re-ran
+every measurement with its own scripts and tried to refute each verdict. The
+verifiers reproduced the measurements, corrected a few descriptions, and changed
+some verdicts: two rounds went up from subtle to visible, and one went down.
+
+<figure>
+  <img src="/assets/images/20261002/rounds-map.png" alt="A grid of all rounds, worlds 1 to 10 and rounds 1 to 8. 17 rounds are marked visible, 12 subtle, 6 with no change, and 42 not affected. Round 9-8 is marked as the same result as round 10-1.">
+  <figcaption>Every round of the original, after the second check.</figcaption>
+</figure>
+
+After that check:
+
+- In 17 rounds the difference is visible. Flyers clip into walls or fly
+  through them, or reach places that they never reach with a TurboTap. In some
+  rounds this only happens now and then.
+- In 12 rounds the enemies' paths change, but nothing looks wrong.
+- In 6 rounds the game plays the same.
+
+<figure>
+  <img src="/assets/images/20261002/round-10-1-ab.png" alt="Round 10-1 at frame 242, TurboTap on the left and one pad on the right. With one pad, a purple blob is above the top wall, over the score display.">
+  <figcaption>Round 10-1. With one pad (right), a blob leaves its pocket and gets out above the map. With the TurboTap it stays in the pocket.</figcaption>
+</figure>
+
+<figure>
+  <img src="/assets/images/20261002/round-7-3-ab.png" alt="Round 7-3 at frame 2384, TurboTap on the left and one pad on the right. With one pad, the sky cow is inside a magenta block, marked with a red box.">
+  <figcaption>Round 7-3. With one pad (right), the sky cow goes through a block and leaves its pocket.</figcaption>
+</figure>
+
+The search found two more things.
+
+The bug is not only about controllers. Even with a TurboTap, a flyer's wall
+test can start with a value that other code left in `$26`. When a flyer's head
+is above the top of the map, the wall test sets `$26` to the number of rows
+above the map, and part of that count can stay there after the test ends. The
+routine that moves the flyers (bank 6 `$6CB6`) also leaves values in `$26`.
+Nothing clears the byte between two flyers' wall tests.
+
+I compared the original with a version that clears `$26` at the start of each
+wall test, both with a TurboTap and no input, for 9,000 frames. In five rounds, flyers end up inside
+walls only in the original: 9-2 (397 frames against 0), 8-6 (149 against 0),
+2-2 (109 against 0), 2-4 (38 against 0) and 6-6 (26 against 0). A second agent
+checked each case: every time, the flyer had just skipped a wall cell because
+of the stale value. These are the green dots on the map.
+
+Player 2's join check reads `$27`. On a normal console with one pad, nothing
+happens, because the game turns off joining when it does not find a TurboTap on
+the title screen. But if a TurboTap was there on the title screen and stops
+answering later (unplugged during play, or an emulator's multitap switched
+off), the RUN press that unpauses the game also joins player 2. The credit
+goes, Bobby comes in, and pad 1 then moves both characters. I only tested this
+in the emulator.
+
+In two-player games, the flyers' wall test is the only code outside the player
+routines that reads player 2's buttons.
+
+This is the part that I could not have done by hand in any reasonable time: 78
+rounds, two setups and three inputs, thousands of frames each, and then a
+second pass to check every result. The agents took a little over an hour for
+all of it.
 
 ## The bug class
 
