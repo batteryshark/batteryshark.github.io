@@ -37,10 +37,12 @@ not remove it, and players found it in 2012, 15 years after release. The game
 also still contains a character select screen for the earlier Bond actors,
 which you can only reach with a cheat device.
 
-I expect that many ROMs still contain things like this that nobody has found
-yet: debug menus, cheats, unused features and bugs. The Cutting Room Floor
-documents a lot of them, but there are thousands of games, and many of them
-have several revisions and regional versions.
+Developers also put in button codes and debug features that they never
+disclosed, or that they forgot about, and many of them are still in the
+shipped code. I expect that many ROMs contain things like this that nobody has
+found yet, along with bugs. The Cutting Room Floor documents a lot of them, but
+there are thousands of games, and many of them have several revisions and
+regional versions.
 
 Some of these bugs are well known. In Super Mario Bros., Lakitu was supposed to
 throw Spiny eggs with some physics: the throw depended on Mario's speed and
