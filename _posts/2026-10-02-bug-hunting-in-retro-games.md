@@ -2,37 +2,44 @@
 layout: post
 title: "Bug Hunting in Retro Games"
 date: 2026-10-02
-description: "Old games have bugs that shipped and became part of how the game works. An emulator with good instrumentation lets an agent test many configurations and compare the results, which makes it practical to search for these bugs. The example: a Parasol Stars bug where the second controller port controls whether enemies can fly through walls."
+description: "The bugs that went undetected, or that everyone accepted as intended, are the interesting ones, and retro games have a lot of them. An emulator with good instrumentation lets an agent test many configurations and compare the results, which makes it practical to search for these bugs. The example: a Parasol Stars bug where the second controller port controls whether enemies can fly through walls."
 tags: [reverse-engineering, game-hacking, emulation, low-level-systems, tooling]
 toc: true
 image: /assets/images/20261002/01-same-inputs.png
 ---
 
-A bug is behavior that the developers did not intend. Most bugs get found and
-fixed, or get reported and become known bugs. The ones I like to look for are
-different: they shipped, people played them for years, and nobody recognized
-them as bugs. Players assumed the behavior was part of the design.
+Bugs fascinate me, especially the ones that nobody detected, or that everyone
+accepted as intended behavior. Software ships with them, people use it for
+years, and the bug becomes part of how the software works.
 
-Before patches and online updates, the cartridge was the final version. If a
-routine failed under a condition that nobody tested, that behavior stayed in
-the game. Some cases of this are known. In Street Fighter II, you can cancel a
-normal attack into a special move. This came from code that made special-move
-inputs easier, and Capcom saw it during development and kept it. In Super
-Mario Bros., Lakitu was supposed to throw Spiny eggs with some physics: the
-throw depended on Mario's speed and position, and the eggs bounced off walls. A
-bug makes the eggs drop straight down. For decades, players knew that as normal
-Lakitu behavior.
+Retro games are a good place to look for these bugs. It was easy to add one by
+accident at that time. Most developers wrote in assembly, and they had few of
+the tools that we use now to find bugs, such as static analysis and test
+automation. There are also thousands of these games, and emulators let us run
+and inspect them.
 
-The Lakitu type is the interesting type. The developers did not know about the
-behavior, and no document shows what they intended. The only evidence is in
-the code, where two parts of the code disagree.
+A shipped cartridge did not get online updates, but it was not always the last
+version either. Some games got cartridge revisions that fixed bugs, and
+sometimes a revision broke other things or changed a feature. Releases for
+different regions were often built from different snapshots of the code. I
+think we have only started to understand the differences between all these
+versions.
 
-These bugs are difficult to find by hand. Often a bug occurs in one
-configuration only: one controller instead of two, a multitap connected or not,
-a different region, different timing. To find one, you must know the game well
-enough to see that something is different. Then you must test each
-configuration and compare the results. A person can do this for one or two
-theories, but it is slow work.
+Some of these bugs are well known. In Super Mario Bros., Lakitu was supposed to
+throw Spiny eggs with some physics: the throw depended on Mario's speed and
+position, and the eggs bounced off walls. A bug makes the eggs drop straight
+down. For decades, players knew that as normal Lakitu behavior. In Street
+Fighter II, you can cancel a normal attack into a special move. This came from
+code that made special-move inputs easier. Capcom saw it during development and
+kept it, and it became a feature of the genre.
+
+The undetected bugs are the hardest to find, because no document shows what the
+developers intended. The only evidence is in the code, where two parts of the
+code disagree. Often the bug occurs in one configuration only: one controller
+instead of two, a multitap connected or not, a different region, different
+timing. To find one, you must know the game well enough to see that something
+is different. Then you must test each configuration and compare the results. A
+person can do this for one or two theories, but it is slow work.
 
 An emulator with good instrumentation makes this easier. You can save a state,
 play the same input in different configurations, record the RAM in every frame,
