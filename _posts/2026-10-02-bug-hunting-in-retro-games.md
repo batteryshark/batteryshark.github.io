@@ -30,6 +30,17 @@ different regions were often built from different snapshots of the code. I
 think we have only started to understand the differences between all these
 versions.
 
+Some of what shipped stayed hidden for a long time. Every cartridge of
+GoldenEye 007 (Nintendo 64, 1997) contains a ZX Spectrum emulator with ten of
+Rare's Spectrum games. Rare made it as an experiment and disabled it, but did
+not remove it, and players found it in 2012, 15 years after release. The game
+also still contains a character select screen for the earlier Bond actors,
+which you can only reach with a cheat device. I expect that many ROMs still
+contain things like this that nobody has found yet: debug menus, cheats, unused
+features and bugs. The Cutting Room Floor documents a lot of them, but there
+are thousands of games, and many of them have several revisions and regional
+versions.
+
 Some of these bugs are well known. In Super Mario Bros., Lakitu was supposed to
 throw Spiny eggs with some physics: the throw depended on Mario's speed and
 position, and the eggs bounced off walls. A bug makes the eggs drop straight
@@ -385,6 +396,14 @@ person who knows the game very well and has a lot of time. With an emulator
 that you can script and an agent to run the tests, you can search for them
 systematically.
 
+This is also why the work interests me outside of games. My day job is finding
+issues in software. Large code bases have the same problems: odd edge cases,
+many configurations, and behavior that nobody intended. When an agent can take
+one systemic cause, such as a shared value that one part of the code does not
+reset, and check every place where it shows up across all the variations, it
+becomes practical to find unintended behavior at a scale that a person cannot
+cover by hand. That is the part that I am excited about.
+
 If you remember this room being very hard on a console with one pad, or if you
 know of other bugs like this, I would like to hear about it.
 
@@ -395,6 +414,9 @@ know of other bugs like this, I would like to hear about it.
 [Nintendo Everything](https://nintendoeverything.com/how-lakitu-throws-spiny-eggs-in-super-mario-bros-is-due-to-a-glitch-not-the-intended-behavior/)).
 The Street Fighter II cancel story comes from its designers, in
 [Game Developer](https://www.gamedeveloper.com/business/-i-street-fighter-ii-i-designer-opens-up-about-the-cancelling-bug-).
+The GoldenEye details are from
+[Wikipedia](https://en.wikipedia.org/wiki/GoldenEye_007_(1997_video_game)) and
+[Nintendo Life](https://www.nintendolife.com/news/2012/03/wait_theres_a_spectrum_emulator_in_goldeneye).
 The TurboTap protocol and the multitap expectation are from pce-devel's
 [PCE_Controller_Info](https://github.com/pce-devel/PCE_Controller_Info). The
 emulator's model of the TurboTap is in the input code of
