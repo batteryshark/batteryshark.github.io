@@ -33,6 +33,11 @@ Fighter II, you can cancel a normal attack into a special move. This came from
 code that made special-move inputs easier. Capcom saw it during development and
 kept it, and it became a feature of the genre.
 
+<figure>
+  <img src="/assets/images/20261002/lakitu-eggs.png" alt="Schematic: on the left, Lakitu's egg follows an arc ahead of Mario and bounces off a block, as the throw code intends. On the right, the egg drops straight down under Lakitu, as in the shipped game.">
+  <figcaption>The Lakitu bug, drawn from the description on The Cutting Room Floor.</figcaption>
+</figure>
+
 The undetected bugs are the hardest to find, because no document shows what the
 developers intended. The only evidence is in the code, where two parts of the
 code disagree. Often the bug occurs in one configuration only: one controller
@@ -47,6 +52,11 @@ and compare the runs. An agent can do this for many configurations and many
 save states, and it does not get tired of comparing memory dumps. This makes it
 practical to search for these bugs, instead of only testing a theory that you
 already have.
+
+<figure>
+  <img src="/assets/images/20261002/ab-runs.png" alt="Diagram: one save state runs twice, once with a TurboTap and once with one pad, with the same input. The triangles' state is the same in frames 30 to 32 and different from frame 33. The trace back finds $26: $00 in run A and $80 in run B.">
+  <figcaption>The method, applied to the Parasol Stars bug that the rest of this post explains.</figcaption>
+</figure>
 
 The example below is from a remake project of mine. I saw a difference in
 difficulty, and an agent found the cause.
@@ -63,6 +73,11 @@ must behave like the original. Agents read the original HuC6280 code and write
 the same logic in GDScript. A lock-step harness then runs the remake and the
 original ROM side by side in an emulator and compares the game state in every
 frame.
+
+<figure>
+  <img src="/assets/images/20261002/remake-round-1-5.jpg" alt="Round 1-5 of the remake in two graphics modes: CLASSIC with the original pixels, and REMASTER with new art. The maze and the ten triangles are in the same places.">
+  <figcaption>Round 1-5 in the remake. The graphics mode changes the art. The game logic is the original's.</figcaption>
+</figure>
 
 Round 1-5 is a brick maze with ten triangle enemies that fly inside it. There
 are four water dispensers on the roof. The room is designed for one method:
@@ -252,6 +267,11 @@ the shipped behavior: `$26` contains your buttons with one pad, and player 2's
 buttons in a two-player game. The regression tests use ORIGINAL, so they still
 match the ROM. An option for the controller type would not fix the bug,
 because with a TurboTap it still occurs when player 2 holds a direction.
+
+<figure>
+  <img src="/assets/images/20261002/remake-pause-menu.png" alt="The remake's pause menu, GAME tab, with FLYER WALL BUG set to FIXED and the hint: flying enemies stop at walls, as intended.">
+  <figcaption>The option in the remake's pause menu.</figcaption>
+</figure>
 
 ## How it probably shipped
 
