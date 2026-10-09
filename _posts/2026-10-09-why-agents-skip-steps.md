@@ -67,9 +67,6 @@ way to check results that the agent can run.
 
 ## What the agent has instead
 
-It's tempting to say the model has no internal picture of the program at all.
-It has one, and the details of how far it reaches matter.
-
 **Its predictions are good on toy code and poor on real code.** The classic
 test, CruxEval, asks a model to predict the output of a small Python
 function. By 2026 it had stopped separating models: one evaluation service
@@ -266,8 +263,7 @@ design says what you want; the check says whether you got it. A check written
 from a vague request confirms a vague result, which is why the checks have to
 come from the requirement, and why the requirement has to be written down.
 
-The stronger the model, the more this matters. The newer frontier models are
-very good at solving things with no direction, and that's most of their
+The newer frontier models are very good at solving things with no direction, and that's most of their
 appeal: one-shot builds, changes to existing code, long runs of work from a
 vague instruction. The cost is that more gets assumed. Every requirement I
 didn't write down gets filled in by the model's judgment, and the work is
@@ -300,13 +296,13 @@ the work, and it lists all of them at the end.
 ## Track what's known, not what's done
 
 Most agent workflows keep a plan or a to-do list. That records what has been
-done. It doesn't record what's actually known, and that's the difference
-that matters when something goes wrong.
+done. It doesn't record what's actually known, which is what you need when
+something goes wrong.
 
 For any task with several dependent steps, have the agent keep a short working
 record: the goal, what has been observed and how, what's assumed but not yet
 checked, which later steps depend on each assumption, and the one check that
-would settle the assumption that matters most right now.
+would settle the assumption the next step depends on.
 
 <figure>
   <img src="/assets/images/20261009/06-working-record.png" alt="A working record for adding a download CSV button to a filtered dashboard. Goal: the download contains exactly the records the current filters show. Observed: test dataset with filter region=EU shows 12 records. Assumed, not checked: the export request includes the active filters. Depends on it: everything about whether the file is right. Next check: inspect the export request, then parse the file and compare its record IDs with the 12 expected. Two arrows from a mismatch: no filters in the request points at the button-to-endpoint path; request right but file wrong points at the export.">
@@ -503,7 +499,7 @@ In the Parasol Stars work, every mistake the agent made was found the same way:
 by checking its claim against the logged data. The log made that possible, not
 the agent.
 
-The log matters for another reason. People remember the hits and forget the
+The log has a second use. People remember the hits and forget the
 misses. An agent that does one surprising thing well leaves a stronger
 impression than the ten routine failures around it, and the failures turn
 into ordinary days. Engineers surface the hits, managers see the hit rate, and
