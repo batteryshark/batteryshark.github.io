@@ -55,7 +55,7 @@ at how people write tasks for agents:
 - Make the checkout page look better on mobile.
 - Clean up my downloads folder.
 - You are a senior engineer who never makes mistakes and checks everything
-  before starting. Hook the API up to the database.
+  before starting, blah blah blah. Hook the API up to the database.
 
 Each one describes a change. None says what the current state is, or how
 anyone would know the change worked. The person writing it might know both
