@@ -248,9 +248,9 @@ doesn't close it.
 
 ## Part two: what to keep in mind
 
-This is the half to use. Four moments on any project longer than a day:
-when you start, while it runs, when it gets stuck, and when you change your
-mind about what you wanted. First, what a check can be, because most of what
+This is the half to use. Any project longer than a day has the same four
+moments: when you start, while it runs, when it gets stuck, and when you
+change your mind about what you wanted. First, what a check can be, because most of what
 follows depends on having one.
 
 ## Checks are not only tests
