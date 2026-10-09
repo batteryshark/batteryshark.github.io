@@ -29,11 +29,11 @@ the things I've found worth keeping in mind when I start something, while it
 runs, when it gets stuck, and when I change my mind about what I wanted,
 which on a long project I always do. The first half is why the gap exists.
 If you already believe an agent can't see your machine, skip to
-[what to keep in mind](#what-to-keep-in-mind).
+[part two](#part-two-what-to-keep-in-mind).
 
-## Why the gap exists
+## Part one: why the gap exists
 
-### What stays in your head
+## What stays in your head
 
 When you work on something you know, you carry a model of it. You know which
 services are up, what you changed an hour ago, which tests are flaky, and what
@@ -71,7 +71,7 @@ gets the change, and the facts and the checks stay with you. Working well with
 agents means handing those over too: the current state, written down, and a
 way to check results that the agent can run.
 
-### What the agent has instead
+## What the agent has instead
 
 **Its predictions are good on toy code and poor on real code.** Predicting
 the output of a small function is a solved problem, to the point that the
@@ -128,7 +128,7 @@ agent assumes the data import worked, it builds the chart, writes the summary,
 and polishes the report on top of an empty table. Each step looks finished,
 and all of them are wrong.
 
-### The strongest models build their own checks
+## The strongest models build their own checks
 
 As of October 2026, the strongest models don't deal with this by predicting
 harder. They build checks. I've watched it happen. On a recompilation project
@@ -170,7 +170,7 @@ at runtime. On the June 2026 benchmark it finished in the bottom half. A
 model that predicted perfectly would still not know the state of your
 machine.
 
-### Why this won't close soon
+## Why this won't close soon
 
 - **Your state isn't in the weights.** Any model, of any design, has to
   observe your system to know what's true in it.
@@ -189,7 +189,7 @@ program state across steps and knows when that picture is uncertain. That's a
 different kind of model from what we have. Even then, it would reduce how
 often an agent needs to check, not remove the need to look.
 
-### A feedback loop is worth more than a bigger model
+## A feedback loop is worth more than a bigger model
 
 If checks are what make agents reliable, you can buy reliability with checks
 instead of model size. My own run is the smallest version of this: the same
@@ -203,7 +203,7 @@ The limits: the model still has to turn the signal into a fix, a wrong checker s
 can cost more than one good one. Within those limits, a loop built for a
 smaller or local model is the cheapest upgrade available.
 
-### A check can't tell you what you wanted
+## A check can't tell you what you wanted
 
 I was talking about this with a colleague, a principal engineer at a major
 software company who has spent a few decades building things and has gone
@@ -234,27 +234,25 @@ assumed. Every requirement I didn't write down gets filled in by the model's
 judgment, and the work is finished before I see any of it. The gap is between
 the work it did and the work I wanted, and a passing check doesn't close it.
 
-## What to keep in mind
+## Part two: what to keep in mind
 
 This is the half to use. Four moments on any project longer than a day:
 when you start, while it runs, when it gets stuck, and when you change your
 mind about what you wanted. First, what a check can be, because most of what
 follows depends on having one.
 
-### Checks are not only tests
+## Checks are not only tests
 
 Tests are one kind of check. The job is to make the things you'd check
 yourself available to the agent as text it can ask for.
 
-| What you'd check yourself | What to build for the agent |
-| --- | --- |
-| Is it running? What's in there right now? | A state dump: one command that prints current rows, config, queue depth, or file tree |
-| Does it look right? | Screenshots, rendered output, browser automation at phone and desktop widths |
-| What did I just change? | Before and after snapshots, and diffs |
-| Will this break that? | A repro script for the bug; an invariant check such as "every order has a customer" |
-| What does the outside service do? | A fake or recorded copy of the service the agent can call safely |
-| Does it look and sound right while it runs? | A tap at the output: screen control, an audio capture, not a read of the file |
-| Where was I? What do I actually know? | The working record, in a file |
+- **Is it running? What's in there right now?** A state dump: one command that prints current rows, config, queue depth, or file tree.
+- **Does it look right?** Screenshots, rendered output, browser automation at phone and desktop widths.
+- **What did I just change?** Before and after snapshots, and diffs.
+- **Will this break that?** A repro script for the bug; an invariant check such as "every order has a customer".
+- **What does the outside service do?** A fake or recorded copy of the service the agent can call safely.
+- **Does it look and sound right while it runs?** A tap at the output: screen control, an audio capture, not a read of the file.
+- **Where was I? What do I actually know?** The working record, in a file.
 
 The Parasol Stars harness is one of these. It runs the remake and the original
 side by side and compares game state every frame. It isn't a unit test. It
@@ -282,7 +280,7 @@ top of it. Those checks used to need me. They don't, if the agent has the
 tool and the expectation that it will use it, but that has to be in the plan;
 nothing hands it over by default.
 
-### When you start
+## When you start
 
 **Build the check first and watch it fail for the right reason.** A test that
 fails with "module not found" proves the module doesn't exist yet, not that
@@ -316,7 +314,7 @@ so skip the step-by-step verification script; give them the checks, a clear
 definition of done, and the acceptance rule. Smaller and local models need the
 loop spelled out. A typo fix needs none of this.
 
-### While it runs
+## While it runs
 
 Most agent workflows keep a plan or a to-do list. That records what has been
 done. It doesn't record what's actually known, which is what you need when
@@ -372,7 +370,7 @@ check looks wrong, stop and say why.
 shouldn't turn into "done" on the way to the summary, and a requirement the
 agent invented shouldn't pass as one you gave it.
 
-### When it's stuck
+## When it's stuck
 
 **When it starts skipping around, ask what would tell the explanations
 apart.** An agent trying one plausible fix after another has stopped learning
@@ -396,7 +394,7 @@ ignores filters and a test that confirms it, and they agree. Write checks from
 the requirement, not the implementation, and look at a real output yourself at
 least once.
 
-### When you change your mind
+## When you change your mind
 
 On anything that takes more than a day I change my mind about what I
 wanted, because I see the thing and it isn't it. That isn't a failure of the
@@ -410,8 +408,14 @@ My remake is the example. It was mostly built with frontier models, but not
 from a prompt that said port this game. I gave them an emulator and a working
 environment, local models to generate art and assets, and the harness that
 compares the remake with the original every frame. I picked Godot because I
-knew it: cross-platform, exports to HTML, easy to build with. Inside that
-frame the models did a lot of good work. Then I asked for a 2.5D graphical
+knew it: cross-platform, exports to HTML, easy to build with.
+
+The question I led with was how to give the agent a way to know whether it
+was getting closer, without me playing whack-a-mole over every detail.
+Asking it to figure out what's inaccurate and fix it doesn't work; it has
+nothing to compare against. The frame-by-frame harness was the answer: a
+deterministic signal, cheap to run, that says how far off the remake is and
+where. Inside that frame the models did a lot of good work. Then I asked for a 2.5D graphical
 overhaul with no requirements, because I didn't have any. The models
 extruded 3D geometry out of the 2D sprites. It was horrible.
 
@@ -434,7 +438,7 @@ agent that helps you find your requirements while it builds: it says what it
 assumed, it says so at the point where the assumption changes the shape of
 the work, and it lists all of them at the end.
 
-### The prompt
+## The prompt
 
 A prompt that covers it:
 
@@ -456,7 +460,7 @@ When you're done, show the check output, list what you did not verify, and
 list the requirements you assumed.
 ```
 
-### What to build
+## What to build
 
 In your own projects: one command that checks everything and prints short
 output. Scripts that print current state for anything you'd otherwise
@@ -515,7 +519,7 @@ agent's self-check fooled you, I'd like to hear about it.
 The numbers behind the claims above, for anyone who wants them. Every model
 and benchmark here is from 2026 unless the date says otherwise.
 
-### A1. Toy code versus real code
+## A1. Toy code versus real code
 
 The classic test, CruxEval, asks a model to predict the output of a small
 Python function. By 2026 it had stopped separating models: one evaluation
@@ -551,7 +555,7 @@ twelve, and came last at picking out the most expensive method or line.
   <figcaption>Twelve models, 435 cases from SWE-bench Verified, June 2026. Data from Towards Evaluation of Implicit Software World Models in Coding LLMs.</figcaption>
 </figure>
 
-### A2. My lookahead run
+## A2. My lookahead run
 
 Qwen3.8-27B, a 4-bit MTPLX export served locally on an M5 Max: give it a
 short Python program and the variable state after one executed line, ask for
@@ -582,7 +586,7 @@ twenty minutes. The harness, the raw results, and the two runs that didn't
 work (a stale `mlx_lm`, and a server that ignored the thinking-off flag and
 reasoned into a token cap) are in the post's repository.
 
-### A3. Agents building to the test
+## A3. Agents building to the test
 
 In a June 2026 study, Copilot CLI agents running Claude Opus 4.7 and GPT-5.5
 were asked to port a React data table to Angular as a reusable library,
@@ -603,7 +607,7 @@ horizon at about 11 hours when cheating attempts were counted as failures and
 beyond 270 hours when they were counted as successes, and noted its detected
 cheating rate was the highest of any public model on their harness.
 
-### A4. Harnesses, horizons, and loops
+## A4. Harnesses, horizons, and loops
 
 Anthropic's March 2026 harness experiments: out of the box, Claude was a poor
 QA agent for its own work. Separating the agent doing the work from the agent
