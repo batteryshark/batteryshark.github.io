@@ -131,6 +131,14 @@ agent assumes the data import worked, it builds the chart, writes the summary,
 and polishes the report on top of an empty table. Each step looks finished,
 and all of them are wrong.
 
+That's the quantitative case. A lot of the direction on a real project is
+qualitative: you look at what came back, wrinkle your nose, and say eh, this
+isn't it, what about this. Make it tie into the theme. Make it land harder.
+Reframe it around that other thing. That happens constantly while building,
+and there's no check for it except a person looking at the output. The agent
+can't wrinkle its nose on your behalf, which is one more reason the output
+has to end up somewhere you'll look.
+
 ## The strongest models build their own checks
 
 As of October 2026, the strongest models don't deal with this by predicting
