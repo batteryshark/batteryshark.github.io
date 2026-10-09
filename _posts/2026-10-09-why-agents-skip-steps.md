@@ -24,10 +24,11 @@ no multitap, and it kept that configuration without comparing it to my
 emulator, which had the multitap on. I knew which setup I play on. It never
 came up.
 
-This post is about getting better results from agents on larger projects:
-the things I've found worth keeping in mind when I start something, while it
-runs, when it gets stuck, and when I change my mind about what I wanted,
-which on a long project I always do. The first half is why the gap exists.
+This post is about getting better results from agents on larger projects,
+the kind that run for weeks with twenty to fifty agents working at once, not
+one agent and a button: the things I've found worth keeping in mind when I
+start something, while it runs, when it gets stuck, and when I change my mind
+about what I wanted, which on a long project I always do. The first half is why the gap exists.
 If you already believe an agent can't see your machine, skip to
 [part two](#part-two-what-to-keep-in-mind).
 
