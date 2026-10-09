@@ -36,6 +36,11 @@ If you already believe an agent can't see your machine, skip to
 
 ## What stays in your head
 
+<figure>
+  <img src="/assets/images/20261009/00-in-your-head.png" alt="A person at a laptop glancing at a log, with a thought cloud above holding sticky notes and icons: DB is up, port 3000, changed the schema an hour ago, a flask for the legacy tests that flake on purpose, a chart from last month's sheet, a monitor with the sound crossed out, and a note that Sam owns the deploy script.">
+  <figcaption>All of it current, none of it written down.</figcaption>
+</figure>
+
 When you work on something you know, you carry a model of it. You know which
 services are up, what you changed an hour ago, which tests are flaky, and what
 the data usually looks like. Outside code it's the same. You know the chart
@@ -72,49 +77,9 @@ gets the change, and the facts and the checks stay with you. Working well with
 agents means handing those over too: the current state, written down, and a
 way to check results that the agent can run.
 
-## What the agent has instead
+## The context window is all it has
 
-**Its predictions are good on toy code and poor on real code.** Predicting
-the output of a small function is a solved problem, to the point that the
-classic benchmark for it was retired this year, and a September 2026 paper
-notes that an agent doesn't need to predict anyway when it can run the
-program. Fair for agents, and beside the point for the model: being able to
-run the program says nothing about how good its own picture is, which is
-what you're relying on every time it can't run the thing, or doesn't.
-
-Real repositories are a different story: on a September 2026
-benchmark built from instrumented test runs, the best of five models got 38%
-of the runtime questions right, and on a June 2026 benchmark the best of
-twelve models caught three quarters of the failing tests while most caught a
-third or less. On my own machine, a 27B model asked for the program state ten
-lines ahead got it right never with reasoning off and two thirds of the time
-with reasoning on, at twenty times the cost. The numbers are in the
-[appendix](#appendix-the-measurements).
-
-**It's optimistic about its own work.** In a 2026 Anthropic harness
-experiment, agents reliably graded their own work too generously, and the
-June 2026 benchmark's authors attribute its misses to a bias toward
-predicting that tests pass.
-
-**It can't see your state.** No training run puts your database, your
-environment variables, your library versions, or yesterday's edits into a
-model's weights. A perfect simulator would still need to know where to start.
-
-**It can't reliably tell when it's wrong without outside input.** Asking a
-model to review its work without running anything means it re-reads text it
-wrote a moment ago. Research from 2024 on self-correction found that without
-outside feedback, models often don't improve and sometimes get worse. With
-reliable feedback, an error message or a test result, self-correction works.
-
-The same limit holds at the other end of the speed range. TypeSafe AI's Jev,
-launched in September, is a System One model: hand it a state and a typed
-question and it returns a decision with a probability in one pass, no prose,
-no reasoning. That's useful for routing and triage, and the probability isn't
-evidence that the decision was right. It's the model's assessment of itself,
-which is the thing that can't be trusted without outside input. A fast
-decision still needs a check from outside the model.
-
-Put those together: the context window is the agent's working memory. If a
+The agent has none of that. Its context window is its working memory: if a
 fact isn't in it, the agent guesses or goes and gets it. Reasoning can tell
 it what should have happened. Only observation tells it what did. Compiler
 errors, test output, logs, screenshots, and query results are how the real
@@ -143,6 +108,10 @@ that without buying it a ring. That happens constantly while building,
 and there's no check for it except a person looking at the output. The agent
 can't wrinkle its nose on your behalf, which is one more reason the output
 has to end up somewhere you'll look.
+
+How far its own predictions go, and how well it judges its own work, is
+measured in [What the agent has instead](#what-the-agent-has-instead) near
+the end, with the numbers in the appendix.
 
 ## The strongest models build their own checks
 
@@ -576,6 +545,51 @@ mistakes" is not a check.
 The numbers are below for anyone who wants them. If you've built checks like
 these for your own work, or had an agent's self-check fool you, I'd like to
 hear about it.
+
+## What the agent has instead
+
+The facts behind part one, for anyone who wants them before the numbers.
+
+
+**Its predictions are good on toy code and poor on real code.** Predicting
+the output of a small function is a solved problem, to the point that the
+classic benchmark for it was retired this year, and a September 2026 paper
+notes that an agent doesn't need to predict anyway when it can run the
+program. Fair for agents, and beside the point for the model: being able to
+run the program says nothing about how good its own picture is, which is
+what you're relying on every time it can't run the thing, or doesn't.
+
+Real repositories are a different story: on a September 2026
+benchmark built from instrumented test runs, the best of five models got 38%
+of the runtime questions right ([A1](#a1-toy-code-versus-real-code)), and on a June 2026 benchmark the best of
+twelve models caught three quarters of the failing tests while most caught a
+third or less. On my own machine, a 27B model asked for the program state ten
+lines ahead got it right never with reasoning off and two thirds of the time
+with reasoning on, at twenty times the cost ([A2](#a2-my-lookahead-run)).
+
+**It's optimistic about its own work.** In a 2026 Anthropic harness
+experiment, agents reliably graded their own work too generously
+([A4](#a4-harnesses-horizons-and-loops)), and the
+June 2026 benchmark's authors attribute its misses to a bias toward
+predicting that tests pass.
+
+**It can't see your state.** No training run puts your database, your
+environment variables, your library versions, or yesterday's edits into a
+model's weights. A perfect simulator would still need to know where to start.
+
+**It can't reliably tell when it's wrong without outside input.** Asking a
+model to review its work without running anything means it re-reads text it
+wrote a moment ago. Research from 2024 on self-correction found that without
+outside feedback, models often don't improve and sometimes get worse. With
+reliable feedback, an error message or a test result, self-correction works.
+
+The same limit holds at the other end of the speed range. TypeSafe AI's Jev,
+launched in September, is a System One model: hand it a state and a typed
+question and it returns a decision with a probability in one pass, no prose,
+no reasoning. That's useful for routing and triage, and the probability isn't
+evidence that the decision was right. It's the model's assessment of itself,
+which is the thing that can't be trusted without outside input. A fast
+decision still needs a check from outside the model.
 
 ## Appendix: the measurements
 
