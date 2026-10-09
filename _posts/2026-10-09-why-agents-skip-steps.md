@@ -402,12 +402,10 @@ plan; part of the requirement gets discovered by building. The record above
 handles the mechanics: evidence expires, assumptions go back to assumed. The
 harder part is the requirement that was never written down at all.
 
-<!-- art slot: drop a generated 2.5D scene in as assets/images/20261009/11-remake-scene.png and replace this comment with:
 <figure>
-  <img src="/assets/images/20261009/11-remake-scene.png" alt="A 2.5D remake-style arcade platformer stage: pre-rendered characters and enemies on brick platforms with real depth, parallax background, dramatic lighting.">
+  <img src="/assets/images/20261009/11-remake-scene.jpg" alt="A 2.5D arcade platformer stage at sunset: a small hero with a striped parasol on a mossy stone bridge, bubble enemies, winged star enemies, gold coins over block platforms, waterfalls and a castle in the parallax background, and a score, lives, round and time HUD.">
   <figcaption>Roughly what I had in mind, and nothing like what came back.</figcaption>
 </figure>
-Prompt in fable-take.md. -->
 
 
 My remake is the example. It was mostly built with frontier models, but not
