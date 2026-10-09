@@ -1,15 +1,15 @@
 ---
 layout: post
-title: "Lessons From Running Fifty Agents at Once"
+title: "Lessons From Running a Swarm of Agents"
 date: 2026-10-09
-description: "Why agents skip steps, and what to keep in mind when you start something with a swarm of them, while it runs, when it gets stuck, and when you change your mind about what you wanted. From weeks-long projects with twenty to fifty agents building at once."
+description: "Why agents skip steps, and what to keep in mind when you start something with a swarm of them, while it runs, when it gets stuck, and when you change your mind about what you wanted. From weeks-long projects with anywhere from seven to fifty agents working at once."
 tags: [agents, ai-engineering, harness-design, tooling]
 toc: true
 image: /assets/images/20261009/social.png
 ---
 
 <figure>
-  <img src="/assets/images/20261009/banner.png" alt="Title art: the words Lessons From Running Fifty Agents at Once beside a sticky note of questions you answer for yourself labeled with questions you answer for yourself: migration ran? server up? column exists? which emulator config?">
+  <img src="/assets/images/20261009/banner.png" alt="Title art: the words Lessons From Running a Swarm of Agents beside a sticky note of questions you answer for yourself labeled with questions you answer for yourself: migration ran? server up? column exists? which emulator config?">
 </figure>
 
 In [my last post]({% post_url 2026-10-02-bug-hunting-in-retro-games %}), an
@@ -25,8 +25,9 @@ emulator, which had the multitap on. I knew which setup I play on. It never
 came up.
 
 This post is about getting better results from agents on larger projects,
-the kind that run for weeks with twenty to fifty agents working at once, not
-one agent and a button: the things I've found worth keeping in mind when I
+the kind that run for weeks with anywhere from seven to fifty agents working
+at once depending on whether the work is research, investigation, or
+building, not one agent and a button: the things I've found worth keeping in mind when I
 start something, while it runs, when it gets stuck, and when I change my mind
 about what I wanted, which on a long project I always do. The first half is why the gap exists.
 If you already believe an agent can't see your machine, skip to
@@ -232,9 +233,10 @@ assumed. Every requirement I didn't write down gets filled in by the model's
 judgment, and the work is finished before I see any of it.
 
 With one agent that's manageable. But past a toy example I'm not waiting on
-one agent to build anything moderately complex; I need twenty or fifty
-running at once, and what that trade costs is visibility into the small
-decisions. Each agent fills its gaps its own way, then they build on each
+one agent to build anything moderately complex; I need anywhere from seven
+to fifty running at once, depending on whether the work is research,
+investigation, or building, and what that trade costs is visibility into the
+small decisions. Each agent fills its gaps its own way, then they build on each
 other's fills, and the drift from what I thought I said grows exponentially
 with every hour nobody is watching.
 
@@ -590,10 +592,14 @@ third or less. On my own machine, a 27B model asked for the program state ten
 lines ahead got it right never with reasoning off and two thirds of the time
 with reasoning on, at twenty times the cost ([A2](#a2-my-lookahead-run)).
 
-None of this is a last-generation problem. On the one shared harness that
-runs every current model on Terminal-Bench 4.0, the best of them, Claude Opus
-5.5, finishes 65% of the tasks as of October 7, 2026; GPT-6 Astra finishes
-60% and Grok 4.7 29% ([A4](#a4-harnesses-horizons-and-loops)).
+The current generation isn't exempt, though the measure there is different.
+Terminal-Bench 4.0 is a completion benchmark, not a prediction one: 66
+realistic jobs in a sandboxed terminal, the agent gets bash with no step
+limit, and a verifier checks the end state after it stops. With every chance
+to run and check, the best current model, Claude Opus 5.5, finishes 65% of
+the jobs as of October 7, 2026; GPT-6 Astra 60%, Grok 4.7 29%
+([A4](#a4-harnesses-horizons-and-loops)). The two benchmarks above are the
+ones that measure prediction.
 
 **It's optimistic about its own work.** In a 2026 Anthropic harness
 experiment, agents reliably graded their own work too generously
@@ -742,8 +748,17 @@ tasks finished half the time (confidence interval 5 to 61 hours) and about
 1.5 hours for tasks finished 80% of the time, with the strongest agents
 having essentially saturated the Time Horizon 1.1 suite.
 
-Where the current models stand on one harness: Vals AI runs every model
-through the same minimal agent (mini-SWE-agent) on Terminal-Bench 4.0. As of
+Where the current models stand on one harness. Terminal-Bench 4.0 isn't a
+prediction benchmark and doesn't measure reading what you wanted: it's 66
+community-written tasks across software, science, ML, operations, hardware,
+security, and media, each a real deliverable (one example: speed up worker
+startup for a transaction pipeline), graded by a verifier that runs after
+the agent finishes, all or nothing, with the agent given bash, no step
+limit, and up to eight hours. It's here for two reasons: it's the one place
+every current model is run through the same harness, and it shows how often
+finishing happens when the agent can run anything it wants.
+
+Vals AI runs every model through the same minimal agent (mini-SWE-agent). As of
 October 7, 2026, Claude Opus 5.5 leads at 65%, with Claude Sonnet 5.5 at 64%,
 GPT-6 Astra at 60%, Claude Fable 5.1 at 58%, GPT-6.1 Sol at 55%, GLM 5.3 at
 39%, Grok 4.7 at 29%, DeepSeek V4.1 Flash at 20%, and Kimi K3 at 17%. The
