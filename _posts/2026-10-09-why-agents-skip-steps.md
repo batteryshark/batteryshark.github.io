@@ -54,8 +54,8 @@ at how people write tasks for agents:
 - Hook the API up to the database.
 - Make the checkout page look better on mobile.
 - Clean up my downloads folder.
-- You are a senior engineer who never makes mistakes and checks everything
-  before starting, blah blah blah. Hook the API up to the database.
+- You are a senior engineer at a top FAANG company who never makes
+  mistakes... blah blah blah.
 
 Each one describes a change. None says what the current state is, or how
 anyone would know the change worked. The person writing it might know both
@@ -555,7 +555,8 @@ the generic article you have already read ten times.
 
 If you take one thing from this, take the question: before you hand an agent
 a task, how will either of you know it worked? If you take two, the second is
-that "you are a senior engineer who never makes mistakes" is not a check.
+that "you are a senior engineer at a top FAANG company who never makes
+mistakes" is not a check.
 
 The numbers are below for anyone who wants them. If you've built checks like
 these for your own work, or had an agent's self-check fool you, I'd like to
