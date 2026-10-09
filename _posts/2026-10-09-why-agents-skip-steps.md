@@ -320,10 +320,10 @@ loop spelled out. A typo fix needs none of this.
 This is where the scale bites. With one agent I can follow the thread: I
 see it hit a problem or build something I didn't expect, and I step in. With
 twenty running at once I can't. They're making decisions I have no idea
-about, in parallel, all day. The record and the checks are what scale; my
-attention doesn't. Each agent writes down what it observed and what it
-assumed, each result gets checked before anything builds on it, and I read
-the misses instead of watching the work.
+about, in parallel, all day. I can't watch twenty things, so the record and
+the checks have to do it for me: each agent writes down what it observed and
+what it assumed, each result gets checked before anything builds on it, and
+I read the misses.
 
 Most agent workflows keep a plan or a to-do list. That records what has been
 done. It doesn't record what's actually known, which is what you need when
