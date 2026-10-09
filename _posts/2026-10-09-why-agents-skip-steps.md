@@ -10,7 +10,7 @@ image: /assets/images/20261009/social.png
 
 <figure>
   <img src="/assets/images/20261009/banner.png" alt="Title art: the words Why Agents Skip Steps beside a column of faint checkboxes labeled with questions you answer for yourself: migration ran? server up? column exists? which emulator config?">
-  <figcaption>The questions you answer for yourself, and the agent cannot.</figcaption>
+  <figcaption>Title art: a checklist of the questions you answer for yourself while you work.</figcaption>
 </figure>
 
 In [my last post]({% post_url 2026-10-02-bug-hunting-in-retro-games %}), an
@@ -22,8 +22,8 @@ something was off, and I made a bet on it.
 
 The agent had built the remake's enemy logic against an emulator harness with
 no multitap, and it kept that configuration without comparing it to my
-emulator, which had the multitap on. Nobody had compared the two. The fact that would have settled
-it, which setup I actually play on, was something I knew and never said.
+emulator, which had the multitap on. The fact that would have settled it,
+which setup I actually play on, was something I knew and never said.
 
 This post is about that gap. It's less about how smart the model is than
 about how we hand work to it. We describe the change we want and leave out the
@@ -57,7 +57,7 @@ obvious. They would look.
 
 <figure>
   <img src="/assets/images/20261009/01-handoff.png" alt="Diagram: a task card that says Hook the API up to the database is handed to an agent. Above the person, a thought cloud holds the facts that are not on the card: the DB is up, the migration might not have run, port 3000, the legacy tests fail on purpose.">
-  <figcaption>The request describes the change. The facts you would check it against are not on it.</figcaption>
+  <figcaption>Diagram: the request card carries the change; the facts you'd check it against stay in the thought cloud.</figcaption>
 </figure>
 
 An agent can't look unless you gave it something to look with. So the request
@@ -119,7 +119,8 @@ A June 2026 benchmark took 435 cases from SWE-bench Verified and asked twelve
 models, frontier ones included, whether a test would pass. GPT-5.5 caught 74%
 of the failing tests. Claude Opus 4.7 caught 35%, Qwen3.5-397B 32%, and Qwen3-30B 2.5%. The authors attribute the
 misses to a bias toward predicting that tests pass. Asked which method or line
-would use the most time or memory, no model's recall at five reached 0.2.
+would use the most time or memory, none of the twelve reached a recall at
+five of 0.2.
 
 <figure>
   <img src="/assets/images/20261009/02-real-code.png" alt="Bar chart of the share of failing tests each model caught when predicting test outcomes on real repository code: gpt-5.5 73.5%, gpt-oss-120b 49.5%, gpt-5-mini 39.5%, claude-sonnet-4-6 39%, claude-opus-4-7 34.5%, Qwen3.5-397B 32%, gpt-5.2 27%, gpt-5.4 23.5%, CWM 21%, claude-haiku-4-5 18.5%, Qwen3-235B 8%, Qwen3-30B 2.5%.">
@@ -159,7 +160,7 @@ and all of them are wrong.
 
 None of this is news to agent researchers. ReAct paired model reasoning with
 actions and observations in 2022. What hasn't happened is the habit moving
-out of papers and into how everyone hands off work.
+out of papers and into everyday practice.
 
 ## The strongest models build their own checks
 
@@ -309,7 +310,7 @@ would settle the assumption that matters most right now.
 
 <figure>
   <img src="/assets/images/20261009/06-working-record.png" alt="A working record for adding a download CSV button to a filtered dashboard. Goal: the download contains exactly the records the current filters show. Observed: test dataset with filter region=EU shows 12 records. Assumed, not checked: the export request includes the active filters. Depends on it: everything about whether the file is right. Next check: inspect the export request, then parse the file and compare its record IDs with the 12 expected. Two arrows from a mismatch: no filters in the request points at the button-to-endpoint path; request right but file wrong points at the export.">
-  <figcaption>A working record for one task, and where each kind of mismatch points.</figcaption>
+  <figcaption>The working record for the CSV export task, with the two places a failed check points.</figcaption>
 </figure>
 
 Without the record, a wrong file sends the agent through unrelated fixes:
@@ -346,7 +347,7 @@ shows the agent a difference that it couldn't have predicted from the code.
 
 <figure>
   <img src="/assets/images/20261002/01-same-inputs.png" alt="Two rows of screenshots from Parasol Stars round 1-5 at 10, 25 and 50 seconds. With a TurboTap the triangle enemies stay inside their brick maze; with one pad they leak out through the walls.">
-  <figcaption>Same save state, same input, one configuration change. The comparison harness is what made this visible.</figcaption>
+  <figcaption>Same save state, same input, one configuration change, seen through the comparison harness.</figcaption>
 </figure>
 
 The same idea works away from code. Reorganizing 8,000 photos: write a
@@ -364,7 +365,7 @@ proves the setting changed, not that you can hear anything.
 
 <figure>
   <img src="/assets/images/20261009/07-scope.png" alt="Three pairs. What the check proves versus what you wanted to know: the file downloaded versus the right records downloaded; the document saved versus the document is correct; the output device changed versus you can hear sound.">
-  <figcaption>What a passing check proves, next to what you wanted to know.</figcaption>
+  <figcaption>Three passing checks, each shown next to the question it doesn't answer.</figcaption>
 </figure>
 
 The worst case is a check written from the same misunderstanding as the code.
@@ -506,7 +507,7 @@ The log matters for another reason. People remember the hits and forget the
 misses. An agent that does one surprising thing well leaves a stronger
 impression than the ten routine failures around it, and the failures turn
 into ordinary days. Engineers surface the hits, managers see the hit rate, and
-nobody sees the misses. I'm not immune. I have a skill pack that Codex has
+the misses never make it into the summary. I'm not immune. I have a skill pack that Codex has
 been writing for four days, about 280 skills, and I don't know if any of it
 is any good, because nothing checks it. A record of what was verified and what
 wasn't is the only account that keeps the misses in it.
