@@ -134,8 +134,8 @@ and all of them are wrong.
 That's the quantitative case. A lot of the direction on a real project is
 qualitative: you look at what came back, wrinkle your nose, and say eh, this
 isn't it, what about this. The page doesn't pop. The enemy shows up too
-early. The animation is right but the timing feels off. The error message is
-technically accurate and nobody would understand it. That happens constantly
+early. The animation is right but the timing feels off. The settings menu
+works and it's three clicks too deep. That happens constantly
 while building,
 and there's no check for it except a person looking at the output. The agent
 can't wrinkle its nose on your behalf, which is one more reason the output
