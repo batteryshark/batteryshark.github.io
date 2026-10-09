@@ -412,7 +412,12 @@ My remake is the example. It was mostly built with frontier models, but not
 from a prompt that said port this game. I gave them an emulator and a working
 environment, local models to generate art and assets, and the harness that
 compares the remake with the original every frame. I picked Godot because I
-knew it: cross-platform, exports to HTML, easy to build with.
+knew it: cross-platform, easy to build with, and it exports to HTML. The HTML
+part did more work than I expected. Models are very good at web pages, and
+most harnesses can drive Chrome over its debug protocol, so an HTML build
+gives the agent a whole environment to guess, check, and sort out its own
+mistakes in a browser tab it controls. It also means my machine isn't
+covered in game windows while it tests.
 
 The question I led with was how to give the agent a way to know whether it
 was getting closer, without me playing whack-a-mole over every detail.
