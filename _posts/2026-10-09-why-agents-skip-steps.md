@@ -120,10 +120,16 @@ and all of them are wrong.
 As of October 2026, the strongest models don't deal with this by predicting
 harder. They build checks. I've watched it happen. On a recompilation project
 before this one, the audio skipped when a certain part of a stage started,
-and I couldn't explain it. The model tapped the audio output while the game
-ran and did spectral analysis on the stream to find where the hiccup was.
-Reading the file wouldn't have shown it; the glitch only existed at runtime,
-so it built a monitor at the end of the line.
+and I couldn't explain it. The cause turned out to be the process freezing
+while it waited for the window to become responsive, which meant nothing
+inside the process could see the gap: its threads were stopped, so from its
+point of view no time had passed. Logging from the code would have shown
+nothing.
+
+The model built a monitor in a separate process that tapped the audio output
+while the game ran and did spectral analysis on the stream, and that found
+the hiccup. That was where I noticed it couldn't see what I could see, and
+that I'd been assuming it could.
 
 Claude Opus 5's launch examples are the same move: asked to rebuild a machine part from a drawing it couldn't
 view, it wrote its own computer vision pipeline; asked to build a market data
