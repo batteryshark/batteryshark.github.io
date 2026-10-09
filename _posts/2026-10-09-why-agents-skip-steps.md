@@ -402,7 +402,13 @@ plan; part of the requirement gets discovered by building. The record above
 handles the mechanics: evidence expires, assumptions go back to assumed. The
 harder part is the requirement that was never written down at all.
 
-<!-- art slot: an AI-generated 2.5D action-game scene (a retro arcade stage reimagined with depth, lighting and parallax) goes here as a <figure>; see fable-take.md for the prompt. -->
+<!-- art slot: drop a generated 2.5D scene in as assets/images/20261009/11-remake-scene.png and replace this comment with:
+<figure>
+  <img src="/assets/images/20261009/11-remake-scene.png" alt="A 2.5D remake-style arcade platformer stage: pre-rendered characters and enemies on brick platforms with real depth, parallax background, dramatic lighting.">
+  <figcaption>Roughly what I had in mind, and nothing like what came back.</figcaption>
+</figure>
+Prompt in fable-take.md. -->
+
 
 My remake is the example. It was mostly built with frontier models, but not
 from a prompt that said port this game. I gave them an emulator and a working
@@ -511,8 +517,15 @@ a check of every number against its paper, and one measurement I ran myself.
 None of that is prompting. It's the pipeline, and without it the result is
 the generic article you have already read ten times.
 
-If you have built checks like these for your own work, or hit a case where an
-agent's self-check fooled you, I'd like to hear about it.
+## Sign-off
+
+If you take one thing from this, take the question: before you hand an agent
+a task, how will either of you know it worked? If you take two, the second is
+that "you are a senior engineer who never makes mistakes" is not a check.
+
+The numbers are below for anyone who wants them. If you've built checks like
+these for your own work, or had an agent's self-check fool you, I'd like to
+hear about it.
 
 ## Appendix: the measurements
 
