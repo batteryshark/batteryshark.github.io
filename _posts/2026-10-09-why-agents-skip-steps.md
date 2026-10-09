@@ -65,20 +65,24 @@ transcribe into an actionable plan; it's the same reason people who are great
 at a thing are often bad at teaching it. So when we delegate, the model stays
 where it is. Look at how people write tasks for agents:
 
-- Hook the API up to the database.
-- Make the checkout page look better on mobile.
-- Clean up my downloads folder.
+- Port this game to Godot and make the enemies feel like the original.
+- Map the security posture of this scope and tell me what matters.
+- Fix the audio skip at the start of stage 3.
+- Automate the weekly numbers report.
 - You are a senior engineer at a top FAANG company who never makes
   mistakes... blah blah blah.
 
-Each one describes a change. None says what the current state is, or how
-anyone would know the change worked. The person writing it might know both
-and not think to say them, or might not have thought about either. They know
-what they want, and that's what goes on the card.
+Each one names an outcome. None says what the current state is, what would
+count as right, how anyone would know, or how to tell halfway through that
+it's on the right track. The person writing it knows a lot of that: which
+emulator setting is the real one, which findings are worth a weekend, what
+the skip sounds like, which column is always wrong on Mondays. Some of it
+they'd say if asked. Some of it they've never put into words. They know what
+they want, and that's what goes on the card.
 
 <figure>
-  <img src="/assets/images/20261009/01-handoff.png" alt="Diagram: a task card that says Hook the API up to the database is handed to an agent. Above the person, a thought cloud holds the facts that are not on the card: the DB is up, the migration might not have run, port 3000, the legacy tests fail on purpose.">
-  <figcaption>Port 3000 and the migration never make it onto the card.</figcaption>
+  <img src="/assets/images/20261009/01-handoff.png" alt="A task card that says Port this game to Godot is handed to an agent at a terminal. Above the person, a thought cloud holds the facts that are not on the card: I play with the multitap on, enemies move one pixel per frame, round 1-5 is a flood room, compare every frame with the original.">
+  <figcaption>The multitap setting never makes it onto the card.</figcaption>
 </figure>
 
 An agent can't look unless you gave it something to look with. So the request
