@@ -205,8 +205,10 @@ smaller or local model is the cheapest upgrade available.
 
 ### A check can't tell you what you wanted
 
-A colleague who runs these things all day pushes back on this. In his view,
-loops and goals are crutches, a way of failing upward at a cost, and the real
+A colleague pushes back on this, and I take his view seriously: a principal
+engineer at a major software company, a few decades into building things,
+and all in on getting these models to build them the way he wants them
+built. In his view, loops and goals are crutches, a way of failing upward at a cost, and the real
 work is the design up front. His plans read like hand-held pseudocode where
 an algorithm matters and detailed prose where it doesn't, with the data model
 and the state model written out. It's more work, and what comes back is what
