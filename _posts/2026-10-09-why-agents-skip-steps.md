@@ -2,7 +2,7 @@
 layout: post
 title: "Why Agents Skip Steps"
 date: 2026-10-09
-description: "An agent can't see the state of your machine, and even the best current models are unreliable at predicting what real code will do when it runs. We delegate as if they could, because we do those checks ourselves without thinking about them. What that means for how to hand off work, and what to build so an agent can check its own results."
+description: "An agent can't see the state of your machine, and even the best current models are unreliable at predicting what real code will do when it runs. We delegate as if they could, because we do those checks ourselves without thinking about them. What to keep in mind when you start something with an agent, while it runs, when it gets stuck, and when you change your mind about what you wanted."
 tags: [agents, ai-engineering, harness-design, tooling]
 toc: true
 image: /assets/images/20261009/social.png
@@ -24,12 +24,16 @@ no multitap, and it kept that configuration without comparing it to my
 emulator, which had the multitap on. I knew which setup I play on. It never
 came up.
 
-This post is about that gap. It's less about how smart the model is than
-about how we hand work to it. We describe the change we want and leave out the
-facts we'd check it against, because we check them ourselves without
-thinking about it.
+This post is about getting better results from agents on larger projects:
+the things I've found worth keeping in mind when I start something, while it
+runs, when it gets stuck, and when I change my mind about what I wanted,
+which on a long project I always do. The first half is why the gap exists.
+If you already believe an agent can't see your machine, skip to
+[what to keep in mind](#what-to-keep-in-mind).
 
-## What stays in your head
+## Why the gap exists
+
+### What stays in your head
 
 When you work on something you know, you carry a model of it. You know which
 services are up, what you changed an hour ago, which tests are flaky, and what
@@ -67,7 +71,7 @@ gets the change, and the facts and the checks stay with you. Working well with
 agents means handing those over too: the current state, written down, and a
 way to check results that the agent can run.
 
-## What the agent has instead
+### What the agent has instead
 
 **Its predictions are good on toy code and poor on real code.** Predicting
 the output of a small function is a solved problem, to the point that the
@@ -124,7 +128,7 @@ agent assumes the data import worked, it builds the chart, writes the summary,
 and polishes the report on top of an empty table. Each step looks finished,
 and all of them are wrong.
 
-## The strongest models build their own checks
+### The strongest models build their own checks
 
 As of October 2026, the strongest models don't deal with this by predicting
 harder. They build checks. I've watched it happen. On a recompilation project
@@ -166,7 +170,7 @@ at runtime. On the June 2026 benchmark it finished in the bottom half. A
 model that predicted perfectly would still not know the state of your
 machine.
 
-## Why this won't close soon
+### Why this won't close soon
 
 - **Your state isn't in the weights.** Any model, of any design, has to
   observe your system to know what's true in it.
@@ -185,7 +189,7 @@ program state across steps and knows when that picture is uncertain. That's a
 different kind of model from what we have. Even then, it would reduce how
 often an agent needs to check, not remove the need to look.
 
-## A feedback loop is worth more than a bigger model
+### A feedback loop is worth more than a bigger model
 
 If checks are what make agents reliable, you can buy reliability with checks
 instead of model size. My own run is the smallest version of this: the same
@@ -199,7 +203,7 @@ The limits: the model still has to turn the signal into a fix, a wrong checker s
 can cost more than one good one. Within those limits, a loop built for a
 smaller or local model is the cheapest upgrade available.
 
-## A check can't tell you what you wanted
+### A check can't tell you what you wanted
 
 A colleague who runs these things all day pushes back on this. In his view,
 loops and goals are crutches, a way of failing upward at a cost, and the real
@@ -228,77 +232,14 @@ assumed. Every requirement I didn't write down gets filled in by the model's
 judgment, and the work is finished before I see any of it. The gap is between
 the work it did and the work I wanted, and a passing check doesn't close it.
 
-## The remake, and the overhaul I never specified
+## What to keep in mind
 
-<!-- art slot: an AI-generated 2.5D action-game scene (a retro arcade stage reimagined with depth, lighting and parallax) goes here as a <figure>; see fable-take.md for the prompt. -->
+This is the half to use. Four moments on any project longer than a day:
+when you start, while it runs, when it gets stuck, and when you change your
+mind about what you wanted. First, what a check can be, because most of what
+follows depends on having one.
 
-My remake is the example. It was mostly built with frontier models, but not
-from a prompt that said port this game. I gave them an emulator and a working
-environment, local models to generate art and assets, and the harness that
-compares the remake with the original every frame. I picked Godot because I
-knew it: cross-platform, exports to HTML, easy to build with. Inside that
-frame the models did a lot of good work. Then I asked for a 2.5D graphical
-overhaul with no requirements, because I didn't have any. The models
-extruded 3D geometry out of the 2D sprites. It was horrible.
-
-<figure>
-  <img src="/assets/images/20261009/09-asked-wanted.png" alt="Diagram of the 2.5D request. In the person's head, a sticky note says what I wanted: looks like a studio with a budget reimagined it, with art direction, pipeline and tooling marked as never written down. The task card says 2.5D graphical overhaul. The agent returns a card showing the flat pixel sprite next to the same sprite extruded into blocks, marked done with a check and wanted with a question mark.">
-  <figcaption>Every check passed. The sprite got thicker.</figcaption>
-</figure>
-
-To get what a studio with a budget would produce, I'd have to supply the
-tooling, the direction, and a production pipeline for turning a retro game
-into something that looks designed. Frontier models can do a lot and there's
-headroom there. But even if they can do it, will the assumptions they make be
-the ones I want? And if they are, is the way they get there any good? I have
-no way to tell.
-
-Anthropic's guide for Opus 5 now ships a prompt to hold the model to the
-scope you asked for and to check in when different readings of the request
-would lead to materially different work. The useful version of that is an
-agent that helps you find your requirements while it builds: it says what it
-assumed, it says so at the point where the assumption changes the shape of
-the work, and it lists all of them at the end.
-
-## Track what's known, not what's done
-
-Most agent workflows keep a plan or a to-do list. That records what has been
-done. It doesn't record what's actually known, which is what you need when
-something goes wrong.
-
-For any task with several dependent steps, have the agent keep a short working
-record: the goal, what has been observed and how, what's assumed but not yet
-checked, which later steps depend on each assumption, and the one check that
-would settle the assumption the next step depends on.
-
-<figure>
-  <img src="/assets/images/20261009/06-working-record.png" alt="A working record for adding a download CSV button to a filtered dashboard. Goal: the download contains exactly the records the current filters show. Observed: test dataset with filter region=EU shows 12 records. Assumed, not checked: the export request includes the active filters. Depends on it: everything about whether the file is right. Next check: inspect the export request, then parse the file and compare its record IDs with the 12 expected. Two arrows from a mismatch: no filters in the request points at the button-to-endpoint path; request right but file wrong points at the export.">
-  <figcaption>Without this, the next move after a wrong file is "try something else."</figcaption>
-</figure>
-
-Without the record, a wrong file sends the agent through unrelated fixes:
-tweak the button, rewrite the query, restyle the CSV. With it, a mismatch
-points somewhere. If the request has no filters, the bug is between the button
-and the endpoint. If the request is right and the file is wrong, the bug is in
-the export. Either way one assumption gets crossed off and the next move has a
-reason.
-
-The record also lets evidence expire. A check on yesterday's build says nothing
-about today's, so when something a check relied on changes, that fact goes
-back to assumed.
-
-This record is the external working memory. Logs and test output are raw
-observations. The record holds what they mean for the task.
-
-I keep a skill for this,
-[project-tracker](https://github.com/batteryshark/skill-tap/tree/main/skills/productivity/project-tracker):
-one Markdown dashboard per project with the current objective, status,
-attempts, decisions, open questions, and next actions, with observed facts
-kept separate from theories and unknowns. I'm not pitching it. It's a
-collection of the things I kept finding myself tracking in larger projects,
-iterated on now and then, and it has been useful on the bigger ones.
-
-## Checks are not only tests
+### Checks are not only tests
 
 Tests are one kind of check. The job is to make the things you'd check
 yourself available to the agent as text it can ask for.
@@ -339,23 +280,7 @@ top of it. Those checks used to need me. They don't, if the agent has the
 tool and the expectation that it will use it, but that has to be in the plan;
 nothing hands it over by default.
 
-Every check has a scope, and it's easy to ask the wrong question. "The file
-downloaded" isn't "the right records downloaded." Reopening a document proves
-it saved, not that it says the right things. Reading back an audio setting
-proves the setting changed, not that you can hear anything.
-
-<figure>
-  <img src="/assets/images/20261009/07-scope.png" alt="Three pairs. What the check proves versus what you wanted to know: the file downloaded versus the right records downloaded; the document saved versus the document is correct; the output device changed versus you can hear sound.">
-  <figcaption>All three pass. None of them answers the question you had.</figcaption>
-</figure>
-
-The worst case is a check written from the same misunderstanding as the code.
-If the agent believes exports should ignore filters, it writes an export that
-ignores filters and a test that confirms it, and they agree. Write checks from
-the requirement, not the implementation, and look at a real output yourself at
-least once.
-
-## Ask how you will know before you ask for the change
+### When you start
 
 **Build the check first and watch it fail for the right reason.** A test that
 fails with "module not found" proves the module doesn't exist yet, not that
@@ -384,6 +309,49 @@ judge of its own work; a separate judging agent with a real browser was the
 strongest lever they found. A dev environment, sample data, a browser, and
 read-only logs beat paragraphs of instructions.
 
+**Match the effort to the model.** Frontier models already check their work,
+so skip the step-by-step verification script; give them the checks, a clear
+definition of done, and the acceptance rule. Smaller and local models need the
+loop spelled out. A typo fix needs none of this.
+
+### While it runs
+
+Most agent workflows keep a plan or a to-do list. That records what has been
+done. It doesn't record what's actually known, which is what you need when
+something goes wrong.
+
+For any task with several dependent steps, have the agent keep a short working
+record: the goal, what has been observed and how, what's assumed but not yet
+checked, which later steps depend on each assumption, and the one check that
+would settle the assumption the next step depends on.
+
+<figure>
+  <img src="/assets/images/20261009/06-working-record.png" alt="A working record for adding a download CSV button to a filtered dashboard. Goal: the download contains exactly the records the current filters show. Observed: test dataset with filter region=EU shows 12 records. Assumed, not checked: the export request includes the active filters. Depends on it: everything about whether the file is right. Next check: inspect the export request, then parse the file and compare its record IDs with the 12 expected. Two arrows from a mismatch: no filters in the request points at the button-to-endpoint path; request right but file wrong points at the export.">
+  <figcaption>Without this, the next move after a wrong file is "try something else."</figcaption>
+</figure>
+
+Without the record, a wrong file sends the agent through unrelated fixes:
+tweak the button, rewrite the query, restyle the CSV. With it, a mismatch
+points somewhere. If the request has no filters, the bug is between the button
+and the endpoint. If the request is right and the file is wrong, the bug is in
+the export. Either way one assumption gets crossed off and the next move has a
+reason.
+
+The record also lets evidence expire. A check on yesterday's build says nothing
+about today's, so when something a check relied on changes, that fact goes
+back to assumed.
+
+This record is the external working memory. Logs and test output are raw
+observations. The record holds what they mean for the task.
+
+I keep a skill for this,
+[project-tracker](https://github.com/batteryshark/skill-tap/tree/main/skills/productivity/project-tracker):
+one Markdown dashboard per project with the current objective, status,
+attempts, decisions, open questions, and next actions, with observed facts
+kept separate from theories and unknowns. I'm not pitching it. It's a
+collection of the things I kept finding myself tracking in larger projects,
+iterated on now and then, and it has been useful on the bigger ones.
+
 **Check before you build on it.** Not after every edit; before a result
 becomes the foundation for more work. The data import before the analysis, the
 schema before the API.
@@ -398,20 +366,73 @@ measurement of it (appendix). Tests can be wrong too, so the rule isn't
 acceptance checks out of the agent's reach, hold some back, and tell it: if a
 check looks wrong, stop and say why.
 
+**End with what wasn't checked and what was assumed.** "Probably works"
+shouldn't turn into "done" on the way to the summary, and a requirement the
+agent invented shouldn't pass as one you gave it.
+
+### When it's stuck
+
 **When it starts skipping around, ask what would tell the explanations
 apart.** An agent trying one plausible fix after another has stopped learning
 from its attempts. Ask which observation would show which explanation is
 right. If two attempts teach it nothing new, it should change how it's
 investigating or say what's blocking it.
 
-**End with what wasn't checked and what was assumed.** "Probably works"
-shouldn't turn into "done" on the way to the summary, and a requirement the
-agent invented shouldn't pass as one you gave it.
+Every check has a scope, and it's easy to ask the wrong question. "The file
+downloaded" isn't "the right records downloaded." Reopening a document proves
+it saved, not that it says the right things. Reading back an audio setting
+proves the setting changed, not that you can hear anything.
 
-**Match the effort to the model.** Frontier models already check their work,
-so skip the step-by-step verification script; give them the checks, a clear
-definition of done, and the acceptance rule. Smaller and local models need the
-loop spelled out. A typo fix needs none of this.
+<figure>
+  <img src="/assets/images/20261009/07-scope.png" alt="Three pairs. What the check proves versus what you wanted to know: the file downloaded versus the right records downloaded; the document saved versus the document is correct; the output device changed versus you can hear sound.">
+  <figcaption>All three pass. None of them answers the question you had.</figcaption>
+</figure>
+
+The worst case is a check written from the same misunderstanding as the code.
+If the agent believes exports should ignore filters, it writes an export that
+ignores filters and a test that confirms it, and they agree. Write checks from
+the requirement, not the implementation, and look at a real output yourself at
+least once.
+
+### When you change your mind
+
+On anything that takes more than a day I change my mind about what I
+wanted, because I see the thing and it isn't it. That isn't a failure of the
+plan; part of the requirement gets discovered by building. The record above
+handles the mechanics: evidence expires, assumptions go back to assumed. The
+harder part is the requirement that was never written down at all.
+
+<!-- art slot: an AI-generated 2.5D action-game scene (a retro arcade stage reimagined with depth, lighting and parallax) goes here as a <figure>; see fable-take.md for the prompt. -->
+
+My remake is the example. It was mostly built with frontier models, but not
+from a prompt that said port this game. I gave them an emulator and a working
+environment, local models to generate art and assets, and the harness that
+compares the remake with the original every frame. I picked Godot because I
+knew it: cross-platform, exports to HTML, easy to build with. Inside that
+frame the models did a lot of good work. Then I asked for a 2.5D graphical
+overhaul with no requirements, because I didn't have any. The models
+extruded 3D geometry out of the 2D sprites. It was horrible.
+
+<figure>
+  <img src="/assets/images/20261009/09-asked-wanted.png" alt="Diagram of the 2.5D request. In the person's head, a sticky note says what I wanted: looks like a studio with a budget reimagined it, with art direction, pipeline and tooling marked as never written down. The task card says 2.5D graphical overhaul. The agent returns a card showing the flat pixel sprite next to the same sprite extruded into blocks, marked done with a check and wanted with a question mark.">
+  <figcaption>Every check passed. The sprite got thicker.</figcaption>
+</figure>
+
+To get what a studio with a budget would produce, I'd have to supply the
+tooling, the direction, and a production pipeline for turning a retro game
+into something that looks designed. Frontier models can do a lot and there's
+headroom there. But even if they can do it, will the assumptions they make be
+the ones I want? And if they are, is the way they get there any good? I have
+no way to tell.
+
+Anthropic's guide for Opus 5 now ships a prompt to hold the model to the
+scope you asked for and to check in when different readings of the request
+would lead to materially different work. The useful version of that is an
+agent that helps you find your requirements while it builds: it says what it
+assumed, it says so at the point where the assumption changes the shape of
+the work, and it lists all of them at the end.
+
+### The prompt
 
 A prompt that covers it:
 
@@ -433,7 +454,7 @@ When you're done, show the check output, list what you did not verify, and
 list the requirements you assumed.
 ```
 
-## What to build
+### What to build
 
 In your own projects: one command that checks everything and prints short
 output. Scripts that print current state for anything you'd otherwise
