@@ -47,6 +47,12 @@ the data usually looks like. Outside code it's the same. You know the chart
 came from last month's spreadsheet, and that the sound stopped after you
 plugged in the new monitor.
 
+It isn't only facts. The model is also what you expect: this call is fast,
+that service drops connections under load, the build takes four minutes, the
+cache is probably stale. You run on those assumptions without noticing
+they're assumptions, right or wrong, and most problem-solving is comparing
+what happened to what you expected and chasing the difference.
+
 You check your work against that model all the time without thinking of it as
 checking: a glance at a log, a quick run because something looks off. The
 model is often wrong, which is why you also keep notes, open a debugger, and
