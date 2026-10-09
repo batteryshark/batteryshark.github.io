@@ -17,7 +17,7 @@ In [my last post]({% post_url 2026-10-02-bug-hunting-in-retro-games %}), an
 agent found a bug in Parasol Stars by running the original ROM twice with one
 change and comparing memory frame by frame. I only looked because I happened
 to play that room in the remake and it felt wrong: harder than I remembered,
-in a way that did not seem intentional. I had no proof, just a guess that
+in a way that didn't seem intentional. I had no proof, just a guess that
 something was off, and I made a bet on it.
 
 The agent had built the remake's enemy logic against an emulator harness with
@@ -25,7 +25,7 @@ no multitap, and it kept that configuration without comparing it to my
 emulator, which had the multitap on. Nobody had compared the two. The fact that would have settled
 it, which setup I actually play on, was something I knew and never said.
 
-This post is about that gap. It is less about how smart the model is than
+This post is about that gap. It's less about how smart the model is than
 about how we hand work to it. We describe the change we want and leave out the
 facts we would check it against, because we check them ourselves without
 thinking about it.
@@ -34,7 +34,7 @@ thinking about it.
 
 When you work on something you know, you carry a model of it. You know which
 services are up, what you changed an hour ago, which tests are flaky, and what
-the data usually looks like. Outside code it is the same. You know the chart
+the data usually looks like. Outside code it's the same. You know the chart
 came from last month's spreadsheet, and that the sound stopped after you
 plugged in the new monitor.
 
@@ -44,7 +44,7 @@ model is often wrong, which is why you also keep notes, open a debugger, and
 ask a coworker. But the tracking and the checking happen whether you plan them
 or not.
 
-Because that work costs nothing, we do not plan for it when we delegate. Look
+Because that work costs nothing, we don't plan for it when we delegate. Look
 at how people write tasks for agents:
 
 - Hook the API up to the database.
@@ -60,14 +60,14 @@ obvious. They would look.
   <figcaption>The request describes the change. The facts you would check it against are not on it.</figcaption>
 </figure>
 
-An agent cannot look unless you gave it something to look with. So the request
+An agent can't look unless you gave it something to look with. So the request
 gets the change, and the facts and the checks stay with you. Working well with
 agents means handing those over too: the current state, written down, and a
 way to check results that the agent can run.
 
 ## What the agent has instead
 
-It is tempting to say the model has no internal picture of the program at all.
+It's tempting to say the model has no internal picture of the program at all.
 It has one, and the details of how far it reaches matter.
 
 **Its predictions are good on toy code and poor on real code.** The classic
@@ -78,7 +78,7 @@ saturated, and a benchmark paper from late September 2026 says the format is
 no longer suitable for coding agents at all, because an agent can run the
 program instead of reasoning about it.
 
-That paper, Codoku, replaced it with puzzles an agent cannot run its way out
+That paper, Codoku, replaced it with puzzles an agent can't run its way out
 of: fill in typed blanks in a partial program so that global constraints
 hold. Claude Opus 5 solved 77% of the
 small puzzles and 50% of the large ones. GPT-5.6 Sol solved 67% and 54%. The
@@ -97,7 +97,7 @@ reasoning tokens at one line ahead and about 1,200 at ten, and 6 to 24
 seconds per answer instead of one.
 
 The reasoning is the model executing the program by hand, one line at a
-time, in text. That is the mechanism: it can simulate, the simulation costs
+time, in text. That's the mechanism: it can simulate, the simulation costs
 tokens in proportion to the distance, and it still fails a third of the time
 at ten lines. Thirty programs with reasoning off, twelve with it on, one run
 each, synthetic code; the harness and the raw results are in the repository
@@ -126,25 +126,25 @@ would use the most time or memory, no model's recall at five reached 0.2.
   <figcaption>Share of failing tests caught when asked to predict test outcomes for real repository code, June 2026. Data from Towards Evaluation of Implicit Software World Models in Coding LLMs.</figcaption>
 </figure>
 
-**It is optimistic about its own work.** The same lean shows up in practice.
+**It's optimistic about its own work.** The same lean shows up in practice.
 In a 2026 Anthropic harness experiment, agents reliably graded their own work
 too generously.
 
-**It cannot see your state.** No training run puts your database, your
+**It can't see your state.** No training run puts your database, your
 environment variables, your library versions, or yesterday's edits into a
 model's weights. A perfect simulator would still need to know where to start.
 
-**It cannot reliably tell when it is wrong without outside input.** Asking a
+**It can't reliably tell when it's wrong without outside input.** Asking a
 model to review its work without running anything means it re-reads text it
 wrote a moment ago. Research from 2024 on self-correction found that without
-outside feedback, models often do not improve and sometimes get worse. With reliable
+outside feedback, models often don't improve and sometimes get worse. With reliable
 feedback, an error message or a test result, self-correction works.
 
 Put those together: the context window is the agent's working memory. If a
-fact is not in it, the agent guesses or goes and gets it. Reasoning can tell
+fact isn't in it, the agent guesses or goes and gets it. Reasoning can tell
 it what should have happened. Only observation tells it what did. Compiler
 errors, test output, logs, screenshots, and query results are how the real
-world gets into that memory, and they are how the agent finds out what is
+world gets into that memory, and they're how the agent finds out what's
 true.
 
 <figure>
@@ -158,15 +158,15 @@ and polishes the report on top of an empty table. Each step looks finished,
 and all of them are wrong.
 
 None of this is news to agent researchers. ReAct paired model reasoning with
-actions and observations in 2022. What has not happened is the habit moving
+actions and observations in 2022. What hasn't happened is the habit moving
 out of papers and into how everyone hands off work.
 
 ## The strongest models build their own checks
 
-As of October 2026, the strongest models do not deal with this by predicting
+As of October 2026, the strongest models don't deal with this by predicting
 harder. They build checks.
 
-Claude Opus 5, released in July, could not view a machine drawing directly, so
+Claude Opus 5, released in July, couldn't view a machine drawing directly, so
 it wrote its own computer vision pipeline to pull the geometry out of the
 pixels. Building a market data feed with no live feed to test against, it wrote
 its own test harness. Anthropic's prompting guide now tells developers to
@@ -177,7 +177,7 @@ run tests, Astra does it unprompted, and the old instructions now cause
 unnecessary testing.
 
 Read that as evidence. The labs with the most compute trained their models to
-build checks. They did not train them to stop needing checks.
+build checks. They didn't train them to stop needing checks.
 
 Anthropic's harness work shows the same thing from the other side. A harness
 is the software around the model that runs its tools and manages its context.
@@ -193,16 +193,16 @@ app in a real browser.
 
 Meta tried the other route. Its Code World Model (CWM, 2025) was trained on
 over 120 million traced Python functions to give it an internal sense of what
-code does at runtime. It is a capable coding model, but on the June 2026
+code does at runtime. It's a capable coding model, but on the June 2026
 benchmark above it caught 21% of the failing tests, ninth of twelve, and came
 last at picking out the most expensive method or line. Training a model to
 predict execution is hard. And a model that predicted
 perfectly would still not know the state of your machine.
 
-## Why this will not close soon
+## Why this won't close soon
 
-- **Your state is not in the weights.** This one is permanent. Any model, of
-  any design, has to observe your system to know what is true in it.
+- **Your state isn't in the weights.** This one is permanent. Any model, of
+  any design, has to observe your system to know what's true in it.
 - **Prediction degrades with distance and size.** Models predict by
   reasoning one step at a time. My run above shows the cost growing with the
   number of lines, and the September 2026 repository benchmark scores lowest
@@ -219,9 +219,9 @@ perfectly would still not know the state of your machine.
   mean more steps between checks and more room to drift.
 
 What would change this? A model that keeps an explicit, updated picture of
-program state across steps and knows when that picture is uncertain. That is a
+program state across steps and knows when that picture is uncertain. That's a
 different kind of model from what we have, and CWM shows how early it is. Even
-then, it would reduce how often an agent needs to check. It would not remove
+then, it would reduce how often an agent needs to check. It wouldn't remove
 the need to look.
 
 ## A feedback loop is worth more than a bigger model
@@ -238,7 +238,7 @@ succeeded at lower reasoning effort, at the price of more compute per run. An
 ICML 2026 paper found that picking the best harness gains about as much on
 Terminal-Bench as picking the best model.
 
-The idea is not new. The 2024 "Large Language Monkeys" paper showed a cheap open model with tests choosing
+The idea isn't new. The 2024 "Large Language Monkeys" paper showed a cheap open model with tests choosing
 among many attempts beating the best single attempt of that year's frontier
 models on SWE-bench Lite. The models in that study are two generations gone,
 and the result has held up.
@@ -246,18 +246,18 @@ and the result has held up.
 There are limits. The model still has to turn the signal into a fix, a wrong
 checker steers it wrong with confidence, and many cheap attempts can cost more
 than one good one. Within those limits the pattern holds. Frontier models build
-their own loops. Smaller, cheaper, and local models mostly do not, and a loop
+their own loops. Smaller, cheaper, and local models mostly don't, and a loop
 built for them is the cheapest upgrade available.
 
 A colleague who runs these things all day pushes back on this. In his view,
 loops and goals are crutches, a way of failing upward at a cost, and the real
 work is the design up front. His plans read like hand-held pseudocode where
-an algorithm matters and detailed prose where it does not, with the data model
-and the state model written out. It is more work, and what comes back is what
+an algorithm matters and detailed prose where it doesn't, with the data model
+and the state model written out. It's more work, and what comes back is what
 he meant. Tokens are cheap, he says, and thought is not.
 
-He is right about the part a check cannot reach. A check tells you whether
-what you asked for happened. It cannot tell you whether you asked for the
+He is right about the part a check can't reach. A check tells you whether
+what you asked for happened. It can't tell you whether you asked for the
 right thing, and a loop that runs until the check passes gives you exactly
 what you asked for and not what you wanted, which is the oldest complaint in
 software, moved down one level. The two fixes are not in competition. The
@@ -266,12 +266,12 @@ from a vague request confirms a vague result, which is why the checks have to
 come from the requirement, and why the requirement has to be written down.
 
 The stronger the model, the more this matters. The newer frontier models are
-very good at solving things with no direction, and that is most of their
+very good at solving things with no direction, and that's most of their
 appeal: one-shot builds, changes to existing code, long runs of work from a
 vague instruction. The cost is that more gets assumed. Every requirement I
-did not write down gets filled in by the model's judgment, and the work is
+didn't write down gets filled in by the model's judgment, and the work is
 finished before I see any of it. The gap is between the work it did and the
-work I wanted, and a passing check does not close it.
+work I wanted, and a passing check doesn't close it.
 
 My remake is the example. It was mostly built with frontier models, but not
 from a prompt that said port this game. I gave them an emulator and a working
@@ -279,12 +279,12 @@ environment, local models to generate art and assets, and the harness that
 compares the remake with the original every frame. I picked Godot because I
 knew it: cross-platform, exports to HTML, easy to build with. Inside that
 frame the models did a lot of good work. Then I asked for a 2.5D graphical
-overhaul with no requirements, because I did not have any. The models
+overhaul with no requirements, because I didn't have any. The models
 extruded 3D geometry out of the 2D sprites. It was horrible.
 
-To get what a studio with a budget would produce, I would have to supply the tooling, the
+To get what a studio with a budget would produce, I'd have to supply the tooling, the
 direction, and a production pipeline for turning a retro game into something
-that looks designed. Frontier models can do a lot and there is headroom
+that looks designed. Frontier models can do a lot and there's headroom
 there. But even if they can do it, will the assumptions they make be the ones
 I want? And if they are, is the way they get there any good? I have no way to
 tell.
@@ -296,14 +296,14 @@ agent that helps you find your requirements while it builds: it says what it
 assumed, it says so at the point where the assumption changes the shape of
 the work, and it lists all of them at the end.
 
-## Track what is known, not what is done
+## Track what's known, not what's done
 
 Most agent workflows keep a plan or a to-do list. That records what has been
-done. It does not record what is actually known, and that is the difference
+done. It doesn't record what's actually known, and that's the difference
 that matters when something goes wrong.
 
 For any task with several dependent steps, have the agent keep a short working
-record: the goal, what has been observed and how, what is assumed but not yet
+record: the goal, what has been observed and how, what's assumed but not yet
 checked, which later steps depend on each assumption, and the one check that
 would settle the assumption that matters most right now.
 
@@ -328,12 +328,12 @@ observations. The record holds what they mean for the task.
 
 ## Checks are not only tests
 
-Tests are one kind of check. The job is to make the things you would check
+Tests are one kind of check. The job is to make the things you'd check
 yourself available to the agent as text it can ask for.
 
-| What you would check yourself | What to build for the agent |
+| What you'd check yourself | What to build for the agent |
 | --- | --- |
-| Is it running? What is in there right now? | A state dump: one command that prints current rows, config, queue depth, or file tree |
+| Is it running? What's in there right now? | A state dump: one command that prints current rows, config, queue depth, or file tree |
 | Does it look right? | Screenshots, rendered output, browser automation at phone and desktop widths |
 | What did I just change? | Before and after snapshots, and diffs |
 | Will this break that? | A repro script for the bug; an invariant check such as "every order has a customer" |
@@ -341,8 +341,8 @@ yourself available to the agent as text it can ask for.
 | Where was I? What do I actually know? | The working record, in a file |
 
 The Parasol Stars harness is one of these. It runs the remake and the original
-side by side and compares game state every frame. It is not a unit test. It
-shows the agent a difference that it could not have predicted from the code.
+side by side and compares game state every frame. It isn't a unit test. It
+shows the agent a difference that it couldn't have predicted from the code.
 
 <figure>
   <img src="/assets/images/20261002/01-same-inputs.png" alt="Two rows of screenshots from Parasol Stars round 1-5 at 10, 25 and 50 seconds. With a TurboTap the triangle enemies stay inside their brick maze; with one pad they leak out through the walls.">
@@ -357,8 +357,8 @@ conclusions. Writing from sources: a script that confirms every quote appears
 word for word in the source. Setting up a home server: a health check that hits
 each service and prints up or down after every change.
 
-Every check has a scope, and it is easy to ask the wrong question. "The file
-downloaded" is not "the right records downloaded." Reopening a document proves
+Every check has a scope, and it's easy to ask the wrong question. "The file
+downloaded" isn't "the right records downloaded." Reopening a document proves
 it saved, not that it says the right things. Reading back an audio setting
 proves the setting changed, not that you can hear anything.
 
@@ -376,14 +376,14 @@ least once.
 ## Ask how you will know before you ask for the change
 
 **Build the check first and watch it fail for the right reason.** A test that
-fails with "module not found" proves the module does not exist yet, not that
+fails with "module not found" proves the module doesn't exist yet, not that
 the test checks the behavior you care about.
 
-**Write down what is in your head.** Which database, which port, which tests
+**Write down what's in your head.** Which database, which port, which tests
 fail on purpose, what normal data looks like, which emulator configuration is
 the real one. The design belongs here too: the data model, the state model,
 and which algorithm goes where. An agent fills unspecified design with
-whatever is most common in its training data, and that is rarely what you had
+whatever is most common in its training data, and that's rarely what you had
 in mind. Put the lasting answers in a file the agent reads every session:
 
 ```markdown
@@ -402,7 +402,7 @@ was a poor QA agent for its own work. Separating the agent doing the work
 from the agent judging it was the strongest lever, and the judge got a real
 browser through Playwright so it could click through the live app. The June
 2026 study above reached the same conclusion from the other side: the agent
-does not, on its own, validate what it ships as a user would. A dev
+doesn't, on its own, validate what it ships as a user would. A dev
 environment, sample data, a browser, and read-only logs beat paragraphs of
 instructions.
 
@@ -428,19 +428,19 @@ run of GPT-5.6 Sol in June 2026 put its 50% time horizon at about 11 hours
 when cheating attempts were counted as failures and beyond 270 hours when
 they were counted as successes.
 
-Tests can be wrong too, so the rule is not "never touch a test." It is "never
+Tests can be wrong too, so the rule isn't "never touch a test." It's "never
 weaken a check to get a pass." Keep the acceptance checks out of the agent's
 reach, hold some back, and tell it: if a check looks wrong, stop and say why.
 
 **When it starts skipping around, ask what would tell the explanations
 apart.** An agent trying one plausible fix after another has stopped learning
 from its attempts. Ask which observation would show which explanation is
-right. If two attempts teach it nothing new, it should change how it is
-investigating or say what is blocking it.
+right. If two attempts teach it nothing new, it should change how it's
+investigating or say what's blocking it.
 
-**End with what was not checked and what was assumed.** "Probably works"
-should not turn into "done" on the way to the summary, and a requirement the
-agent invented should not pass as one you gave it.
+**End with what wasn't checked and what was assumed.** "Probably works"
+shouldn't turn into "done" on the way to the summary, and a requirement the
+agent invented shouldn't pass as one you gave it.
 
 **Match the effort to the model.** Frontier models already check their work,
 so skip the step-by-step verification script; give them the checks, a clear
@@ -470,20 +470,20 @@ list the requirements you assumed.
 ## What to build
 
 In your own projects: one command that checks everything and prints short
-output. Scripts that print current state for anything you would otherwise
+output. Scripts that print current state for anything you'd otherwise
 look at in a GUI. Sample data with known right answers, and fakes for outside
 services. A way to see UI output. A working-record file for multi-session
 work.
 
 In the harnesses we all use: tools that report whether something finished, not
 just whether it was requested. The project's check run automatically when the
-agent says it is done, with the result shown to both of you. Compiler and type
+agent says it's done, with the result shown to both of you. Compiler and type
 errors surfaced right after each edit. Files the user can mark off-limits so
 the acceptance checks stay intact. The working record kept outside the context
 window so it survives restarts. Loop detection: repeated attempts that produce
 nothing new should trigger a new approach or a question. Screenshots, browser
 control, and log tails as standard tools, and cheap experiments with sandboxes
-and rollback. Tool output trimmed so the one useful line is not buried in
+and rollback. Tool output trimmed so the one useful line isn't buried in
 2,000 lines of noise.
 
 In teams: treat "agent-legible" as an engineering goal. One-command dev
@@ -494,9 +494,9 @@ well.
 
 ## Build the check first
 
-Before handing an agent a task, the question is not whether it can make the
+Before handing an agent a task, the question isn't whether it can make the
 change. It usually can. The question is whether it can check the result. If it
-cannot, build that first.
+can't, build that first.
 
 In the Parasol Stars work, every mistake the agent made was found the same way:
 by checking its claim against the logged data. The log made that possible, not
@@ -506,20 +506,20 @@ The log matters for another reason. People remember the hits and forget the
 misses. An agent that does one surprising thing well leaves a stronger
 impression than the ten routine failures around it, and the failures turn
 into ordinary days. Engineers surface the hits, managers see the hit rate, and
-nobody sees the misses. I am not immune. I have a skill pack that Codex has
-been writing for four days, about 280 skills, and I do not know if any of it
+nobody sees the misses. I'm not immune. I have a skill pack that Codex has
+been writing for four days, about 280 skills, and I don't know if any of it
 is any good, because nothing checks it. A record of what was verified and what
-was not is the only account that keeps the misses in it.
+wasn't is the only account that keeps the misses in it.
 
 The same applies to writing, including this post. It started as a rant,
 got sorted into beats and a short brief for what a reader should walk away
 with, and went through three reviewers with different jobs, a lint for my own
 voice, a check of every number against its paper, and one measurement I ran
-myself. None of that is prompting. It is the pipeline, and without it the
+myself. None of that is prompting. It's the pipeline, and without it the
 result is the generic article you have already read ten times.
 
 If you have built checks like these for your own work, or hit a case where an
-agent's self-check fooled you, I would like to hear about it.
+agent's self-check fooled you, I'd like to hear about it.
 
 ---
 
