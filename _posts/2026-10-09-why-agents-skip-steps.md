@@ -414,7 +414,7 @@ environment, local models to generate art and assets, and the harness that
 compares the remake with the original every frame.
 
 I picked Godot because I knew it: cross-platform, easy to build with, and it
-exports to HTML. The HTML part did more work than I expected. Models are very good at web pages, and
+exports to HTML, which matters because models are very good at web pages and
 most harnesses can drive Chrome over its debug protocol, so an HTML build
 gives the agent a whole environment to guess, check, and sort out its own
 mistakes in a browser tab it controls. It also means my machine isn't
