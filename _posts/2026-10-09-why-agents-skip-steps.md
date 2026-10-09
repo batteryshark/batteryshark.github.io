@@ -232,8 +232,9 @@ The newer frontier models are very good at solving things with no direction,
 and that's most of their appeal: one-shot builds, changes to existing code,
 long runs of work from a vague instruction. The cost is that more gets
 assumed. Every requirement I didn't write down gets filled in by the model's
-judgment, and the work is finished before I see any of it. With twenty agents
-at once that compounds: each fills its gaps its own way, then they build on
+judgment, and the work is finished before I see any of it.
+
+With twenty agents at once that compounds: each fills its gaps its own way, then they build on
 each other's fills, and the distance between what I think I said and what
 exists grows with every hour nobody is watching. The gap is between the work
 it did and the work I wanted, and a passing check doesn't close it.
@@ -437,8 +438,9 @@ agents instrumentation and a debugger for free: no crude harness to wire up,
 no getting lucky and catching the odd behavior at the right moment. They can
 step cycle by cycle and dump any subsystem they need, which makes the
 emulator a source of truth, and I led with that from the start because I
-value an agent being able to reproduce anything at any time. The target
-helped too. An arcade game has no complicated state carried between screens,
+value an agent being able to reproduce anything at any time.
+
+The target helped too. An arcade game has no complicated state carried between screens,
 so every part of it can be run and tested on its own without playing back to
 it; I'm a few seconds from any state I need to validate.
 
