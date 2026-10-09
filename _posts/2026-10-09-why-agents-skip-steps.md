@@ -231,10 +231,20 @@ long runs of work from a vague instruction. The cost is that more gets
 assumed. Every requirement I didn't write down gets filled in by the model's
 judgment, and the work is finished before I see any of it.
 
-With twenty agents at once that compounds: each fills its gaps its own way, then they build on
-each other's fills, and the distance between what I think I said and what
-exists grows with every hour nobody is watching. The gap is between the work
-it did and the work I wanted, and a passing check doesn't close it.
+With one agent that's manageable. But past a toy example I'm not waiting on
+one agent to build anything moderately complex; I need twenty or fifty
+running at once, and what that trade costs is visibility into the small
+decisions. Each agent fills its gaps its own way, then they build on each
+other's fills, and the drift from what I thought I said grows exponentially
+with every hour nobody is watching.
+
+By the end, the thing may be a long way from the model I started with.
+Sometimes that's right: they found something along the way that invalidated
+the original vision. Sometimes it's just drift, and I can't tell which
+without looking. Either way the scale is a necessity if you want to build
+anything consequential with this, as opposed to demos and one-shots. The gap
+is between the work it did and the work I wanted, and a passing check
+doesn't close it.
 
 ## Part two: what to keep in mind
 
