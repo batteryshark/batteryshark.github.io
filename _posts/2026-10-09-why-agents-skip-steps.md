@@ -232,8 +232,11 @@ The newer frontier models are very good at solving things with no direction,
 and that's most of their appeal: one-shot builds, changes to existing code,
 long runs of work from a vague instruction. The cost is that more gets
 assumed. Every requirement I didn't write down gets filled in by the model's
-judgment, and the work is finished before I see any of it. The gap is between
-the work it did and the work I wanted, and a passing check doesn't close it.
+judgment, and the work is finished before I see any of it. With twenty agents
+at once that compounds: each fills its gaps its own way, then they build on
+each other's fills, and the distance between what I think I said and what
+exists grows with every hour nobody is watching. The gap is between the work
+it did and the work I wanted, and a passing check doesn't close it.
 
 ## Part two: what to keep in mind
 
@@ -428,6 +431,22 @@ most harnesses can drive Chrome over its debug protocol, so an HTML build
 gives the agent a whole environment to guess, check, and sort out its own
 mistakes in a browser tab it controls. It also means my machine isn't
 covered in game windows while it tests.
+
+The emulator was the same kind of decision. An open-source emulator gives the
+agents instrumentation and a debugger for free: no crude harness to wire up,
+no getting lucky and catching the odd behavior at the right moment. They can
+step cycle by cycle and dump any subsystem they need, which makes the
+emulator a source of truth, and I led with that from the start because I
+value an agent being able to reproduce anything at any time. The target
+helped too. An arcade game has no complicated state carried between screens,
+so every part of it can be run and tested on its own without playing back to
+it; I'm a few seconds from any state I need to validate.
+
+None of that is specific to games. Games are a useful case because they're a
+runtime of many subsystems running in real time, with consequences in real
+time and everything bubbling up into a presentation layer, plus remote
+systems to coordinate with if there's a network feature. That's what makes
+them a good test of working with agents on complex systems.
 
 The question I led with was how to give the agent a way to know whether it
 was getting closer, without me playing whack-a-mole over every detail.
