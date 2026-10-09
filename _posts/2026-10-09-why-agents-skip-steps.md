@@ -10,7 +10,6 @@ image: /assets/images/20261009/social.png
 
 <figure>
   <img src="/assets/images/20261009/banner.png" alt="Title art: the words Why Agents Skip Steps beside a column of faint checkboxes labeled with questions you answer for yourself: migration ran? server up? column exists? which emulator config?">
-  <figcaption>Title art: a checklist of the questions you answer for yourself while you work.</figcaption>
 </figure>
 
 In [my last post]({% post_url 2026-10-02-bug-hunting-in-retro-games %}), an
@@ -50,6 +49,8 @@ at how people write tasks for agents:
 - Hook the API up to the database.
 - Make the checkout page look better on mobile.
 - Clean up my downloads folder.
+- You are a senior engineer who never makes mistakes and checks everything
+  before starting. Hook the API up to the database.
 
 Each one describes a change. None says what the current state is, or how
 anyone would know the change worked. The person writing it might know both
@@ -58,7 +59,7 @@ what they want, and that's what goes on the card.
 
 <figure>
   <img src="/assets/images/20261009/01-handoff.png" alt="Diagram: a task card that says Hook the API up to the database is handed to an agent. Above the person, a thought cloud holds the facts that are not on the card: the DB is up, the migration might not have run, port 3000, the legacy tests fail on purpose.">
-  <figcaption>Diagram: the request card carries the change; the facts you'd check it against stay in the thought cloud.</figcaption>
+  <figcaption>Port 3000 and the migration never make it onto the card.</figcaption>
 </figure>
 
 An agent can't look unless you gave it something to look with. So the request
@@ -98,6 +99,14 @@ wrote a moment ago. Research from 2024 on self-correction found that without
 outside feedback, models often don't improve and sometimes get worse. With
 reliable feedback, an error message or a test result, self-correction works.
 
+The same limit holds at the other end of the speed range. TypeSafe AI's Jev,
+launched in September, is a System One model: hand it a state and a typed
+question and it returns a decision with a probability in one pass, no prose,
+no reasoning. That's useful for routing and triage, and the probability isn't
+evidence that the decision was right. It's the model's assessment of itself,
+which is the thing that can't be trusted without outside input. A fast
+decision still needs a check from outside the model.
+
 Put those together: the context window is the agent's working memory. If a
 fact isn't in it, the agent guesses or goes and gets it. Reasoning can tell
 it what should have happened. Only observation tells it what did. Compiler
@@ -107,7 +116,7 @@ true.
 
 <figure>
   <img src="/assets/images/20261009/03-two-loops.png" alt="Three rows. You: idea, change, compare against what you know and what you see, next. Agent: idea, change, done? with nothing to compare against. Agent with checks: idea, change, run or look, write down what is now known, next.">
-  <figcaption>Diagram of the three loops. The middle row is the default when a request only describes the change.</figcaption>
+  <figcaption>The middle row is what you get when the request only describes the change.</figcaption>
 </figure>
 
 Unchecked assumptions get expensive because later work depends on them. If an
@@ -148,7 +157,7 @@ browser.
 
 <figure>
   <img src="/assets/images/20261009/04-scaffolding.png" alt="Timeline across three Opus releases. Scaffolding blocks drop away one by one: forced context resets, rigid sprint plans, explicit verification instructions. One block stays across all three: a separate evaluator with a real browser.">
-  <figcaption>What was removed and what was kept, from Anthropic's harness experiments (March 2026) and the Opus 5 prompting guide.</figcaption>
+  <figcaption>Each release let more scaffolding go. The browser never left.</figcaption>
 </figure>
 
 Meta tried the other route, training its Code World Model on 120 million
@@ -190,6 +199,8 @@ The limits: the model still has to turn the signal into a fix, a wrong checker s
 can cost more than one good one. Within those limits, a loop built for a
 smaller or local model is the cheapest upgrade available.
 
+## A check can't tell you what you wanted
+
 A colleague who runs these things all day pushes back on this. In his view,
 loops and goals are crutches, a way of failing upward at a cost, and the real
 work is the design up front. His plans read like hand-held pseudocode where
@@ -206,12 +217,20 @@ design says what you want; the check says whether you got it. A check written
 from a vague request confirms a vague result, which is why the checks have to
 come from the requirement, and why the requirement has to be written down.
 
+<figure>
+  <img src="/assets/images/20261009/10-design-check.png" alt="Two boxes. The design says what you want: data model, state model, which algorithm where. The check says whether you got it, written from the requirement, not the code. An arrow from the design to the check labeled checks come from here. Below: a loop that runs until the check passes gives you what you asked for; the design is the only thing that says whether that was what you wanted.">
+</figure>
+
 The newer frontier models are very good at solving things with no direction,
 and that's most of their appeal: one-shot builds, changes to existing code,
 long runs of work from a vague instruction. The cost is that more gets
 assumed. Every requirement I didn't write down gets filled in by the model's
 judgment, and the work is finished before I see any of it. The gap is between
 the work it did and the work I wanted, and a passing check doesn't close it.
+
+## The remake, and the overhaul I never specified
+
+<!-- art slot: an AI-generated 2.5D action-game scene (a retro arcade stage reimagined with depth, lighting and parallax) goes here as a <figure>; see fable-take.md for the prompt. -->
 
 My remake is the example. It was mostly built with frontier models, but not
 from a prompt that said port this game. I gave them an emulator and a working
@@ -221,6 +240,11 @@ knew it: cross-platform, exports to HTML, easy to build with. Inside that
 frame the models did a lot of good work. Then I asked for a 2.5D graphical
 overhaul with no requirements, because I didn't have any. The models
 extruded 3D geometry out of the 2D sprites. It was horrible.
+
+<figure>
+  <img src="/assets/images/20261009/09-asked-wanted.png" alt="Diagram of the 2.5D request. In the person's head, a sticky note says what I wanted: looks like a studio with a budget reimagined it, with art direction, pipeline and tooling marked as never written down. The task card says 2.5D graphical overhaul. The agent returns a card showing the flat pixel sprite next to the same sprite extruded into blocks, marked done with a check and wanted with a question mark.">
+  <figcaption>Every check passed. The sprite got thicker.</figcaption>
+</figure>
 
 To get what a studio with a budget would produce, I'd have to supply the
 tooling, the direction, and a production pipeline for turning a retro game
@@ -249,7 +273,7 @@ would settle the assumption the next step depends on.
 
 <figure>
   <img src="/assets/images/20261009/06-working-record.png" alt="A working record for adding a download CSV button to a filtered dashboard. Goal: the download contains exactly the records the current filters show. Observed: test dataset with filter region=EU shows 12 records. Assumed, not checked: the export request includes the active filters. Depends on it: everything about whether the file is right. Next check: inspect the export request, then parse the file and compare its record IDs with the 12 expected. Two arrows from a mismatch: no filters in the request points at the button-to-endpoint path; request right but file wrong points at the export.">
-  <figcaption>The working record for the CSV export task, with the two places a failed check points.</figcaption>
+  <figcaption>Without this, the next move after a wrong file is "try something else."</figcaption>
 </figure>
 
 Without the record, a wrong file sends the agent through unrelated fixes:
@@ -265,6 +289,14 @@ back to assumed.
 
 This record is the external working memory. Logs and test output are raw
 observations. The record holds what they mean for the task.
+
+I keep a skill for this,
+[project-tracker](https://github.com/batteryshark/skill-tap/tree/main/skills/productivity/project-tracker):
+one Markdown dashboard per project with the current objective, status,
+attempts, decisions, open questions, and next actions, with observed facts
+kept separate from theories and unknowns. I'm not pitching it. It's a
+collection of the things I kept finding myself tracking in larger projects,
+iterated on now and then, and it has been useful on the bigger ones.
 
 ## Checks are not only tests
 
@@ -287,7 +319,7 @@ shows the agent a difference that it couldn't have predicted from the code.
 
 <figure>
   <img src="/assets/images/20261002/01-same-inputs.png" alt="Two rows of screenshots from Parasol Stars round 1-5 at 10, 25 and 50 seconds. With a TurboTap the triangle enemies stay inside their brick maze; with one pad they leak out through the walls.">
-  <figcaption>Same save state, same input, one configuration change, seen through the comparison harness.</figcaption>
+  <figcaption>Same save state, same input. One controller port's worth of difference.</figcaption>
 </figure>
 
 The same idea works away from code. Reorganizing 8,000 photos: write a
@@ -314,7 +346,7 @@ proves the setting changed, not that you can hear anything.
 
 <figure>
   <img src="/assets/images/20261009/07-scope.png" alt="Three pairs. What the check proves versus what you wanted to know: the file downloaded versus the right records downloaded; the document saved versus the document is correct; the output device changed versus you can hear sound.">
-  <figcaption>Three passing checks, each shown next to the question it doesn't answer.</figcaption>
+  <figcaption>All three pass. None of them answers the question you had.</figcaption>
 </figure>
 
 The worst case is a check written from the same misunderstanding as the code.
@@ -493,7 +525,7 @@ twelve, and came last at picking out the most expensive method or line.
 
 <figure>
   <img src="/assets/images/20261009/02-real-code.png" alt="Bar chart of the share of failing tests each model caught when predicting test outcomes on real repository code: gpt-5.5 73.5%, gpt-oss-120b 49.5%, gpt-5-mini 39.5%, claude-sonnet-4-6 39%, claude-opus-4-7 34.5%, Qwen3.5-397B 32%, gpt-5.2 27%, gpt-5.4 23.5%, CWM 21%, claude-haiku-4-5 18.5%, Qwen3-235B 8%, Qwen3-30B 2.5%.">
-  <figcaption>Share of failing tests caught when asked to predict test outcomes for real repository code, June 2026. Data from Towards Evaluation of Implicit Software World Models in Coding LLMs.</figcaption>
+  <figcaption>Twelve models, 435 cases from SWE-bench Verified, June 2026. Data from Towards Evaluation of Implicit Software World Models in Coding LLMs.</figcaption>
 </figure>
 
 ### A2. My lookahead run
@@ -518,7 +550,7 @@ still fails a third of the time at ten lines.
 
 <figure>
   <img src="/assets/images/20261009/08-local-lookahead.png" alt="Grouped bar chart. Qwen3.8-27B, exact state predicted n executed lines ahead. Reasoning off: 1 line 70%, 3 lines 20%, 5 lines 3%, 10 lines 0%. Reasoning on at low effort: 100%, 100%, 92%, 67%.">
-  <figcaption>Exact-match accuracy by lookahead horizon, reasoning off (120 prompts) and reasoning on at low effort (49 prompts). My run, October 2026.</figcaption>
+  <figcaption>Reasoning off, 120 prompts; reasoning on at low effort, 49 prompts. My run, October 2026.</figcaption>
 </figure>
 
 Limits: synthetic code, one model, one quantization, one run per prompt, and
@@ -587,7 +619,9 @@ two generations gone; the result has held up.
 [Large Language Models Cannot Self-Correct Reasoning Yet](https://arxiv.org/abs/2310.01798)
 (ICLR 2024) and Kamoi et al.,
 [When Can LLMs Actually Correct Their Own Mistakes?](https://aclanthology.org/2024.tacl-1.78)
-(TACL 2024). ReAct: [Yao et al.](https://arxiv.org/abs/2210.03629) (2022).
+(TACL 2024). Jev: TypeSafe AI,
+[Introducing System One Models & Jev](https://typesafe.ai/blog/introducing-system-one-models-and-jev)
+(September 2026). ReAct: [Yao et al.](https://arxiv.org/abs/2210.03629) (2022).
 Opus 5 examples and guidance:
 [Introducing Claude Opus 5](https://www.anthropic.com/news/claude-opus-5) and
 [Prompting Claude Opus 5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5).
