@@ -59,8 +59,11 @@ model is often wrong, which is why you also keep notes, open a debugger, and
 ask a coworker. But the tracking and the checking happen whether you plan them
 or not.
 
-Because that work costs nothing, we don't plan for it when we delegate. Look
-at how people write tasks for agents:
+We take that model for granted, and most of us aren't good at turning it
+into something written down. It's intuition, and intuition is hard to
+transcribe into an actionable plan; it's the same reason people who are great
+at a thing are often bad at teaching it. So when we delegate, the model stays
+where it is. Look at how people write tasks for agents:
 
 - Hook the API up to the database.
 - Make the checkout page look better on mobile.
