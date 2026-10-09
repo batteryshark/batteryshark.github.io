@@ -12,6 +12,12 @@ image: /assets/images/20261009/social.png
   <img src="/assets/images/20261009/banner.png" alt="Title art: the words Lessons From Running a Swarm of Agents beside a sticky note of questions you answer for yourself labeled with questions you answer for yourself: migration ran? server up? column exists? which emulator config?">
 </figure>
 
+After several months of using armies of agents to reverse engineer software,
+build servers and emulators, make games, write every utility I'll ever need,
+work through a decade-long backlog of projects, and rebuild my entire home
+server setup, alongside building the infrastructure for the agentic work
+itself, this is some of what I've learned.
+
 In [my last post]({% post_url 2026-10-02-bug-hunting-in-retro-games %}), an
 agent found a bug in Parasol Stars by running the original ROM twice with one
 change and comparing memory frame by frame. I only looked because I happened
