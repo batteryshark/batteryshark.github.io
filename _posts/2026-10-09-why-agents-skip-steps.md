@@ -1,15 +1,15 @@
 ---
 layout: post
-title: "Why Agents Skip Steps"
+title: "Lessons From Running Fifty Agents at Once"
 date: 2026-10-09
-description: "An agent can't see the state of your machine, and even the best current models are unreliable at predicting what real code will do when it runs. We delegate as if they could, because we do those checks ourselves without thinking about them. What to keep in mind when you start something with an agent, while it runs, when it gets stuck, and when you change your mind about what you wanted."
+description: "Why agents skip steps, and what to keep in mind when you start something with a swarm of them, while it runs, when it gets stuck, and when you change your mind about what you wanted. From weeks-long projects with twenty to fifty agents building at once."
 tags: [agents, ai-engineering, harness-design, tooling]
 toc: true
 image: /assets/images/20261009/social.png
 ---
 
 <figure>
-  <img src="/assets/images/20261009/banner.png" alt="Title art: the words Why Agents Skip Steps beside a column of faint checkboxes labeled with questions you answer for yourself: migration ran? server up? column exists? which emulator config?">
+  <img src="/assets/images/20261009/banner.png" alt="Title art: the words Lessons From Running Fifty Agents at Once beside a sticky note of questions you answer for yourself labeled with questions you answer for yourself: migration ran? server up? column exists? which emulator config?">
 </figure>
 
 In [my last post]({% post_url 2026-10-02-bug-hunting-in-retro-games %}), an
@@ -590,6 +590,11 @@ third or less. On my own machine, a 27B model asked for the program state ten
 lines ahead got it right never with reasoning off and two thirds of the time
 with reasoning on, at twenty times the cost ([A2](#a2-my-lookahead-run)).
 
+None of this is a last-generation problem. On the one shared harness that
+runs every current model on Terminal-Bench 4.0, the best of them, Claude Opus
+5.5, finishes 65% of the tasks as of October 7, 2026; GPT-6 Astra finishes
+60% and Grok 4.7 29% ([A4](#a4-harnesses-horizons-and-loops)).
+
 **It's optimistic about its own work.** In a 2026 Anthropic harness
 experiment, agents reliably graded their own work too generously
 ([A4](#a4-harnesses-horizons-and-loops)), and the
@@ -632,7 +637,8 @@ That paper, Codoku, replaced it with puzzles
 an agent can't run its way out of: fill in typed blanks in a partial program
 so that global constraints hold. Claude Opus 5 solved 77% of the small
 puzzles and 50% of the large ones. GPT-5.6 Sol solved 67% and 54%. The
-open-weight models ranged from 50% down to 11%.
+open-weight models trailed: GLM 5.3 solved 50% of the small puzzles and 12%
+of the large, Kimi K3 48% and 11%, DeepSeek V4.1 Flash 39% and 22%.
 
 SWE-Flux, also from September 2026, asks what happens at runtime inside
 twelve Python repositories, with the answers taken from instrumented test
@@ -705,7 +711,20 @@ memorized the test inputs.
 METR's pre-deployment run of GPT-5.6 Sol in June 2026 put its 50% time
 horizon at about 11 hours when cheating attempts were counted as failures and
 beyond 270 hours when they were counted as successes, and noted its detected
-cheating rate was the highest of any public model on their harness.
+cheating rate was the highest of any public model on their harness. METR's
+May 2026 frontier report, covering internal models from Anthropic, Google,
+Meta, and OpenAI, found that on tasks of eight hours or longer at least 16%
+of successful runs were illegitimate on review, over a hundred instances, and
+says that checking for cheating by hand is often the majority of the work in
+running its suite.
+
+The failure has a quieter form: not saying what wasn't done. OpenAI's launch
+page for GPT-6.1 Sol (early October 2026) reports an evaluation of whether an
+agent tells the user its search tool is broken instead of guessing. On tasks
+chosen to provoke the failure, GPT-6.1 Sol fails to say so 2.1% of the time,
+GPT-6 Sol 4.9%, GPT-6 Astra 1.5%, and GPT-6 Luna 28.7%. The same page notes
+that Claude Fable 5.1 fell back to another model on about 40% of one
+benchmark's tasks, a detail that doesn't show in the score.
 
 ## A4. Harnesses, horizons, and loops
 
@@ -722,6 +741,25 @@ METR's May 2026 frontier report: the public frontier at about 12 hours for
 tasks finished half the time (confidence interval 5 to 61 hours) and about
 1.5 hours for tasks finished 80% of the time, with the strongest agents
 having essentially saturated the Time Horizon 1.1 suite.
+
+Where the current models stand on one harness: Vals AI runs every model
+through the same minimal agent (mini-SWE-agent) on Terminal-Bench 4.0. As of
+October 7, 2026, Claude Opus 5.5 leads at 65%, with Claude Sonnet 5.5 at 64%,
+GPT-6 Astra at 60%, Claude Fable 5.1 at 58%, GPT-6.1 Sol at 55%, GLM 5.3 at
+39%, Grok 4.7 at 29%, DeepSeek V4.1 Flash at 20%, and Kimi K3 at 17%. The
+best model on the board fails a third of the tasks.
+
+Vals also notes that 22
+of Opus 5.5's 198 attempts were served by Opus 5 or Opus 4.8 through
+provider-side fallback; counted as failures, its score drops to 58%, behind
+Sonnet 5.5 and Astra. METR's September 22, 2026 pre-deployment summary calls
+Opus 5.5 an incremental improvement over Fable 5.1 on its quantitative
+evaluations.
+
+<figure>
+  <img src="/assets/images/20261009/12-terminal-bench.png" alt="Bar chart of Terminal-Bench 4.0 scores on the shared mini-SWE-agent harness, October 7, 2026: Claude Opus 5.5 65.2%, Claude Sonnet 5.5 64.1%, GPT-6 Astra 59.6%, Claude Fable 5.1 58.1%, GPT-6.1 Sol 55.1%, GLM 5.3 38.9%, Grok 4.7 28.8%, DeepSeek V4.1 Flash 19.7%, Kimi K3 17.2%.">
+  <figcaption>Every current model, one harness, October 7, 2026. Data from Vals AI.</figcaption>
+</figure>
 
 Loops versus model size: a 2026 study of coding agents on ARC-AGI-3 found the
 variant that checked its model of the game against recorded observations
@@ -761,7 +799,14 @@ Harness experiments: Anthropic,
 (2025). METR: [Frontier Risk Report, February to March 2026](https://metr.org/blog/2026-05-19-frontier-risk-report/)
 (May 2026) and
 [Summary of METR's predeployment evaluation of GPT-5.6 Sol](https://metr.org/blog/2026-06-26-gpt-5-6-sol/)
-(June 2026). Repeated sampling: Brown et al.,
+(June 2026), [Frontier Risk Report, February to March 2026](https://metr.org/blog/2026-05-19-frontier-risk-report/)
+for the illegitimate-run rate, and
+[Summary of METR's predeployment evaluation of Claude Opus 5.5](https://metr.org/blog/2026-09-22-claude-opus-5-5/)
+(September 2026). Broken-search-tool evaluation and the Fable 5.1 fallback
+note: OpenAI, [Introducing GPT-6.1 Sol](https://openai.com/index/introducing-gpt-6-1-sol/)
+(October 2026). Shared-harness scores:
+[Vals AI, Terminal-Bench 4.0](https://www.vals.ai/benchmarks/terminal-bench-4)
+(updated October 7, 2026). Repeated sampling: Brown et al.,
 [Large Language Monkeys](https://arxiv.org/abs/2407.21787) (2024). ARC-AGI-3:
 [Rodionov](https://arxiv.org/abs/2607.15439) (2026). Harness versus model:
 Han and Sun, [How good is your harness?](https://icml.cc/virtual/2026/68323)
