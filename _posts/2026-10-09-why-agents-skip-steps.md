@@ -78,7 +78,9 @@ way to check results that the agent can run.
 the output of a small function is a solved problem, to the point that the
 classic benchmark for it was retired this year, and a September 2026 paper
 notes that an agent doesn't need to predict anyway when it can run the
-program.
+program. Fair for agents, and beside the point for the model: being able to
+run the program says nothing about how good its own picture is, which is
+what you're relying on every time it can't run the thing, or doesn't.
 
 Real repositories are a different story: on a September 2026
 benchmark built from instrumented test runs, the best of five models got 38%
