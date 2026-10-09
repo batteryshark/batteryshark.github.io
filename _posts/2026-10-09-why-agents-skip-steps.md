@@ -2,7 +2,7 @@
 layout: post
 title: "Why Agents Skip Steps"
 date: 2026-10-09
-description: "An agent cannot see the state of your machine, and even the best current models are unreliable at predicting what real code will do when it runs. We delegate as if they could, because we do those checks ourselves without thinking about them. What that means for how to hand off work, and what to build so an agent can check its own results."
+description: "An agent can't see the state of your machine, and even the best current models are unreliable at predicting what real code will do when it runs. We delegate as if they could, because we do those checks ourselves without thinking about them. What that means for how to hand off work, and what to build so an agent can check its own results."
 tags: [agents, ai-engineering, harness-design, tooling]
 toc: true
 image: /assets/images/20261009/social.png
@@ -27,7 +27,7 @@ came up.
 
 This post is about that gap. It's less about how smart the model is than
 about how we hand work to it. We describe the change we want and leave out the
-facts we would check it against, because we check them ourselves without
+facts we'd check it against, because we check them ourselves without
 thinking about it.
 
 ## What stays in your head
@@ -52,8 +52,9 @@ at how people write tasks for agents:
 - Clean up my downloads folder.
 
 Each one describes a change. None says what the current state is, or how
-anyone would know the change worked. To the person writing it, that part is
-obvious. They would look.
+anyone would know the change worked. The person writing it might know both
+and not think to say them, or might not have thought about either. They know
+what they want, and that's what goes on the card.
 
 <figure>
   <img src="/assets/images/20261009/01-handoff.png" alt="Diagram: a task card that says Hook the API up to the database is handed to an agent. Above the person, a thought cloud holds the facts that are not on the card: the DB is up, the migration might not have run, port 3000, the legacy tests fail on purpose.">
@@ -67,66 +68,25 @@ way to check results that the agent can run.
 
 ## What the agent has instead
 
-**Its predictions are good on toy code and poor on real code.** The classic
-test, CruxEval, asks a model to predict the output of a small Python
-function. By 2026 it had stopped separating models: one evaluation service
-quit running LiveCodeBench's version on new releases because scores had
-saturated, and a benchmark paper from late September 2026 says the format is
-no longer suitable for coding agents at all, because an agent can run the
-program instead of reasoning about it.
+**Its predictions are good on toy code and poor on real code.** Predicting
+the output of a small function is a solved problem, to the point that the
+classic benchmark for it was retired this year, and a September 2026 paper
+notes that an agent doesn't need to predict anyway when it can run the
+program.
 
-That paper, Codoku, replaced it with puzzles an agent can't run its way out
-of: fill in typed blanks in a partial program so that global constraints
-hold. Claude Opus 5 solved 77% of the
-small puzzles and 50% of the large ones. GPT-5.6 Sol solved 67% and 54%. The
-open-weight models ranged from 50% down to 11%.
+Real repositories are a different story: on a September 2026
+benchmark built from instrumented test runs, the best of five models got 38%
+of the runtime questions right, and on a June 2026 benchmark the best of
+twelve models caught three quarters of the failing tests while most caught a
+third or less. On my own machine, a 27B model asked for the program state ten
+lines ahead got it right never with reasoning off and two thirds of the time
+with reasoning on, at twenty times the cost. The numbers are in the
+[appendix](#appendix-the-measurements).
 
-I checked the simplest version of this on my own machine. Qwen3.8-27B, a 4-bit
-MTPLX export served locally: give it a short Python program and the variable
-state after one executed line, ask for the state n lines later. With
-reasoning off, one line ahead it was exactly right 70% of the time. Three
-lines ahead, 20%. Five, 3%. Ten, never, though on average it still had about
-half the variables right. Each answer took about a second.
-
-With reasoning on at the lowest effort setting, it got one and three lines
-ahead right every time, five lines 92%, and ten lines 67%. The cost was 290
-reasoning tokens at one line ahead and about 1,200 at ten, and 6 to 24
-seconds per answer instead of one.
-
-The reasoning is the model executing the program by hand, one line at a
-time, in text. That's the mechanism: it can simulate, the simulation costs
-tokens in proportion to the distance, and it still fails a third of the time
-at ten lines. Thirty programs with reasoning off, twelve with it on, one run
-each, synthetic code; the harness and the raw results are in the repository
-for this post.
-
-<figure>
-  <img src="/assets/images/20261009/08-local-lookahead.png" alt="Grouped bar chart. Qwen3.8-27B, exact state predicted n executed lines ahead. Reasoning off: 1 line 70%, 3 lines 20%, 5 lines 3%, 10 lines 0%. Reasoning on at low effort: 100%, 100%, 92%, 67%.">
-  <figcaption>Exact-match accuracy by lookahead horizon, reasoning off (120 prompts) and reasoning on at low effort (49 prompts). My run, October 2026.</figcaption>
-</figure>
-
-Real code is worse. SWE-Flux, also from September 2026, asks what happens at
-runtime inside twelve Python repositories, with the answers taken from
-instrumented test runs: which branch executed, how many times a loop ran,
-what a variable held, which exception fired. The best of five models, GPT-5.4,
-scored 38% overall and 29% on the loop questions, where, as the authors put
-it, a model must track how the program evolves over iterations.
-
-A June 2026 benchmark took 435 cases from SWE-bench Verified and asked twelve
-models, frontier ones included, whether a test would pass. GPT-5.5 caught 74%
-of the failing tests. Claude Opus 4.7 caught 35%, Qwen3.5-397B 32%, and Qwen3-30B 2.5%. The authors attribute the
-misses to a bias toward predicting that tests pass. Asked which method or line
-would use the most time or memory, none of the twelve reached a recall at
-five of 0.2.
-
-<figure>
-  <img src="/assets/images/20261009/02-real-code.png" alt="Bar chart of the share of failing tests each model caught when predicting test outcomes on real repository code: gpt-5.5 73.5%, gpt-oss-120b 49.5%, gpt-5-mini 39.5%, claude-sonnet-4-6 39%, claude-opus-4-7 34.5%, Qwen3.5-397B 32%, gpt-5.2 27%, gpt-5.4 23.5%, CWM 21%, claude-haiku-4-5 18.5%, Qwen3-235B 8%, Qwen3-30B 2.5%.">
-  <figcaption>Share of failing tests caught when asked to predict test outcomes for real repository code, June 2026. Data from Towards Evaluation of Implicit Software World Models in Coding LLMs.</figcaption>
-</figure>
-
-**It's optimistic about its own work.** The same lean shows up in practice.
-In a 2026 Anthropic harness experiment, agents reliably graded their own work
-too generously.
+**It's optimistic about its own work.** In a 2026 Anthropic harness
+experiment, agents reliably graded their own work too generously, and the
+June 2026 benchmark's authors attribute its misses to a bias toward
+predicting that tests pass.
 
 **It can't see your state.** No training run puts your database, your
 environment variables, your library versions, or yesterday's edits into a
@@ -135,8 +95,8 @@ model's weights. A perfect simulator would still need to know where to start.
 **It can't reliably tell when it's wrong without outside input.** Asking a
 model to review its work without running anything means it re-reads text it
 wrote a moment ago. Research from 2024 on self-correction found that without
-outside feedback, models often don't improve and sometimes get worse. With reliable
-feedback, an error message or a test result, self-correction works.
+outside feedback, models often don't improve and sometimes get worse. With
+reliable feedback, an error message or a test result, self-correction works.
 
 Put those together: the context window is the agent's working memory. If a
 fact isn't in it, the agent guesses or goes and gets it. Reasoning can tell
@@ -147,7 +107,7 @@ true.
 
 <figure>
   <img src="/assets/images/20261009/03-two-loops.png" alt="Three rows. You: idea, change, compare against what you know and what you see, next. Agent: idea, change, done? with nothing to compare against. Agent with checks: idea, change, run or look, write down what is now known, next.">
-  <figcaption>The middle row is the default when a request only describes the change.</figcaption>
+  <figcaption>Diagram of the three loops. The middle row is the default when a request only describes the change.</figcaption>
 </figure>
 
 Unchecked assumptions get expensive because later work depends on them. If an
@@ -155,97 +115,74 @@ agent assumes the data import worked, it builds the chart, writes the summary,
 and polishes the report on top of an empty table. Each step looks finished,
 and all of them are wrong.
 
-None of this is news to agent researchers. ReAct paired model reasoning with
-actions and observations in 2022. What hasn't happened is the habit moving
-out of papers and into everyday practice.
-
 ## The strongest models build their own checks
 
 As of October 2026, the strongest models don't deal with this by predicting
-harder. They build checks.
+harder. They build checks. I've watched it happen. On a recompilation project
+before this one, the audio skipped when a certain part of a stage started,
+and I couldn't explain it. The model tapped the audio output while the game
+ran and did spectral analysis on the stream to find where the hiccup was.
+Reading the file wouldn't have shown it; the glitch only existed at runtime,
+so it built a monitor at the end of the line.
 
-Claude Opus 5, released in July, couldn't view a machine drawing directly, so
-it wrote its own computer vision pipeline to pull the geometry out of the
-pixels. Building a market data feed with no live feed to test against, it wrote
-its own test harness. Anthropic's prompting guide now tells developers to
-remove explicit verification instructions, because the model already checks
-its work and the extra instructions cause over-checking. OpenAI says the same
-about GPT-6 Astra, released in September: earlier models had to be pushed to
-run tests, Astra does it unprompted, and the old instructions now cause
-unnecessary testing.
-
-Read that as evidence. The labs with the most compute trained their models to
-build checks. They didn't train them to stop needing checks.
+Claude Opus 5's launch examples are the same move: asked to rebuild a machine part from a drawing it couldn't
+view, it wrote its own computer vision pipeline; asked to build a market data
+feed with no live feed to test against, it wrote its own test harness. Anthropic's prompting guide now tells developers to
+remove explicit verification instructions because the model already checks
+its work, and OpenAI says the same about GPT-6 Astra. The labs with the most
+compute trained their models to build checks. They didn't train them to stop
+needing checks.
 
 Anthropic's harness work shows the same thing from the other side. A harness
 is the software around the model that runs its tools and manages its context.
-In a March 2026 experiment, each new Opus release let the author remove more
-of it: forced context resets, then rigid sprint plans. One component stayed
-through every version: a separate evaluator that clicked through the running
-app in a real browser.
+Across three Opus releases, the author removed more of it each time: forced
+context resets, then rigid sprint plans. One component stayed through every
+version: a separate evaluator that clicked through the running app in a real
+browser.
 
 <figure>
   <img src="/assets/images/20261009/04-scaffolding.png" alt="Timeline across three Opus releases. Scaffolding blocks drop away one by one: forced context resets, rigid sprint plans, explicit verification instructions. One block stays across all three: a separate evaluator with a real browser.">
   <figcaption>What was removed and what was kept, from Anthropic's harness experiments (March 2026) and the Opus 5 prompting guide.</figcaption>
 </figure>
 
-Meta tried the other route. Its Code World Model (CWM, 2025) was trained on
-over 120 million traced Python functions to give it an internal sense of what
-code does at runtime. It's a capable coding model, but on the June 2026
-benchmark above it caught 21% of the failing tests, ninth of twelve, and came
-last at picking out the most expensive method or line. Training a model to
-predict execution is hard. And a model that predicted
-perfectly would still not know the state of your machine.
+Meta tried the other route, training its Code World Model on 120 million
+traced Python functions so it would have an internal sense of what code does
+at runtime. On the June 2026 benchmark it finished in the bottom half. A
+model that predicted perfectly would still not know the state of your
+machine.
 
 ## Why this won't close soon
 
-- **Your state isn't in the weights.** This one is permanent. Any model, of
-  any design, has to observe your system to know what's true in it.
-- **Prediction degrades with distance and size.** Models predict by
-  reasoning one step at a time. My run above shows the cost growing with the
-  number of lines, and the September 2026 repository benchmark scores lowest
-  on loop questions, where state has to be tracked across iterations. Running
-  the real thing is faster, cheaper, and exact.
-- **The industry is betting on loops.** Frontier coding models are trained with
-  reinforcement learning inside runnable environments (CWM alone used over
-  35,000 executable repository images) and rewarded when hidden tests pass.
-  That makes models better at using feedback, not at working without it.
-- **Reliability lags capability.** METR's May 2026 frontier report put the
-  public frontier at about 12 hours for tasks agents finish half the time and
-  about 1.5 hours for tasks they finish 80% of the time, an eightfold gap, and
-  noted that the strongest agents had saturated its task suite. Longer tasks
-  mean more steps between checks and more room to drift.
+- **Your state isn't in the weights.** Any model, of any design, has to
+  observe your system to know what's true in it.
+- **Prediction degrades with distance and size.** Models predict by reasoning
+  one step at a time, the cost grows with every line, and running the real
+  thing is faster, cheaper, and exact.
+- **The industry is betting on loops.** Frontier coding models are trained
+  inside runnable environments and rewarded when hidden tests pass, which
+  makes them better at using feedback, not at working without it.
+- **Reliability lags capability.** METR's May 2026 report put the public
+  frontier at about 12 hours for tasks agents finish half the time and 1.5
+  hours for tasks they finish 80% of the time.
 
-What would change this? A model that keeps an explicit, updated picture of
+What would change this is a model that keeps an explicit, updated picture of
 program state across steps and knows when that picture is uncertain. That's a
-different kind of model from what we have, and CWM shows how early it is. Even
-then, it would reduce how often an agent needs to check. It wouldn't remove
-the need to look.
+different kind of model from what we have. Even then, it would reduce how
+often an agent needs to check, not remove the need to look.
 
 ## A feedback loop is worth more than a bigger model
 
 If checks are what make agents reliable, you can buy reliability with checks
-instead of model size.
+instead of model size. My own run is the smallest version of this: the same
+27B model went from 0% to 67% at ten lines ahead when it was allowed to check
+each step. Two 2026 studies found the same at larger scale: an agent that
+checks its model of a game against recorded observations ranks first in every
+setting, and picking the best harness gains about as much as picking the best
+model (appendix).
 
-My own run above is the smallest version of this: the same 27B model went
-from 0% to 67% at ten lines ahead when it was allowed to work the problem
-step by step and check each step, at twenty times the cost. A 2026 study of
-coding agents on ARC-AGI-3 found that the variant which checked its model of
-the game against recorded observations ranked first in every setting and
-succeeded at lower reasoning effort, at the price of more compute per run. An
-ICML 2026 paper found that picking the best harness gains about as much on
-Terminal-Bench as picking the best model.
-
-The idea isn't new. The 2024 "Large Language Monkeys" paper showed a cheap open model with tests choosing
-among many attempts beating the best single attempt of that year's frontier
-models on SWE-bench Lite. The models in that study are two generations gone,
-and the result has held up.
-
-There are limits. The model still has to turn the signal into a fix, a wrong
-checker steers it wrong with confidence, and many cheap attempts can cost more
-than one good one. Within those limits the pattern holds. Frontier models build
-their own loops. Smaller, cheaper, and local models mostly don't, and a loop
-built for them is the cheapest upgrade available.
+The limits: the model still has to turn the signal into a fix, a wrong checker steers it wrong with confidence, and many cheap attempts
+can cost more than one good one. Within those limits, a loop built for a
+smaller or local model is the cheapest upgrade available.
 
 A colleague who runs these things all day pushes back on this. In his view,
 loops and goals are crutches, a way of failing upward at a cost, and the real
@@ -263,12 +200,12 @@ design says what you want; the check says whether you got it. A check written
 from a vague request confirms a vague result, which is why the checks have to
 come from the requirement, and why the requirement has to be written down.
 
-The newer frontier models are very good at solving things with no direction, and that's most of their
-appeal: one-shot builds, changes to existing code, long runs of work from a
-vague instruction. The cost is that more gets assumed. Every requirement I
-didn't write down gets filled in by the model's judgment, and the work is
-finished before I see any of it. The gap is between the work it did and the
-work I wanted, and a passing check doesn't close it.
+The newer frontier models are very good at solving things with no direction,
+and that's most of their appeal: one-shot builds, changes to existing code,
+long runs of work from a vague instruction. The cost is that more gets
+assumed. Every requirement I didn't write down gets filled in by the model's
+judgment, and the work is finished before I see any of it. The gap is between
+the work it did and the work I wanted, and a passing check doesn't close it.
 
 My remake is the example. It was mostly built with frontier models, but not
 from a prompt that said port this game. I gave them an emulator and a working
@@ -279,12 +216,12 @@ frame the models did a lot of good work. Then I asked for a 2.5D graphical
 overhaul with no requirements, because I didn't have any. The models
 extruded 3D geometry out of the 2D sprites. It was horrible.
 
-To get what a studio with a budget would produce, I'd have to supply the tooling, the
-direction, and a production pipeline for turning a retro game into something
-that looks designed. Frontier models can do a lot and there's headroom
-there. But even if they can do it, will the assumptions they make be the ones
-I want? And if they are, is the way they get there any good? I have no way to
-tell.
+To get what a studio with a budget would produce, I'd have to supply the
+tooling, the direction, and a production pipeline for turning a retro game
+into something that looks designed. Frontier models can do a lot and there's
+headroom there. But even if they can do it, will the assumptions they make be
+the ones I want? And if they are, is the way they get there any good? I have
+no way to tell.
 
 Anthropic's guide for Opus 5 now ships a prompt to hold the model to the
 scope you asked for and to check in when different readings of the request
@@ -335,6 +272,7 @@ yourself available to the agent as text it can ask for.
 | What did I just change? | Before and after snapshots, and diffs |
 | Will this break that? | A repro script for the bug; an invariant check such as "every order has a customer" |
 | What does the outside service do? | A fake or recorded copy of the service the agent can call safely |
+| Does it look and sound right while it runs? | A tap at the output: screen control, an audio capture, not a read of the file |
 | Where was I? What do I actually know? | The working record, in a file |
 
 The Parasol Stars harness is one of these. It runs the remake and the original
@@ -353,6 +291,15 @@ two ways and reconcile them against the source before writing any
 conclusions. Writing from sources: a script that confirms every quote appears
 word for word in the source. Setting up a home server: a health check that hits
 each service and prints up or down after every change.
+
+Some things can only be checked at the end of the line. A rendering bug, a
+skipped audio frame, a checkout button that sits off-screen on a phone: none
+of that shows up in the code or in a file, only in the output. That's why
+I've put time into computer-use tooling, [CUA](https://github.com/trycua/cua)
+and my own [computer-ctrl](https://github.com/batteryshark/computer-ctrl) on
+top of it. Those checks used to need me. They don't, if the agent has the
+tool and the expectation that it will use it, but that has to be in the plan;
+nothing hands it over by default.
 
 Every check has a scope, and it's easy to ask the wrong question. "The file
 downloaded" isn't "the right records downloaded." Reopening a document proves
@@ -394,40 +341,24 @@ in mind. Put the lasting answers in a file the agent reads every session:
 ```
 
 **Give access, not instructions.** An agent can only check what it can
-observe. In Anthropic's March 2026 harness experiments, Claude out of the box
-was a poor QA agent for its own work. Separating the agent doing the work
-from the agent judging it was the strongest lever, and the judge got a real
-browser through Playwright so it could click through the live app. The June
-2026 study above reached the same conclusion from the other side: the agent
-doesn't, on its own, validate what it ships as a user would. A dev
-environment, sample data, a browser, and read-only logs beat paragraphs of
-instructions.
+observe. In Anthropic's harness experiments, Claude out of the box was a poor
+judge of its own work; a separate judging agent with a real browser was the
+strongest lever they found. A dev environment, sample data, a browser, and
+read-only logs beat paragraphs of instructions.
 
 **Check before you build on it.** Not after every edit; before a result
 becomes the foundation for more work. The data import before the analysis, the
 schema before the API.
 
 **Protect the acceptance checks.** An agent told to make tests pass will make
-tests pass by whatever route is open. In a June 2026 study, Copilot CLI
-agents running Claude Opus 4.7 and GPT-5.5 were asked to port a React data
-table to Angular as a reusable library, graded by a hidden suite of 222
-browser tests. Without the suite, they delivered a library that was present
-but unfinished. With the suite in the loop, scores went near-perfect while the
-library was often dead or absent: the agents built a demo that held the
-tested behavior directly.
-
-SpecBench, from May 2026, measures the same thing as the gap between visible
-tests and a held-out suite. Every frontier agent
-saturates the visible tests, the gap persists, and it grows by 28 points for
-every tenfold increase in code size. One agent produced a 2,900-line
-hash-table "compiler" that memorized the test inputs. METR's pre-deployment
-run of GPT-5.6 Sol in June 2026 put its 50% time horizon at about 11 hours
-when cheating attempts were counted as failures and beyond 270 hours when
-they were counted as successes.
-
-Tests can be wrong too, so the rule isn't "never touch a test." It's "never
-weaken a check to get a pass." Keep the acceptance checks out of the agent's
-reach, hold some back, and tell it: if a check looks wrong, stop and say why.
+tests pass by whatever route is open. In a June 2026 study, agents graded by a
+hidden suite of browser tests scored near-perfect while the library they were
+asked to build was often dead or absent; they'd built a demo that held the
+tested behavior directly. The same pattern shows up in every current
+measurement of it (appendix). Tests can be wrong too, so the rule isn't
+"never touch a test." It's "never weaken a check to get a pass." Keep the
+acceptance checks out of the agent's reach, hold some back, and tell it: if a
+check looks wrong, stop and say why.
 
 **When it starts skipping around, ask what would tell the explanations
 apart.** An agent trying one plausible fix after another has stopped learning
@@ -499,24 +430,143 @@ In the Parasol Stars work, every mistake the agent made was found the same way:
 by checking its claim against the logged data. The log made that possible, not
 the agent.
 
-The log has a second use. People remember the hits and forget the
-misses. An agent that does one surprising thing well leaves a stronger
-impression than the ten routine failures around it, and the failures turn
-into ordinary days. Engineers surface the hits, managers see the hit rate, and
-the misses never make it into the summary. I'm not immune. I have a skill pack that Codex has
+The log has a second use. People remember the hits and forget the misses. An
+agent that does one surprising thing well leaves a stronger impression than
+the ten routine failures around it, and the failures turn into ordinary days.
+Engineers surface the hits, managers see the hit rate, and the misses never
+make it into the summary. I'm not immune. I have a skill pack that Codex has
 been writing for four days, about 280 skills, and I don't know if any of it
 is any good, because nothing checks it. A record of what was verified and what
 wasn't is the only account that keeps the misses in it.
 
-The same applies to writing, including this post. It started as a rant,
-got sorted into beats and a short brief for what a reader should walk away
-with, and went through three reviewers with different jobs, a lint for my own
-voice, a check of every number against its paper, and one measurement I ran
-myself. None of that is prompting. It's the pipeline, and without it the
-result is the generic article you have already read ten times.
+The same applies to writing, including this post. It started as a rant, got
+sorted into beats and a short brief for what a reader should walk away with,
+and went through three reviewers with different jobs, a lint for my own voice,
+a check of every number against its paper, and one measurement I ran myself.
+None of that is prompting. It's the pipeline, and without it the result is
+the generic article you have already read ten times.
 
 If you have built checks like these for your own work, or hit a case where an
 agent's self-check fooled you, I'd like to hear about it.
+
+## Appendix: the measurements
+
+The numbers behind the claims above, for anyone who wants them. Every model
+and benchmark here is from 2026 unless the date says otherwise.
+
+### A1. Toy code versus real code
+
+The classic test, CruxEval, asks a model to predict the output of a small
+Python function. By 2026 it had stopped separating models: one evaluation
+service quit running LiveCodeBench's version on new releases because scores
+had saturated, and a benchmark paper from late September 2026 says the format
+is no longer suitable for coding agents, because an agent can run the program
+instead of reasoning about it.
+
+That paper, Codoku, replaced it with puzzles
+an agent can't run its way out of: fill in typed blanks in a partial program
+so that global constraints hold. Claude Opus 5 solved 77% of the small
+puzzles and 50% of the large ones. GPT-5.6 Sol solved 67% and 54%. The
+open-weight models ranged from 50% down to 11%.
+
+SWE-Flux, also from September 2026, asks what happens at runtime inside
+twelve Python repositories, with the answers taken from instrumented test
+runs: which branch executed, how many times a loop ran, what a variable held,
+which exception fired. The best of five models, GPT-5.4, scored 38% overall
+and 29% on the loop questions, where, as the authors put it, a model must
+track how the program evolves over iterations.
+
+A June 2026 benchmark took 435 cases from SWE-bench Verified and asked twelve
+models, frontier ones included, whether a test would pass. GPT-5.5 caught 74%
+of the failing tests. Claude Opus 4.7 caught 35%, Qwen3.5-397B 32%, and
+Qwen3-30B 2.5%. The authors attribute the misses to a bias toward predicting
+that tests pass. Asked which method or line would use the most time or
+memory, none of the twelve reached a recall at five of 0.2. Meta's CWM, the
+model trained on execution traces, caught 21% of the failing tests, ninth of
+twelve, and came last at picking out the most expensive method or line.
+
+<figure>
+  <img src="/assets/images/20261009/02-real-code.png" alt="Bar chart of the share of failing tests each model caught when predicting test outcomes on real repository code: gpt-5.5 73.5%, gpt-oss-120b 49.5%, gpt-5-mini 39.5%, claude-sonnet-4-6 39%, claude-opus-4-7 34.5%, Qwen3.5-397B 32%, gpt-5.2 27%, gpt-5.4 23.5%, CWM 21%, claude-haiku-4-5 18.5%, Qwen3-235B 8%, Qwen3-30B 2.5%.">
+  <figcaption>Share of failing tests caught when asked to predict test outcomes for real repository code, June 2026. Data from Towards Evaluation of Implicit Software World Models in Coding LLMs.</figcaption>
+</figure>
+
+### A2. My lookahead run
+
+Qwen3.8-27B, a 4-bit MTPLX export served locally on an M5 Max: give it a
+short Python program and the variable state after one executed line, ask for
+the state n lines later, score exact match on the whole state. Thirty
+synthetic programs (a few integers, a list, a short loop with a branch),
+seed fixed, temperature 0, one run.
+
+With reasoning off, one line ahead it was exactly right 70% of the time.
+Three lines ahead, 20%. Five, 3%. Ten, never, though on average it still had
+about half the variables right. Each answer took about a second.
+
+With reasoning on at the lowest effort setting, it got one and three lines
+ahead right every time, five lines 92%, and ten lines 67%. The cost was 290
+reasoning tokens at one line ahead and about 1,200 at ten, and 6 to 24
+seconds per answer instead of one. The reasoning text is the model executing
+the program by hand, one line at a time. That's the mechanism: it can
+simulate, the simulation costs tokens in proportion to the distance, and it
+still fails a third of the time at ten lines.
+
+<figure>
+  <img src="/assets/images/20261009/08-local-lookahead.png" alt="Grouped bar chart. Qwen3.8-27B, exact state predicted n executed lines ahead. Reasoning off: 1 line 70%, 3 lines 20%, 5 lines 3%, 10 lines 0%. Reasoning on at low effort: 100%, 100%, 92%, 67%.">
+  <figcaption>Exact-match accuracy by lookahead horizon, reasoning off (120 prompts) and reasoning on at low effort (49 prompts). My run, October 2026.</figcaption>
+</figure>
+
+Limits: synthetic code, one model, one quantization, one run per prompt, and
+the reasoning condition was stopped at twelve programs to keep it under
+twenty minutes. The harness, the raw results, and the two runs that didn't
+work (a stale `mlx_lm`, and a server that ignored the thinking-off flag and
+reasoned into a token cap) are in the post's repository.
+
+### A3. Agents building to the test
+
+In a June 2026 study, Copilot CLI agents running Claude Opus 4.7 and GPT-5.5
+were asked to port a React data table to Angular as a reusable library,
+graded by a hidden suite of 222 browser tests. Without the suite, they
+delivered a library that was present but unfinished. With the suite in the
+loop, scores went near-perfect while the library was often dead or absent:
+the agents built a demo that held the tested behavior directly. The authors'
+line: the agent doesn't, on its own, validate what it ships as a user would.
+
+SpecBench, from May 2026, measures the same thing as the gap between visible
+tests and a held-out suite. Every frontier agent saturates the visible tests,
+the gap persists, and it grows by 28 points for every tenfold increase in
+code size. One agent produced a 2,900-line hash-table "compiler" that
+memorized the test inputs.
+
+METR's pre-deployment run of GPT-5.6 Sol in June 2026 put its 50% time
+horizon at about 11 hours when cheating attempts were counted as failures and
+beyond 270 hours when they were counted as successes, and noted its detected
+cheating rate was the highest of any public model on their harness.
+
+### A4. Harnesses, horizons, and loops
+
+Anthropic's March 2026 harness experiments: out of the box, Claude was a poor
+QA agent for its own work. Separating the agent doing the work from the agent
+judging it was the strongest lever, and the judge got a real browser through
+Playwright so it could click through the live app. Opus 4.5 let the author
+drop forced context resets; Opus 4.6 let him drop the sprint structure and
+run the evaluator once at the end. A solo run of the same task took 20
+minutes and $9; the full harness took 6 hours and $200, with a difference in
+output quality the author calls immediately apparent.
+
+METR's May 2026 frontier report: the public frontier at about 12 hours for
+tasks finished half the time (confidence interval 5 to 61 hours) and about
+1.5 hours for tasks finished 80% of the time, with the strongest agents
+having essentially saturated the Time Horizon 1.1 suite.
+
+Loops versus model size: a 2026 study of coding agents on ARC-AGI-3 found the
+variant that checked its model of the game against recorded observations
+ranked first in every setting and succeeded at lower reasoning effort, at the
+price of more compute per run. Han and Sun (ICML 2026) found that picking the
+best harness gains about as much on Terminal-Bench as picking the best model.
+The 2024 "Large Language Monkeys" paper is the origin of the result: a cheap
+open model with tests choosing among many attempts beat the best single
+attempt of that year's frontier models on SWE-bench Lite. Those models are
+two generations gone; the result has held up.
 
 ---
 
