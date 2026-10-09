@@ -22,8 +22,8 @@ something was off, and I made a bet on it.
 
 The agent had built the remake's enemy logic against an emulator harness with
 no multitap, and it kept that configuration without comparing it to my
-emulator, which had the multitap on. The fact that would have settled it,
-which setup I actually play on, was something I knew and never said.
+emulator, which had the multitap on. I knew which setup I play on. It never
+came up.
 
 This post is about that gap. It's less about how smart the model is than
 about how we hand work to it. We describe the change we want and leave out the
