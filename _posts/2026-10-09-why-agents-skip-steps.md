@@ -557,10 +557,12 @@ The log has a second use. People remember the hits and forget the misses. An
 agent that does one surprising thing well leaves a stronger impression than
 the ten routine failures around it, and the failures turn into ordinary days.
 Engineers surface the hits, managers see the hit rate, and the misses never
-make it into the summary. I'm not immune. I have a skill pack that Codex has
-been writing for four days, about 280 skills, and I don't know if any of it
-is any good, because nothing checks it. A record of what was verified and what
-wasn't is the only account that keeps the misses in it.
+make it into the summary. I'm running an experiment on this right now: a
+skill pack that Codex has been writing on its own for four days, about 280
+skills, with no checks on purpose. I want to see how far it drifts from what
+I asked for, and when it's done, I'll have to work out how to tell whether
+any of it is useful. A record of what was verified and what wasn't is the
+only account that keeps the misses in it.
 
 The same applies to writing, including this post. It started as a rant, got
 sorted into beats and a short brief for what a reader should walk away with,
