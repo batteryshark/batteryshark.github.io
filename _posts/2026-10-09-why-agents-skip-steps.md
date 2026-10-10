@@ -30,10 +30,10 @@ to play that room in the remake and it felt wrong: harder than I remembered,
 in a way that didn't seem intentional. I had no proof, just a guess that
 something was off, and I made a bet on it.
 
-The agent had built the remake's enemy logic against an emulator harness with
-no multitap, and it kept that configuration without comparing it to my
-emulator, which had the multitap on. I knew which setup I play on. It never
-came up.
+The agent had built the remake's enemy logic against a test setup configured
+one way, and never compared it with the setup I actually play on, which is
+configured differently. The difference changes how the enemies behave. I knew
+which setup I use. It never came up.
 
 This post is about getting better results from agents on larger projects,
 the kind that run for weeks with anywhere from five to fifty agents working
