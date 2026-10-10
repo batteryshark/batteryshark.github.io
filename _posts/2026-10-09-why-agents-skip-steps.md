@@ -2,7 +2,7 @@
 layout: post
 title: "Lessons From Running a Swarm of Agents"
 date: 2026-10-09
-description: "Why agents skip steps, and what to keep in mind when you start something with a swarm of them, while it runs, when it gets stuck, and when you change your mind about what you wanted. From weeks-long projects with anywhere from seven to fifty agents working at once."
+description: "Why agents skip steps, and what to keep in mind when you start something with a swarm of them, while it runs, when it gets stuck, and when you change your mind about what you wanted. From weeks-long projects with anywhere from five to fifty agents working at once."
 tags: [agents, ai-engineering, harness-design, tooling]
 toc: true
 image: /assets/images/20261009/social.png
@@ -36,9 +36,9 @@ emulator, which had the multitap on. I knew which setup I play on. It never
 came up.
 
 This post is about getting better results from agents on larger projects,
-the kind that run for weeks with anywhere from seven to fifty agents working
-at once depending on whether the work is research, investigation, or
-building, not one agent and a button: the things I've found worth keeping in mind when I
+the kind that run for weeks with anywhere from five to fifty agents working
+at once on research, investigation, and building in parallel, not one agent
+and a button: the things I've found worth keeping in mind when I
 start something, while it runs, when it gets stuck, and when I change my mind
 about what I wanted, which on a long project I always do. The first half is why the gap exists.
 If you already believe an agent can't see your machine, skip to
@@ -244,10 +244,9 @@ assumed. Every requirement I didn't write down gets filled in by the model's
 judgment, and the work is finished before I see any of it.
 
 With one agent that's manageable. But past a toy example I'm not waiting on
-one agent to build anything moderately complex; I need anywhere from seven
-to fifty running at once, depending on whether the work is research,
-investigation, or building, and what that trade costs is visibility into the
-small decisions. Each agent fills its gaps its own way, then they build on each
+one agent to build anything moderately complex; I need anywhere from five
+to fifty running at once, researching, investigating, and building in
+parallel, and what that trade costs is visibility into the small decisions. Each agent fills its gaps its own way, then they build on each
 other's fills, and the drift from what I thought I said grows exponentially
 with every hour nobody is watching.
 
