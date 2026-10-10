@@ -23,13 +23,6 @@ work through a decade-long backlog of projects, and rebuild my entire home
 server setup, alongside building the infrastructure for the agentic work
 itself, this is some of what I've learned.
 
-In [my last post]({% post_url 2026-10-02-bug-hunting-in-retro-games %}), an
-agent found a bug in Parasol Stars by running the original ROM twice with one
-change and comparing memory frame by frame. I only looked because I happened
-to play that room in the remake and it felt wrong: harder than I remembered,
-in a way that didn't seem intentional. I had no proof, just a guess that
-something was off, and I made a bet on it.
-
 This post is about getting better results from agents on larger projects,
 the kind that run for weeks with anywhere from five to fifty agents working
 at once on research, investigation, and building in parallel, not one agent
@@ -68,6 +61,14 @@ checking: a glance at a log, a quick run because something looks off. The
 model is often wrong, which is why you also keep notes, open a debugger, and
 ask a coworker. But the tracking and the checking happen whether you plan them
 or not.
+
+In [my last post]({% post_url 2026-10-02-bug-hunting-in-retro-games %}), an
+agent found a bug in Parasol Stars by running the original ROM twice with one
+change and comparing memory frame by frame. I only looked because I happened
+to play that room in the remake and it felt wrong: harder than I remembered,
+in a way that didn't seem intentional. I had no proof, just a guess that
+something was off, and I made a bet on it. That guess came out of the model
+in my head, not out of the repo.
 
 We take that model for granted, and most of us aren't good at turning it
 into something written down. It's intuition, and intuition is hard to
