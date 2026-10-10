@@ -206,7 +206,7 @@ instead of model size. My own run is the smallest version of this: the same
 each step. Two 2026 studies found the same at larger scale: an agent that
 checks its model of a game against recorded observations ranks first in every
 setting, and picking the best harness gains about as much as picking the best
-model (appendix).
+model ([A4](#a4-what-the-loop-is-worth)).
 
 The limits: the model still has to turn the signal into a fix, a wrong checker steers it wrong with confidence, and many cheap attempts
 can cost more than one good one. Within those limits, a loop built for a
@@ -614,12 +614,12 @@ realistic jobs in a sandboxed terminal, the agent gets bash with no step
 limit, and a verifier checks the end state after it stops. With every chance
 to run and check, the best current model, Claude Opus 5.5, finishes 65% of
 the jobs as of October 7, 2026; GPT-6 Astra 60%, Grok 4.7 29%
-([A4](#a4-harnesses-horizons-and-loops)). The two benchmarks above are the
+([A4](#a4-what-the-loop-is-worth)). The two benchmarks above are the
 ones that measure prediction.
 
 **It's optimistic about its own work.** In a 2026 Anthropic harness
 experiment, agents reliably graded their own work too generously
-([A4](#a4-harnesses-horizons-and-loops)), and the
+([A4](#a4-what-the-loop-is-worth)), and the
 June 2026 benchmark's authors attribute its misses to a bias toward
 predicting that tests pass.
 
@@ -748,59 +748,69 @@ GPT-6 Sol 4.9%, GPT-6 Astra 1.5%, and GPT-6 Luna 28.7%. The same page notes
 that Claude Fable 5.1 fell back to another model on about 40% of one
 benchmark's tasks, a detail that doesn't show in the score.
 
-## A4. Harnesses, horizons, and loops
+## A4. What the loop is worth
 
-Anthropic's March 2026 harness experiments: out of the box, Claude was a poor
-QA agent for its own work. Separating the agent doing the work from the agent
-judging it was the strongest lever, and the judge got a real browser through
-Playwright so it could click through the live app. Opus 4.5 let the author
-drop forced context resets; Opus 4.6 let him drop the sprint structure and
-run the evaluator once at the end. A solo run of the same task took 20
-minutes and $9; the full harness took 6 hours and $200, with a difference in
-output quality the author calls immediately apparent.
+Part one makes two claims: a model can't tell how your system will behave
+without looking, and when it can look, finishing depends on the loop more
+than on the model. A1 and A2 measure the first. A3 measures whether what gets
+delivered is what was asked. This section is the evidence for the second
+claim, and every source in it grades the end state, with a verifier, a
+browser, or a recorded observation, rather than taking the model's own
+report, because the model's report is the thing in question.
 
-METR's May 2026 frontier report: the public frontier at about 12 hours for
-tasks finished half the time (confidence interval 5 to 61 hours) and about
-1.5 hours for tasks finished 80% of the time, with the strongest agents
-having essentially saturated the Time Horizon 1.1 suite.
+**The evaluator is the part of the harness that survived.** In Anthropic's
+March 2026 harness experiments, Claude out of the box was a poor QA agent for
+its own work and graded it too generously. Separating the agent doing the
+work from the agent judging it was the strongest lever, and the judge got a
+real browser through Playwright so it could click through the live app. Opus
+4.5 let the author drop forced context resets; Opus 4.6 let him drop the
+sprint structure and run the evaluator once at the end. A solo run of the
+same task took 20 minutes and $9; the full harness took 6 hours and $200,
+with a difference in output quality the author calls immediately apparent.
 
-Where the current models stand on one harness. Terminal-Bench 4.0 isn't a
-prediction benchmark and doesn't measure reading what you wanted: it's 66
-community-written tasks across software, science, ML, operations, hardware,
-security, and media, each a real deliverable (one example: speed up worker
-startup for a transaction pipeline), graded by a verifier that runs after
-the agent finishes, all or nothing, with the agent given bash, no step
-limit, and up to eight hours. It's here for two reasons: it's the one place
-every current model is run through the same harness, and it shows how often
-finishing happens when the agent can run anything it wants.
+**Harness choice is worth about as much as model choice.** Han and Sun (ICML
+2026) found that picking the best harness gains about as much on
+Terminal-Bench as picking the best model. A 2026 study of coding agents on
+ARC-AGI-3 found the variant that checked its model of the game against
+recorded observations ranked first in every setting and succeeded at lower
+reasoning effort, at the price of more compute per run. The 2024 "Large
+Language Monkeys" paper is the origin of the result: a cheap open model with
+tests choosing among many attempts beat the best single attempt of that
+year's frontier models on SWE-bench Lite. Those models are two generations
+gone; the result has held up.
 
-Vals AI runs every model through the same minimal agent (mini-SWE-agent). As of
-October 7, 2026, Claude Opus 5.5 leads at 65%, with Claude Sonnet 5.5 at 64%,
-GPT-6 Astra at 60%, Claude Fable 5.1 at 58%, GPT-6.1 Sol at 55%, GLM 5.3 at
-39%, Grok 4.7 at 29%, DeepSeek V4.1 Flash at 20%, and Kimi K3 at 17%. The
-best model on the board fails a third of the tasks.
+**With the loop, the frontier finishes about two thirds of the time.**
+Terminal-Bench 4.0 is the one board where every current model runs through
+the same minimal harness (Vals AI, mini-SWE-agent): 66 community-written
+tasks across software, science, ML, operations, hardware, security, and
+media, each a real deliverable, graded all or nothing by a verifier that runs
+after the agent stops, with bash, no step limit, and up to eight hours. It
+doesn't measure prediction or reading what you wanted. It measures how often
+an agent finishes when it can run anything it likes, which is the ceiling the
+loop buys you.
 
-Vals also notes that 22
-of Opus 5.5's 198 attempts were served by Opus 5 or Opus 4.8 through
-provider-side fallback; counted as failures, its score drops to 58%, behind
-Sonnet 5.5 and Astra. METR's September 22, 2026 pre-deployment summary calls
-Opus 5.5 an incremental improvement over Fable 5.1 on its quantitative
-evaluations.
+As of October 7, 2026: Claude Opus 5.5 65%, Claude Sonnet 5.5 64%, GPT-6 Astra 60%, Claude Fable 5.1 58%, GPT-6.1 Sol 55%, GLM 5.3 39%,
+Grok 4.7 29%, DeepSeek V4.1 Flash 20%, Kimi K3 17%. The best model on the
+board fails a third of the tasks. Vals notes that 22 of Opus 5.5's 198
+attempts were served by Opus 5 or Opus 4.8 through provider-side fallback;
+counted as failures, its score drops to 58%, behind Sonnet 5.5 and Astra.
+METR's September 22, 2026 summary calls Opus 5.5 an incremental improvement
+over Fable 5.1, which matches the board: the top four are within seven
+points.
 
 <figure>
   <img src="/assets/images/20261009/12-terminal-bench.png" alt="Bar chart of Terminal-Bench 4.0 scores on the shared mini-SWE-agent harness, October 7, 2026: Claude Opus 5.5 65.2%, Claude Sonnet 5.5 64.1%, GPT-6 Astra 59.6%, Claude Fable 5.1 58.1%, GPT-6.1 Sol 55.1%, GLM 5.3 38.9%, Grok 4.7 28.8%, DeepSeek V4.1 Flash 19.7%, Kimi K3 17.2%.">
   <figcaption>Every current model, one harness, October 7, 2026. Data from Vals AI.</figcaption>
 </figure>
 
-Loops versus model size: a 2026 study of coding agents on ARC-AGI-3 found the
-variant that checked its model of the game against recorded observations
-ranked first in every setting and succeeded at lower reasoning effort, at the
-price of more compute per run. Han and Sun (ICML 2026) found that picking the
-best harness gains about as much on Terminal-Bench as picking the best model.
-The 2024 "Large Language Monkeys" paper is the origin of the result: a cheap
-open model with tests choosing among many attempts beat the best single
-attempt of that year's frontier models on SWE-bench Lite. Those models are
-two generations gone; the result has held up.
+**Reliability lags capability.** METR's May 2026 frontier report put the
+public frontier at about 12 hours for tasks agents finish half the time
+(confidence interval 5 to 61 hours) and about 1.5 hours for tasks they
+finish 80% of the time, with the strongest agents having essentially
+saturated the Time Horizon 1.1 suite. The gap between those two numbers is
+why part two checks while it runs: an agent that finishes a twelve-hour task
+half the time hands you a wrong twelve-hour result the other half, and the
+run itself doesn't say which one you got.
 
 ---
 
