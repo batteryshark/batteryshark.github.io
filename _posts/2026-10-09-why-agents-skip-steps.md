@@ -12,6 +12,11 @@ image: /assets/images/20261009/social.png
   <img src="/assets/images/20261009/banner.png" alt="Title art: the words Lessons From Running a Swarm of Agents beside a sticky note of questions you answer for yourself labeled with questions you answer for yourself: migration ran? server up? column exists? which emulator config?">
 </figure>
 
+> "Knowledge is knowing a tomato is a fruit; wisdom is not putting it in a
+> fruit salad."
+>
+> Miles Kington
+
 After several months of using armies of agents to reverse engineer software,
 build servers and emulators, make games, write every utility I'll ever need,
 work through a decade-long backlog of projects, and rebuild my entire home
