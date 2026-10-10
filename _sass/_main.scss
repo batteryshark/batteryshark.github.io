@@ -384,13 +384,6 @@ figcaption {
 }
 
 @media (prefers-color-scheme: dark) {
-  img {
-    // dim the image's colors for dark mode
-    // - https://jec.fyi/blog/supporting-dark-mode
-    // filter: grayscale(30%);
-    filter: brightness(70%);
-  }
-
   .avoid-transparency {
     background: color("ui-border");
   }
