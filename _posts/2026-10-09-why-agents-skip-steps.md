@@ -30,19 +30,14 @@ to play that room in the remake and it felt wrong: harder than I remembered,
 in a way that didn't seem intentional. I had no proof, just a guess that
 something was off, and I made a bet on it.
 
-The agent had built the remake's enemy logic against a test setup configured
-one way, and never compared it with the setup I actually play on, which is
-configured differently. The difference changes how the enemies behave. I knew
-which setup I use. It never came up.
-
 This post is about getting better results from agents on larger projects,
 the kind that run for weeks with anywhere from five to fifty agents working
 at once on research, investigation, and building in parallel, not one agent
 and a button: the things I've found worth keeping in mind when I
 start something, while it runs, when it gets stuck, and when I change my mind
-about what I wanted, which on a long project I always do. The first half is why the gap exists.
-If you already believe an agent can't see your machine, skip to
-[part two](#part-two-what-to-keep-in-mind).
+about what I wanted, which on a long project I always do. The first half is
+why agents skip steps. If you already believe an agent can't see your
+machine, skip to [part two](#part-two-what-to-keep-in-mind).
 
 ## Part one: why the gap exists
 
@@ -96,8 +91,8 @@ they'd say if asked. Some of it they've never put into words. They know what
 they want, and that's what goes on the card.
 
 <figure>
-  <img src="/assets/images/20261009/01-handoff.png" alt="A task card that says Port this game to Godot is handed to an agent at a terminal. Above the person, a thought cloud holds the facts that are not on the card: I play with the multitap on, enemies move one pixel per frame, round 1-5 is a flood room, compare every frame with the original.">
-  <figcaption>The multitap setting never makes it onto the card.</figcaption>
+  <img src="/assets/images/20261009/01-handoff.png" alt="A task card that says Port this game to Godot is handed to an agent at a terminal. Above the person, a thought cloud holds the facts that are not on the card: my setup isn't the test rig, enemies move one pixel per frame, round 1-5 is a flood room, compare every frame with the original.">
+  <figcaption>The setup I actually play on never makes it onto the card.</figcaption>
 </figure>
 
 An agent can't look unless you gave it something to look with. So the request
