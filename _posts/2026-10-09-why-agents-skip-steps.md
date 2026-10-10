@@ -569,6 +569,11 @@ a check of every number against its paper, and one measurement I ran myself.
 None of that is prompting. It's the pipeline, and without it the result is
 the generic article you have already read ten times.
 
+<figure>
+  <img src="/assets/images/20261009/13-every-phase.jpg" alt="Infographic titled A better plan for every phase: define the outcome, give agents evidence, keep decisions visible. Four panels. When you start: define done in observable terms; write down state, constraints, and design; give access to checks and prove they catch failure; before delegating, how will we know it worked? While it runs: separate observed facts from assumptions; check results before other work depends on them; protect acceptance checks and recheck stale evidence; before building on it, what is actually verified? When it's stuck: ask what observation separates the explanations; after two uninformative attempts, change approach; check the intended outcome, not just the action; before another fix, what will this teach us? When you change your mind: inspect the real output and name what feels wrong; write the missing requirement and revise the checks; surface assumptions that change the work; before continuing, are we building what I want? Below: checks are more than tests, with state dumps, screenshots, diffs, repro scripts, recorded services, audio capture; the final handoff shows the evidence, lists what wasn't verified, lists requirements that were assumed; and write checks from requirements, not from the implementation.">
+  <figcaption>Part two on one page.</figcaption>
+</figure>
+
 ## Sign-off
 
 If you take one thing from this, take the question: before you hand an agent
