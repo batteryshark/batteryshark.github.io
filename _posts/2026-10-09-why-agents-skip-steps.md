@@ -5,11 +5,11 @@ date: 2026-10-09
 description: "Why agents skip steps, and what to keep in mind when you start something with a swarm of them, while it runs, when it gets stuck, and when you change your mind about what you wanted. From weeks-long projects with anywhere from five to fifty agents working at once."
 tags: [agents, ai-engineering, harness-design, tooling]
 toc: true
-image: /assets/images/20261009/social.png
+image: /assets/images/20261009/social.jpg
 ---
 
 <figure>
-  <img src="/assets/images/20261009/banner.png" alt="Title art: the words Lessons From Running a Swarm of Agents beside a sticky note of questions you answer for yourself labeled with questions you answer for yourself: migration ran? server up? column exists? which emulator config?">
+  <img src="/assets/images/20261009/banner.jpg" alt="Two ink-and-watercolor treehouses side by side. Left, labeled in my head: a finished cabin in a tree with string lights, a porch, a rope ladder and a tire swing. Right, labeled what got built: a plywood platform in the same tree, held together with scrap boards and rope, a tarp for a roof, a bucket on a string, and a sign reading v0.1.">
 </figure>
 
 > "Knowledge is knowing a tomato is a fruit; wisdom is not putting it in a
