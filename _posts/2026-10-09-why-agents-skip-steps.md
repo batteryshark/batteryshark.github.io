@@ -37,7 +37,7 @@ machine, skip to [part two](#part-two-what-to-keep-in-mind).
 ## What stays in your head
 
 <figure>
-  <img src="/assets/images/20261009/00-in-your-head.png" alt="A person at a laptop glancing at a log, with a thought cloud above holding sticky notes and icons: DB is up, port 3000, changed the schema an hour ago, a flask for the legacy tests that flake on purpose, a chart from last month's sheet, a monitor with the sound crossed out, and a note that Sam owns the deploy script.">
+  <img src="/assets/images/20261009/00-in-your-head.jpg" alt="A person at a laptop, chin in hand, with a thought cloud above holding what they know: DB is up, port 3000, the users table with a schema change an hour ago, a flask marked these tests flake, last month's sheet, a monitor with the sound muted, a deploy script, and a note that Sam owns deploy.">
   <figcaption>All of it current, none of it written down.</figcaption>
 </figure>
 
@@ -92,7 +92,7 @@ they'd say if asked. Some of it they've never put into words. They know what
 they want, and that's what goes on the card.
 
 <figure>
-  <img src="/assets/images/20261009/01-handoff.png" alt="A task card that says Port this game to Godot is handed to an agent at a terminal. Above the person, a thought cloud holds the facts that are not on the card: my setup isn't the test rig, enemies move one pixel per frame, round 1-5 is a flood room, compare every frame with the original.">
+  <img src="/assets/images/20261009/01-handoff.jpg" alt="A person at a desk hands a card reading Port this game to Godot toward a monitor full of code. The thought cloud above them, labeled what I know, holds a gamepad with my setup isn't the test rig, a sprite with enemies move 1 pixel per frame, a flooded dungeon room labeled round 1-5 is a flood room, and two screens labeled compare every frame. The monitor is labeled what the agent gets.">
   <figcaption>The setup I actually play on never makes it onto the card.</figcaption>
 </figure>
 
@@ -111,7 +111,7 @@ world gets into that memory, and they're how the agent finds out what's
 true.
 
 <figure>
-  <img src="/assets/images/20261009/03-two-loops.png" alt="Three rows. You: idea, change, compare against what you know and what you see, next. Agent: idea, change, done? with nothing to compare against. Agent with checks: idea, change, run or look, write down what is now known, next.">
+  <img src="/assets/images/20261009/03-two-loops.jpg" alt="Three rows of a model bridge being built beside its drawing. You: a builder with a square checks the bridge against the drawing, captioned compare with what you know and see. Agent: the same bridge with the arrow back to the drawing broken off and a thought bubble reading done?, captioned nothing to compare against. Agent with checks: the bridge measured with a square beside a notebook of ticked checks, captioned run or look, record what is known, continue.">
   <figcaption>The middle row is what you get when the request only describes the change.</figcaption>
 </figure>
 
@@ -169,7 +169,7 @@ version: a separate evaluator that clicked through the running app in a real
 browser.
 
 <figure>
-  <img src="/assets/images/20261009/04-scaffolding.png" alt="Timeline across three Opus releases. Scaffolding blocks drop away one by one: forced context resets, rigid sprint plans, explicit verification instructions. One block stays across all three: a separate evaluator with a real browser.">
+  <img src="/assets/images/20261009/04-scaffolding.jpg" alt="Three identical houses labeled more scaffolding, less scaffolding, and still checking. The scaffolding thins from one to the next until the last house stands clear. Under all three, the same room with a browser on a monitor and a magnifying glass over a green check, labeled separate evaluator plus real browser. In the foreground, crates of removed scaffolding labeled forced context resets and rigid sprint plans.">
   <figcaption>Each release let more scaffolding go. The browser never left.</figcaption>
 </figure>
 
@@ -233,7 +233,7 @@ from a vague request confirms a vague result, which is why the checks have to
 come from the requirement, and why the requirement has to be written down.
 
 <figure>
-  <img src="/assets/images/20261009/10-design-check.png" alt="Two boxes. The design says what you want: data model, state model, which algorithm where. The check says whether you got it, written from the requirement, not the code. An arrow from the design to the check labeled checks come from here. Below: a loop that runs until the check passes gives you what you asked for; the design is the only thing that says whether that was what you wanted.">
+  <img src="/assets/images/20261009/10-design-check.jpg" alt="A drawing labeled Design, what you want: treehouse elevations, a layout, a doorway detail with dimensions, a roof detail, a data model, a state model, and an algorithm. Beside it, labeled Check, whether you got it: the built treehouse with calipers on it and a clipboard of ticked checks, matches intended layout, doorway dimensions, roof angle, access, attached to tree, state transitions, follows build algorithm. An arrow from the drawing to the check reads checks come from the requirement. Below: a passing check cannot choose the right design.">
 </figure>
 
 The newer frontier models are very good at solving things with no direction,
@@ -357,7 +357,7 @@ checked, which later steps depend on each assumption, and the one check that
 would settle the assumption the next step depends on.
 
 <figure>
-  <img src="/assets/images/20261009/06-working-record.png" alt="A working record for adding a download CSV button to a filtered dashboard. Goal: the download contains exactly the records the current filters show. Observed: test dataset with filter region=EU shows 12 records. Assumed, not checked: the export request includes the active filters. Depends on it: everything about whether the file is right. Next check: inspect the export request, then parse the file and compare its record IDs with the 12 expected. Two arrows from a mismatch: no filters in the request points at the button-to-endpoint path; request right but file wrong points at the export.">
+  <img src="/assets/images/20261009/06-working-record.jpg" alt="A notebook titled The working record. Goal: CSV matches the filtered dashboard. Observed: region=EU shows 12 records. Assumed, not checked: export request includes active filters. Depends on it: whether the downloaded file is right. Next check: inspect request, compare exported IDs with the expected 12. Beside it, the dashboard filtered to EU, a magnifying glass over the export request showing only region=EU, and the exported CSV. Two sticky notes: no filters in request, check button to endpoint; request right, file wrong, check export.">
   <figcaption>Without this, the next move after a wrong file is "try something else."</figcaption>
 </figure>
 
@@ -415,7 +415,7 @@ it saved, not that it says the right things. Reading back an audio setting
 proves the setting changed, not that you can hear anything.
 
 <figure>
-  <img src="/assets/images/20261009/07-scope.png" alt="Three pairs. What the check proves versus what you wanted to know: the file downloaded versus the right records downloaded; the document saved versus the document is correct; the output device changed versus you can hear sound.">
+  <img src="/assets/images/20261009/07-scope.jpg" alt="Three pairs under the headings what the check proves and what you wanted to know. A downloads tray with data.csv and a green check versus the dashboard filters and the file under a magnifying glass: the file downloaded versus the right records downloaded. A saved project plan versus the plan compared line by line with its source: the document saved versus the document is correct. A sound output menu with headphones selected versus someone listening to music: the output device changed versus you can hear sound.">
   <figcaption>All three pass. None of them answers the question you had.</figcaption>
 </figure>
 
@@ -478,7 +478,7 @@ overhaul with no requirements, because I didn't have any. The models
 extruded 3D geometry out of the 2D sprites. It was horrible.
 
 <figure>
-  <img src="/assets/images/20261009/09-asked-wanted.png" alt="Diagram of the 2.5D request. In the person's head, a sticky note says what I wanted: looks like a studio with a budget reimagined it, with art direction, pipeline and tooling marked as never written down. The task card says 2.5D graphical overhaul. The agent returns a card showing the flat pixel sprite next to the same sprite extruded into blocks, marked done with a check and wanted with a question mark.">
+  <img src="/assets/images/20261009/09-asked-wanted.jpg" alt="Three panels. What I wanted: a person imagining a lush ruined-castle stage with waterfalls and the parasol hero, with three notes below, art direction, pipeline, tooling, bracketed as never written down. What I asked: a task card reading 2.5D graphical overhaul. What got built: the flat pixel sprite next to the same sprite extruded into blocks on a workbench, labeled asked with a check and wanted with a question mark.">
   <figcaption>Every check passed. The sprite got thicker.</figcaption>
 </figure>
 
