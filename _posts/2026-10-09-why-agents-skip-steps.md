@@ -53,9 +53,12 @@ If you already believe an agent can't see your machine, skip to
   <figcaption>All of it current, none of it written down.</figcaption>
 </figure>
 
-When you work on something you know, you carry a model of it. You know which
-services are up, what you changed an hour ago, which tests are flaky, and what
-the data usually looks like. Outside code it's the same. You know the chart
+When you work on something, you carry a model of it, whether you know the
+thing well or not. If you know it, the model is full of specifics: which
+services are up, what you changed an hour ago, which tests are flaky, what
+the data usually looks like. If you don't, you carry a model of what you
+think it looks like, right or wrong, and you make assumptions off that
+instead. Outside code it's the same. You know the chart
 came from last month's spreadsheet, and that the sound stopped after you
 plugged in the new monitor.
 
