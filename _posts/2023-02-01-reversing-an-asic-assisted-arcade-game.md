@@ -75,7 +75,7 @@ The game executable was unstripped and based on SDL - a set of libraries that ac
 
 Normally, stuff like this doesn't have function names available, so it was even more interesting to me as I could see all of the various functions and sort of piece together what they did:
 
-![](/assets/images/20230201/06.PNG 'Screenshot of Unstripped IDA Function Names')
+![](/assets/images/20230201/06.png 'Screenshot of Unstripped IDA Function Names')
 
 
 
@@ -93,7 +93,7 @@ I also noticed some relatively rudimentary "security" functions and figured that
 
 At this point, running the game in a VM, I was greeted with this:
 
-![](/assets/images/20230201/08.PNG 'Screenshot of Failure pccard')
+![](/assets/images/20230201/08.png 'Screenshot of Failure pccard')
 
 At the time, I didn't have much experience beyond trying to patch over functions, but I could skip the pccard checks and a few others. However, I spent a ton of time staring at this screen:
 
@@ -105,7 +105,7 @@ At the time, I didn't have much experience beyond trying to patch over functions
 
 I suspected maybe the `pccard` was to blame, so I looked at the unstripped `.o` kernel module:
 
-![](/assets/images/20230201/10.PNG 'Screenshot pccard.o in IDA')
+![](/assets/images/20230201/10.png 'Screenshot pccard.o in IDA')
 
 
 
@@ -395,7 +395,7 @@ I knew that the built-in pccard driver was working! The next step would be getti
 ***
 #### Getting the Game Working
 
-![](/assets/images/20230201/43.PNG 'nosupported video')
+![](/assets/images/20230201/43.png 'nosupported video')
 
 
 
@@ -433,7 +433,7 @@ I bought another PSU - figured maybe I had a short somewhere killing this cheap 
 
 no POST...
 
-![](/assets/images/20230201/37.PNG 'fuuuu')
+![](/assets/images/20230201/37.png 'fuuuu')
 
 
 
@@ -733,7 +733,7 @@ The reason behind this is that the game evaluates menu controls within the game 
 
 However, as we've covered, the developers were kind enough to include the `key_input` on the request packet, which the A27 happily accepts as an alternate input... I could finally play songs!
 
-![](/assets/images/20230201/44.PNG "Playable!")
+![](/assets/images/20230201/44.png "Playable!")
 
 
 
@@ -788,7 +788,7 @@ Also a character select menu which isn't present.
 
 
   I also translated this menu to English:
-  <img src="/assets/images/20230201/49.png" title="Translated Song Test" />
+  <img src="/assets/images/20230201/49.PNG" title="Translated Song Test" />
 
 
 
