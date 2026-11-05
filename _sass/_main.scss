@@ -46,37 +46,22 @@ table {
   max-width: fit-content;
   margin: 1em auto 1.5em auto;
 
-  border-spacing: 0.25em;
+  border-collapse: collapse;
 }
 
 td {
-  padding: 0.25em 0.5em;
-  border-bottom: 1px solid color("ui-border");
+  padding: 0.35em 0.6em;
+  border: 1px solid color("ui-border-stress");
   font-variant-numeric: tabular-nums;
   white-space: nowrap; // prevent line-breaks on td cells
-
-  &:first-of-type {
-    padding-left: 0;
-  }
-  
-  &:last-of-type {
-    padding-right: 0;
-  }  
 }
 
 th {
-  padding: 0.5em;
-  border-bottom: 3px solid color("ui-border");
+  padding: 0.5em 0.6em;
+  border: 1px solid color("ui-border-stress");
+  border-bottom-width: 3px;
   font-weight: normal;
   // white-space: nowrap; // prevent line-breaks on thead cells
-
-  &:first-of-type {
-    padding-left: 0;
-  }
-  
-  &:last-of-type {
-    padding-right: 0;
-  }
 }
 
 tfoot > tr > td {
@@ -517,6 +502,26 @@ figcaption {
   background: color("ui-bg");
   margin: 1.5em 0 2em 0;
   padding: 0.9em 1em;
+}
+
+.side-note {
+  border-left: 3px solid color("accent");
+  background: color("ui-bg");
+  margin: 1.5em 0 2em 0;
+  padding: 0.9em 1em;
+
+  > p { margin: 0; }
+  > p + p { margin-top: 0.75em; }
+}
+
+.pull-quote {
+  border-left: 3px solid color("accent");
+  margin: 2em 0;
+  padding: 0.1em 0 0.1em 1em;
+  font-size: calc(1em * 1.15);
+  line-height: 1.5;
+
+  > p { margin: 0; }
 }
 
 .archive-section {
