@@ -15,5 +15,7 @@
 
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafafa">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#222222">
+{%- if page.color_scheme == "light" %}
+<meta name="color-scheme" content="light">{% endif %}
 
 <link rel="alternate" type="application/rss+xml" title="{{ site.title }} RSS feed" href="{{ site.url }}/feed.xml" />
