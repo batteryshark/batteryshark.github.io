@@ -754,6 +754,12 @@ This is still ongoing research, and there's a lot of room to grow and improve, b
 - **One model for both?** Retrain with clean package examples to see whether one model can cover agent code and
   packages, or whether specialising really does cost it somewhere else.
 
+- **Many adapters, one base model.** The fine-tune is a LoRA adapter, and it's only 122 MB. Servers like llama.cpp
+  and vLLM can load an adapter as an overlay on a base model that's already in memory, and switch it per request. So
+  with a reliable base model, you could keep a bunch of these for different jobs, one for agent code, others for
+  packages or bash, without duplicating the base weights. I haven't tried that with d3-mini yet, but it's definitely
+  something I want to look into.
+
 - **Across orgs.** Use a few big, messy public codebases as stand-ins for different organizations, to see whether
   a generic model plus some context gets the most out of it without org-specific fine-tunes
   ([what I have so far](#i-early-signs-across-orgs)).
