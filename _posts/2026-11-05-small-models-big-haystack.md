@@ -569,7 +569,7 @@ They do have some gaps:
 
 - **You host them.** No API bill and no provider, but someone has to run the hardware and keep them maintained.
 
-- **No write-up.** You get probabilities, not an explanation. That's still more than the single score a classifier
+- **No write-up.** You get probabilities back. That's still more than the single score a classifier
   gives you: you can ask it several typed questions and glean some context from the answers. It just won't write
   anything up. That can be a plus if you engineer the right system around it, with something else explaining only what
   gets flagged, but building that is on you.
@@ -606,7 +606,7 @@ it on both. Here's how it did:
 
 - **It carried across languages.** It was trained mostly on Python and still caught 278 of 300 in 8 other languages.
 
-The caveat: those bad examples were written by models, not caught in the wild.
+The caveat: models wrote those bad examples. None of them came from a real attack.
 [Fine-tune details](#e-the-fine-tune).
 
 ### What about packages?
@@ -659,7 +659,7 @@ malicious items:
 Sending the small model's flags straight to people instead just makes people the bottleneck. Deliberately malicious
 code should be rare in your commits, so the goal is human time as close to zero as we can get it. A person looking at
 something should be the anomaly: it happens because there's a real investigation to run and someone needs to physically act in
-the real world, not because a model raised its hand.
+the real world. A model raising its hand shouldn't be enough to pull someone in.
 
 ### Prompt injection not only failed, it kinda backfired
 
@@ -857,7 +857,7 @@ The short answers. Every number links to its details below.
 | False alarms, benign diffs in those languages | 3/1,197 | 6/1,197 |
 | Agent-diff catches flipped by planted tricks | 0/105 | 0/50 |
 
-\* Model-written test examples, not malware caught in the wild. [Details](#e-the-fine-tune).
+\* Test examples written by models. None came from a real attack. [Details](#e-the-fine-tune).
 
 **Follow-up: the same fine-tune on packages and releases, where the untuned model is the better pick**
 
@@ -1042,8 +1042,8 @@ The agent training data was mostly Python (JS/TS was 4.4%). I tested it on 300 b
   beforehand, four code-mode cells (bash, cmd/batch, Python and zsh) dropped meaningfully on both seeds. Python is
   one of them, and it's what the model trained on, so the drop is mostly not about language.
 
-Caveat: these bad examples were written by models (GPT and Claude), not caught in the wild. The misses track which
-model wrote them more than the language.
+Caveat: GPT and Claude wrote these bad examples, and none came from a real attack. The misses track which model
+wrote them more than the language.
 
 **Placeholder summary.** Swapping the extractor's summary for a placeholder found 448 of 510 across the 14
 languages with 5 of 2,150 real samples flagged, against 458 and 11 with the full summary.
@@ -1177,7 +1177,7 @@ config and API misuse. The verdict is "calibrate only", "calibrate plus context"
 
 ### J. Limits
 
-- **d3 is a malice signal, not a vulnerability scanner.** The untuned models don't tell a vulnerable version from a
+- **d3 doesn't find vulnerabilities.** It looks for malice. The untuned models don't tell a vulnerable version from a
   fixed one, and nothing in the fine-tune teaches that.
 
 - **Long inputs are a gap.** Unmask, which scans everything, did best on the 26 long inputs (12 of 18 malicious).
