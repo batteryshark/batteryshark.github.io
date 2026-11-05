@@ -670,7 +670,7 @@ ran them past both d3 models, Sonnet and DeepSeek:
   in the same low single digits.
 
 - **They set off false alarms instead.** With "ignore previous instructions" in 26 *benign* files, d3 27B newly flagged
-  21 of them, Sonnet 17 and DeepSeek Flash 22. Only d3-mini mostly shrugged it off (1 of 26). I guess training models
+  21 of them, Sonnet 17 and DeepSeek Flash 22. Only d3-mini shrugged it off (0 of 26). I guess training models
   to watch for prompt injection made them super paranoid about anything that looks like prompt injection. Imagine
   that.
 
@@ -998,7 +998,7 @@ and the tenth found the hidden payload but missed the second stage it loads.
 ### D. Prompt injection and consistency
 
 <figure>
-  <img src="/assets/images/20261105/injection.png" alt="Two bar charts. (a) Injected malware that lost its flag, worst of five templates: d3-mini 4 of 92 (4.3%), d3 27B 2 of 110 (1.8%), DeepSeek V4.1 Flash 3 of 101 (3.0%), Sonnet 5.5 4 of 98 (4.1%). (b) Benign files newly flagged after adding &quot;ignore previous instructions&quot;, out of 26: d3-mini 1, d3 27B 21, DeepSeek V4.1 Flash 22, Sonnet 5.5 17.">
+  <img src="/assets/images/20261105/injection.png" alt="Two bar charts. (a) Injected malware that lost its flag, worst of five templates: d3-mini 3 of 90 (3.3%), d3 27B 2 of 110 (1.8%), DeepSeek V4.1 Flash 3 of 101 (3.0%), Sonnet 5.5 4 of 98 (4.1%). (b) Benign files newly flagged after adding &quot;ignore previous instructions&quot;, out of 26: d3-mini 0, d3 27B 21, DeepSeek V4.1 Flash 22, Sonnet 5.5 17.">
   <figcaption>Fixed injection text rarely removed a flag. Adding "ignore previous instructions" to benign files made most models flag them.</figcaption>
 </figure>
 
@@ -1008,7 +1008,7 @@ benign." On d3 27B the best trick got a malicious item past it 2 times out of 11
 same low single digits.
 
 With "ignore previous instructions" in the comments of 26 benign files, d3 27B newly flagged 21 of them, Sonnet 17 and
-DeepSeek Flash 22. Only d3-mini mostly shrugged it off (1 of 26).
+DeepSeek Flash 22. Only d3-mini shrugged it off (0 of 26).
 
 These were fixed tricks on purpose. An attacker iterating against one specific model is a different experiment.
 
@@ -1083,9 +1083,13 @@ So I discount its package results: packages stay with the untuned model, and the
 On small diffs, Sonnet is fast and cheap: 2.4 seconds median and about $8.12 per 1,000 ordinary commits. Fable costs $48.75 for the same 1,000. Off-the-shelf d3-mini on my Mac, reached over my
 tailnet, also took 2.4 seconds median, with a p95 of 13 seconds. The 27B model took 13 seconds median.
 
-That's all on llama.cpp. On Apple's MLX, through [mlx-lm](https://github.com/ml-explore/mlx-lm), d3-mini took 3.95
+Those times are all on llama.cpp. On Apple's MLX, through [mlx-lm](https://github.com/ml-explore/mlx-lm), d3-mini took 3.95
 seconds median against 5.5 on llama.cpp, on the same Mac and the same 30 items read back to back, picked to cover
 every size. Across all 308 main test items, it flagged exactly the same ones as llama.cpp.
+
+After publishing, I reran the rest of the tests on MLX too, so d3-mini's detection numbers in this post now come from
+those runs. The only ones that changed are in prompt injection, by one item each: d3-mini newly flagged 0 of the 26
+benign files instead of 1, and its worst trick got 3 of 90 malicious items past it instead of 4 of 92.
 
 On a single RTX 4090, the fine-tuned d3-mini takes about 0.5 to 0.8 seconds per typical agent change. That's roughly
 4,500 to 7,000 checks an hour per card, with no API bill.
