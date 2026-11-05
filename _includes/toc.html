@@ -28,3 +28,13 @@
       </div>
     </details>
   </nav>
+
+{% if toc_type == "sticky" %}
+<script>
+  function toggleToc() {
+    ["toc-sticky", "toc-hidden", "toc-shown"].forEach(function (id) {
+      document.getElementById(id).classList.toggle("hidden");
+    });
+  }
+</script>
+{% endif %}
