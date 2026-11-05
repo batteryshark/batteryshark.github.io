@@ -153,7 +153,7 @@ The goal of all this automation is to iterate faster and ship sooner and more of
 - **Delegate more** to systems we can't fully trust, and understand less of what they produce.
 - **Stay in the loop** and become the bottleneck.
 
-Understanding less is the cost of delegating, not the point of it. And while fully autonomous systems may be the
+Delegating means understanding less, and that's a cost we have to manage. And while fully autonomous systems may be the
 endgame, we have quite a bit to build before that's a reality.
 
 Security covers a wide range of responsibilities, and all of them have to grow and change with this push toward
