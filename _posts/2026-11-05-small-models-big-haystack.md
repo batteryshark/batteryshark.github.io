@@ -290,7 +290,7 @@ in the code it's reading?
 Here's what went in:
 
 - **Agent code:** 137 real task-and-diff pairs from public agent trajectories, plus 22 changes I had models write that
-  do more than the task asked. Those are inert stand-ins, not live malware.
+  do more than the task asked. They look the part, but none of them actually does anything harmful.
 
 - **Real malware:** 116 samples. 89 malicious npm packages that showed up after d3's base model was released, so d3
   couldn't have seen them, plus 27 compromised releases of real libraries, shown as a diff from the last clean version.
