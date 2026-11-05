@@ -15,6 +15,7 @@ layout: default
   {% endif %}
 
   <div class="post-meta muted small bottom-spacer">
+    {%- if page.author %}<span>{{ page.author }}</span> <span aria-hidden="true">/</span>{% endif %}
     <span>{{ page.date | date: "%B %-d, %Y" }}</span>
     {% if page.tags %}
       <span aria-hidden="true">/</span>
