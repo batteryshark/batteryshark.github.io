@@ -45,9 +45,11 @@ ways that do real damage, and a couple of risks make their behaviour even harder
 
 <aside class="side-note">
 <p><strong>Side note:</strong> There are also more direct ways to tamper with a model that we don't have a good
-handle on yet. Model poisoning has already shown that tampering can be weaponized, and more recent "LLM black magic" has surfaced
-with <a href="https://rikiyat.github.io/blog/weight-space-programming/">weight-space programming</a>, which edits the
-weights directly after they've been baked. More attacks will likely come out of that, but we can leave it out of scope for now.</p>
+handle on yet. Model poisoning has already shown that tampering can be weaponized. More recently,
+<a href="https://rikiyat.github.io/blog/weight-space-programming/">weight-space programming</a> showed you can edit a
+model's weights directly after they've been baked, with no retraining. It's worth keeping an eye on for new attack
+patterns, but it's a powerful technique, and it may also turn out to be a good way to make models more reliable
+(<a href="#future-work">more on that</a>). For now, we'll leave it out of scope.</p>
 </aside>
 
 ### Where the buck stops
@@ -780,6 +782,14 @@ This is still ongoing research, and there's a lot of room to grow and improve, b
 - **Distilling GLM 5.3's sense of smell.** It had the best nose of any API model here, but it thinks for far too long to
   run on everything. I'd like to try distilling that judgement into a much more modest decision model that answers in
   a fraction of a second, and see how close it gets. I think it probably holds a lot of promise.
+
+- **Programming the weights.** The weight-space programming from the side note up top could help here too. In that
+  write-up, a frontier model edited a tiny slice of a small model's weights directly, with no training, and removed a
+  failure mode that was hiding an ability the model already had. That sounds a lot like the fine-tune's trouble with
+  packages: the extra false alarms on look-alikes, and the fake approval notes that talked it out of catches. I'd like
+  to see whether a stronger model, GLM 5.3 or whatever's best by then, can find what's driving those misses and patch
+  them in place, or help steer the distillation above. More folks seem to be trying this, and if it holds up, it could
+  be a huge deal for making small models more reliable.
 
 ### Other applications
 
