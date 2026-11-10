@@ -55,7 +55,7 @@ patterns, but it's a powerful technique, and it may also turn out to be a good w
 ### Where the buck stops
 
 So who's accountable when an agent uploads something it shouldn't? Bottom line, it doesn't matter who made the model, or whether the behaviour was
-planted or "model jaggedness." That holds for a Claude or OpenAI model as much as for Qwen.
+planted or "model jaggedness." That holds for Claude or GPT as much as for Qwen.
 
 The frontier labs' own incidents
 ([OpenAI](https://openai.com/index/hugging-face-incident-and-the-road-ahead/),
