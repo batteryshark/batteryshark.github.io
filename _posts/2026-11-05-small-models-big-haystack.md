@@ -3,7 +3,7 @@ layout: post
 title: "Small Models, Big Haystack: Triaging Everything Our Agents Write and Run"
 author: Mario Mercaldi
 date: 2026-11-05
-description: "We should be checking what our agents write and run all the time, and most teams can't afford to. I tested whether small local models can take the first look at everything, and found that the pipeline around them matters more than the model."
+description: "We should be checking what our agents write and run all the time, and most teams can't afford to. I tested small local models against rules and the big API models to see how they stack up as a first look, and what seems to matter most."
 tags: [ai-security, agent-security, supply-chain, tooling]
 toc: true
 color_scheme: light
