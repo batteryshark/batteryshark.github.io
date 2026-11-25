@@ -36,7 +36,6 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - MAINTAINING.md
-  - ARCHIVE_AUDIT.md
   - README.md
   - node_modules
   - vendor

@@ -1,23 +1,22 @@
-# BatteryShark Writeup Archive
+# batteryshark.github.io
 
-This is the canonical source for the BatteryShark security research and reverse engineering writeup archive.
+Source of [batteryshark.github.io](https://batteryshark.github.io): write-ups on reverse engineering, game hacking
+and low-level systems. It is a Jekyll site, built and published to GitHub Pages by `.github/workflows/jekyll.yml`.
 
-The public surface is the Jekyll site. The repository can stay private while still publishing GitHub Pages through the existing workflow.
+## What lives here
 
-## What Lives Here
+- `_posts/` holds the posts.
+- `assets/images/` holds post images and the small research snippets some posts link to.
+- `topics.md`, `series.md` and `about.md` are the navigation pages.
+- `MAINTAINING.md` covers front matter, tags and how to add a post.
 
-- `_posts/` contains the article source of truth.
-- `assets/images/` contains article images and downloadable research snippets.
-- `topics.md`, `series.md`, and `about.md` provide the reader-facing navigation routes.
-- `MAINTAINING.md` explains how to edit or add future posts.
+## Build locally
 
-The older `todo/writeups` wiki-style tree is intentionally retired after migration so content does not drift between two sources.
+Needs Ruby 3.3 (the version the workflow uses) and Bundler.
 
-## Build
-
-```powershell
+```sh
 bundle install
-bundle exec jekyll build --trace
+bundle exec jekyll serve
 ```
 
-The local Windows environment used for this cleanup did not have Ruby/Bundler installed, so the GitHub Actions workflow remains the reference build until local tooling is added.
+The site is then at `http://127.0.0.1:4000`. `bundle exec jekyll build` writes it to `_site/` without serving.
